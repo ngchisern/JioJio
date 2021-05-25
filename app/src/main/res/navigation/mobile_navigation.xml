@@ -8,8 +8,12 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.producity.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:label="@string/schedule"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_schedule_Detail"
+            app:destination="@id/schedule_Detail" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard"
@@ -22,4 +26,9 @@
         android:name="com.example.producity.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/schedule_Detail"
+        android:name="com.example.producity.Schedule_Detail"
+        android:label="fragment_schedule__detail"
+        tools:layout="@layout/fragment_schedule__detail" />
 </navigation>
