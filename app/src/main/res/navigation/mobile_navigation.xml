@@ -10,9 +10,10 @@
         android:name="com.example.producity.ui.home.HomeFragment"
         android:label="@string/schedule"
         tools:layout="@layout/fragment_home" >
+
         <action
-            android:id="@+id/action_navigation_home_to_schedule_Detail"
-            app:destination="@id/schedule_Detail" />
+            android:id="@+id/action_navigation_home_to_scheduleDetailFragment"
+            app:destination="@id/scheduleDetailFragment" />
     </fragment>
 
     <fragment
@@ -27,8 +28,19 @@
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
     <fragment
-        android:id="@+id/schedule_Detail"
-        android:name="com.example.producity.Schedule_Detail"
-        android:label="fragment_schedule__detail"
-        tools:layout="@layout/fragment_schedule__detail" />
+        android:id="@+id/scheduleDetailFragment"
+        android:name="com.example.producity.ui.home.ScheduleDetailFragment"
+        android:label="fragment_schedule_detail_list"
+        tools:layout="@layout/fragment_schedule_detail_list" >
+        <argument
+            android:name="title"
+            app:argType="string"
+            android:defaultValue="No Title" />
+        <argument
+            android:name="time"
+            app:argType="string"
+            android:defaultValue="-" />
+    </fragment>
+
+
 </navigation>

@@ -5,4 +5,13 @@
     <string name="title_notifications">Notifications</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_word">Task…</string>
+    <string name="button_save">Save</string>
+    <string name="empty_not_saved">Task not saved because it is empty.</string>
+    <string name="add_task">Add task</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="new_task">New Task</string>
+
 </resources>

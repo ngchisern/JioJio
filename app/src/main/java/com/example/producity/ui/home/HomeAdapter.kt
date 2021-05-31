@@ -3,39 +3,68 @@ package com.example.producity.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
 
-class HomeAdapter (
-    private val context: Fragment,
-    private val dataset: List<ScheduleDetail>
-        ): RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
-
+class HomeAdapter(val context : Fragment, val homeViewModel: HomeViewModel)
+    : ListAdapter<ScheduleDetail, HomeAdapter.HomeViewHolder>(ScheduleComparator()) {
 
     class HomeViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
         val time: TextView = view.findViewById(R.id.schedule_time)
         val title: TextView = view.findViewById(R.id.schedule_title)
-    }
+        val button : ImageButton = view.findViewById(R.id.cancel_button)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
-        val adapterLayout = LayoutInflater.from(parent.context)
-            .inflate(R.layout.schedule_view_item, parent, false)
+        fun bind1(text: String?) {
+            title.text = text
+        }
 
-        return HomeViewHolder(adapterLayout)
-    }
+        fun bind2(text: String?) {
+            time.text = text
+        }
 
-    override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
-        val item = dataset[position]
-        holder.time.text = item.a
-        holder.title.text = item.b
-
-        holder.itemView.setOnClickListener {
-            context.findNavController().navigate(R.id.action_navigation_home_to_schedule_Detail)
+        companion object {
+            fun create(parent: ViewGroup) : HomeViewHolder {
+                val itemView : View = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.schedule_view_item, parent, false)
+                return HomeViewHolder(itemView)
+            }
         }
     }
 
-    override fun getItemCount(): Int = dataset.size
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
+        return HomeViewHolder.create(parent)
+    }
+
+    override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
+        val current = getItem(position)
+        holder.bind1(current.title)
+        holder.bind2(current.time)
+
+        holder.itemView.setOnClickListener {
+            val action = HomeFragmentDirections.actionNavigationHomeToScheduleDetailFragment(current.title,current.time)
+            context.findNavController().navigate(action)
+        }
+
+        holder.button.setOnClickListener {
+            homeViewModel.delete(ScheduleDetail(current.date, current.title, current.time))
+        }
+    }
+
+    class ScheduleComparator : DiffUtil.ItemCallback<ScheduleDetail>() {
+        override fun areItemsTheSame(oldItem: ScheduleDetail, newItem: ScheduleDetail): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(oldItem: ScheduleDetail, newItem: ScheduleDetail): Boolean {
+            return oldItem.title == newItem.title
+        }
+
+    }
+
 }
