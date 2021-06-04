@@ -13,16 +13,16 @@ import kotlinx.coroutines.launch
 
 @Database(entities = arrayOf(ScheduleDetail::class, Task::class), version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
-abstract class MyRoomDatabase : RoomDatabase(){
+abstract class MyRoomDatabase : RoomDatabase() {
 
-    abstract fun scheduleDao() : ScheduleDao
-    abstract fun taskDao() : TaskDao
+    abstract fun scheduleDao(): ScheduleDao
+    abstract fun taskDao(): TaskDao
 
     companion object {
         @Volatile
         private var INSTANCE: MyRoomDatabase? = null
 
-        fun getDatabase(context: Context, scope : CoroutineScope) : MyRoomDatabase {
+        fun getDatabase(context: Context, scope: CoroutineScope): MyRoomDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
@@ -35,10 +35,11 @@ abstract class MyRoomDatabase : RoomDatabase(){
         }
     }
 
-    private class MyRoomDatabaseCallback (private val scope: CoroutineScope) : RoomDatabase.Callback() {
+    private class MyRoomDatabaseCallback(private val scope: CoroutineScope) :
+        RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
-            INSTANCE?.let{ database ->
+            INSTANCE?.let { database ->
                 scope.launch {
                     populateDatabase(database.scheduleDao(), database.taskDao())
                 }

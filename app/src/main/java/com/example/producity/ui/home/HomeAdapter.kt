@@ -12,13 +12,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
 
-class HomeAdapter(val context : Fragment, val homeViewModel: HomeViewModel)
-    : ListAdapter<ScheduleDetail, HomeAdapter.HomeViewHolder>(ScheduleComparator()) {
+class HomeAdapter(val context: Fragment, val homeViewModel: HomeViewModel) :
+    ListAdapter<ScheduleDetail, HomeAdapter.HomeViewHolder>(ScheduleComparator()) {
 
-    class HomeViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
+    class HomeViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val time: TextView = view.findViewById(R.id.schedule_time)
         val title: TextView = view.findViewById(R.id.schedule_title)
-        val button : ImageButton = view.findViewById(R.id.cancel_button)
+        val button: ImageButton = view.findViewById(R.id.cancel_button)
 
         fun bind1(text: String?) {
             title.text = text
@@ -29,8 +29,8 @@ class HomeAdapter(val context : Fragment, val homeViewModel: HomeViewModel)
         }
 
         companion object {
-            fun create(parent: ViewGroup) : HomeViewHolder {
-                val itemView : View = LayoutInflater.from(parent.context)
+            fun create(parent: ViewGroup): HomeViewHolder {
+                val itemView: View = LayoutInflater.from(parent.context)
                     .inflate(R.layout.schedule_view_item, parent, false)
                 return HomeViewHolder(itemView)
             }
@@ -47,7 +47,10 @@ class HomeAdapter(val context : Fragment, val homeViewModel: HomeViewModel)
         holder.bind2(current.time)
 
         holder.itemView.setOnClickListener {
-            val action = HomeFragmentDirections.actionNavigationHomeToScheduleDetailFragment(current.title,current.time)
+            val action = HomeFragmentDirections.actionNavigationHomeToScheduleDetailFragment(
+                current.title,
+                current.time
+            )
             context.findNavController().navigate(action)
         }
 

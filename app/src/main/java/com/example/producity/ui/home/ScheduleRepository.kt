@@ -10,7 +10,7 @@ class ScheduleRepository(private val scheduleDao: ScheduleDao) {
     val allSchedule : Flow<List<ScheduleDetail>> = scheduleDao.getSchedules(LocalDate.now())
      */
 
-    val allSchedule : Flow<List<ScheduleDetail>> = scheduleDao.getSchedules()
+    val allSchedule: Flow<List<ScheduleDetail>> = scheduleDao.getSchedules()
 
     @SuppressWarnings("RedundantSuspendModifier")
     @WorkerThread

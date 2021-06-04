@@ -9,11 +9,11 @@ interface ScheduleDao {
     fun getSchedules(): Flow<List<ScheduleDetail>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(schedule : ScheduleDetail)
+    suspend fun insert(schedule: ScheduleDetail)
 
     @Query("Delete FROM schedule_table")
     suspend fun deleteAll()
 
     @Delete
-    suspend fun delete(scheduleDetail : ScheduleDetail)
+    suspend fun delete(scheduleDetail: ScheduleDetail)
 }

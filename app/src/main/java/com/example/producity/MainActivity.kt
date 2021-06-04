@@ -36,14 +36,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navView: BottomNavigationView = binding.navView
-
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
+                R.id.navigation_home, R.id.navigation_dashboard,
+                R.id.navigation_notifications, R.id.navigation_friends
             )
         )
 
@@ -64,17 +64,23 @@ class MainActivity : AppCompatActivity() {
         input.setHint("Enter Activity")
         input.inputType = InputType.TYPE_CLASS_TEXT
 
-        val view : View = LayoutInflater.from(this).inflate(R.layout.add_schedule, null)
+        val view: View = LayoutInflater.from(this).inflate(R.layout.add_schedule, null)
 
         builder.setView(view)
 
-        builder.setPositiveButton("Done", DialogInterface.OnClickListener{dialog, which ->
-            val text1  : EditText = view.findViewById(R.id.taskInput1)
-            val text2 : EditText = view.findViewById(R.id.taskInput2)
-            homeViewModel.insert(ScheduleDetail(homeViewModel.targetDate.value!!, text1.text.toString(), text2.text.toString()))
+        builder.setPositiveButton("Done", DialogInterface.OnClickListener { dialog, which ->
+            val text1: EditText = view.findViewById(R.id.taskInput1)
+            val text2: EditText = view.findViewById(R.id.taskInput2)
+            homeViewModel.insert(
+                ScheduleDetail(
+                    homeViewModel.targetDate.value!!,
+                    text1.text.toString(),
+                    text2.text.toString()
+                )
+            )
         })
 
-        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener{dialog, which ->
+        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
             dialog.cancel()
         })
 

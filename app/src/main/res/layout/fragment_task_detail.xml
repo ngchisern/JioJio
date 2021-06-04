@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="32dp"
+    tools:context=".ui.dashboard.TaskDetailFragment">
+
+
+    <TextView
+        android:id="@+id/task_name_title"
+        style="?attr/textAppearanceHeadline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/task_detail_frag_padding"
+        android:text="@string/task_title"
+        android:textSize="@dimen/task_detail_frag_title_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/task_name"
+        style="?attr/textAppearanceCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/task_detail_frag_padding"
+        android:paddingBottom="@dimen/task_detail_frag_padding"
+        android:textSize="@dimen/task_detail_frag_text_size"
+        app:layout_constraintBottom_toBottomOf="@id/task_name_title"
+        app:layout_constraintStart_toEndOf="@id/description_title"
+        app:layout_constraintTop_toTopOf="@id/task_name_title"
+        tools:text="MyTask" />
+
+
+    <TextView
+        android:id="@+id/start_date_title"
+        style="?attr/textAppearanceHeadline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/task_detail_frag_padding"
+        android:text="@string/start_date_title"
+        android:textSize="@dimen/task_detail_frag_title_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/task_name_title" />
+
+    <TextView
+        android:id="@+id/start_date"
+        style="?attr/textAppearanceCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/task_detail_frag_padding"
+        android:paddingBottom="@dimen/task_detail_frag_padding"
+        android:textSize="@dimen/task_detail_frag_text_size"
+        app:layout_constraintBottom_toBottomOf="@id/start_date_title"
+        app:layout_constraintStart_toEndOf="@id/description_title"
+        app:layout_constraintTop_toTopOf="@id/start_date_title"
+        tools:text="2021-06-01" />
+
+
+    <TextView
+        android:id="@+id/end_date_title"
+        style="?attr/textAppearanceHeadline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/task_detail_frag_padding"
+        android:text="@string/end_date_title"
+        android:textSize="@dimen/task_detail_frag_title_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/start_date_title" />
+
+    <TextView
+        android:id="@+id/end_date"
+        style="?attr/textAppearanceCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/task_detail_frag_padding"
+        android:paddingBottom="@dimen/task_detail_frag_padding"
+        android:textSize="@dimen/task_detail_frag_text_size"
+        app:layout_constraintBottom_toBottomOf="@id/end_date_title"
+        app:layout_constraintStart_toEndOf="@id/description_title"
+        app:layout_constraintTop_toTopOf="@id/end_date_title"
+        tools:text="2021-06-30" />
+
+
+    <TextView
+        android:id="@+id/description_title"
+        style="?attr/textAppearanceHeadline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/task_detail_frag_padding"
+        android:text="@string/description_title"
+        android:textSize="@dimen/task_detail_frag_title_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/end_date_title" />
+
+    <TextView
+        android:id="@+id/description"
+        style="?attr/textAppearanceCaption"
+        android:layout_width="220dp"
+        android:layout_height="200dp"
+        android:paddingStart="@dimen/task_detail_frag_padding"
+        android:paddingTop="5dp"
+        android:paddingBottom="@dimen/task_detail_frag_padding"
+        android:textSize="@dimen/task_detail_frag_text_size"
+        app:layout_constraintStart_toEndOf="@id/description_title"
+        app:layout_constraintTop_toTopOf="@id/description_title"
+        tools:text="Some description some description\nAaabbb" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

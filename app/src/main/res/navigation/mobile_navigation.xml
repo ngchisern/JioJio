@@ -9,7 +9,7 @@
         android:id="@+id/navigation_home"
         android:name="com.example.producity.ui.home.HomeFragment"
         android:label="@string/schedule"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
 
         <action
             android:id="@+id/action_navigation_home_to_scheduleDetailFragment"
@@ -20,27 +20,52 @@
         android:id="@+id/navigation_dashboard"
         android:name="com.example.producity.ui.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_navigation_dashboard_to_taskDetailFragment"
+            app:destination="@id/taskDetailFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.example.producity.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+
     <fragment
         android:id="@+id/scheduleDetailFragment"
         android:name="com.example.producity.ui.home.ScheduleDetailFragment"
         android:label="fragment_schedule_detail_list"
-        tools:layout="@layout/fragment_schedule_detail_list" >
+        tools:layout="@layout/fragment_schedule_detail_list">
         <argument
             android:name="title"
-            app:argType="string"
-            android:defaultValue="No Title" />
+            android:defaultValue="No Title"
+            app:argType="string" />
         <argument
             android:name="time"
-            app:argType="string"
-            android:defaultValue="-" />
+            android:defaultValue="-"
+            app:argType="string" />
     </fragment>
 
+    <fragment
+        android:id="@+id/taskDetailFragment"
+        android:name="com.example.producity.ui.dashboard.TaskDetailFragment"
+        android:label="fragment_task_detail"
+        tools:layout="@layout/fragment_task_detail">
+        <argument
+            android:name="taskName"
+            app:argType="string" />
+        <argument
+            android:name="startDate"
+            app:argType="string" />
+        <argument
+            android:name="endDate"
+            app:argType="string" />
+        <argument
+            android:name="description"
+            android:defaultValue="-"
+            app:argType="string" />
+    </fragment>
+    
 
 </navigation>

@@ -3,4 +3,10 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="add_task_dialog_text_size">16sp</dimen>
+    <dimen name="task_detail_frag_title_size">24sp</dimen>
+    <dimen name="task_detail_frag_text_size">18sp</dimen>
+    <dimen name="task_detail_frag_padding">30dp</dimen>
+    <dimen name="task_done_delete_button_size">40dp</dimen>
+    <dimen name="task_text_width">280dp</dimen>
 </resources>

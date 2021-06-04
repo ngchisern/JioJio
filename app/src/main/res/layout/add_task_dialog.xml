@@ -4,57 +4,78 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="25dp">
 
     <TextView
-        android:id="@+id/taskTextView1"
+        android:id="@+id/task_text_view_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Task:"
+        android:text="@string/task_title"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="20sp"
+        android:textSize="@dimen/add_task_dialog_text_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/taskInput1"
+        android:id="@+id/task_input_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:textSize="@dimen/add_task_dialog_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/taskTextView1" />
+        app:layout_constraintTop_toBottomOf="@id/task_text_view_1" />
 
     <TextView
-        android:id="@+id/taskTextView2"
+        android:id="@+id/task_text_view_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Deadline:"
+        android:text="@string/deadline_title"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="20sp"
+        android:textSize="@dimen/add_task_dialog_text_size"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/taskInput1" />
+        app:layout_constraintTop_toBottomOf="@id/task_input_1" />
 
     <ImageButton
-        android:id="@+id/taskDatePickerButton"
+        android:id="@+id/task_date_picker_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/schedule"
-        app:layout_constraintEnd_toStartOf="@id/taskInput2"
+        app:layout_constraintEnd_toStartOf="@id/task_input_2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/taskTextView2" />
+        app:layout_constraintTop_toBottomOf="@id/task_text_view_2"
+        app:srcCompat="@drawable/schedule" />
 
     <TextView
-        android:id="@+id/taskInput2"
+        android:id="@+id/task_input_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@id/taskDatePickerButton"
-        app:layout_constraintStart_toEndOf="@id/taskDatePickerButton"
-        app:layout_constraintTop_toTopOf="@id/taskDatePickerButton"
+        android:textSize="@dimen/add_task_dialog_text_size"
+        app:layout_constraintBottom_toBottomOf="@id/task_date_picker_button"
+        app:layout_constraintStart_toEndOf="@id/task_date_picker_button"
+        app:layout_constraintTop_toTopOf="@id/task_date_picker_button"
         tools:text="1 Jan 2022" />
+
+    <TextView
+        android:id="@+id/task_text_view_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/description_title"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/add_task_dialog_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/task_date_picker_button" />
+
+    <EditText
+        android:id="@+id/task_input_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/add_task_dialog_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/task_text_view_3" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

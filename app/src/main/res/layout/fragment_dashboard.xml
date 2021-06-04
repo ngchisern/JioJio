@@ -7,14 +7,14 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:liftOnScroll="false">
 
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topAppBar"
+            android:id="@+id/top_app_bar"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -22,7 +22,7 @@
             app:layout_scrollFlags="noScroll"
             app:menu="@menu/task_top_app_bar"
             app:navigationIcon="@drawable/menu_book"
-            app:title="Task" />
+            app:title="@string/task" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -38,29 +38,14 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!-- <TextView
-                android:id="@+id/header"
-                style="@style/HeaderTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                tools:text="Header" /> -->
-
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/taskRecyclerView"
+                android:id="@+id/task_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
-                android:paddingBottom="0dp"
+                android:paddingBottom="60dp"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:itemCount="16" />
-
-            <!--            <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-            <!--                android:id="@+id/taskFab"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_margin="16dp"-->
-            <!--                android:src="@drawable/ic_add" />-->
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

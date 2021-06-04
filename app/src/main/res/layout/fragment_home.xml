@@ -1,65 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+    <data>
+        <variable
+            name="hViewModel"
+            type="com.example.producity.ui.home.HomeViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:liftOnScroll="true">
+        android:layout_height="match_parent">
 
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topAppBar"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/holo_purple"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:menu="@menu/schedule_top_app_bar"
-            app:navigationIcon="@drawable/menu_book"
-            app:title="@string/schedule" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".ui.home.HomeFragment">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/schedule_linear_layout"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            app:liftOnScroll="true">
 
-            <TextView
-                android:id="@+id/header"
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                style="@style/Widget.MaterialComponents.Toolbar.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/holo_purple"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:menu="@menu/schedule_top_app_bar"
+                app:navigationIcon="@drawable/menu_book"
+                app:title="@string/schedule" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:context=".ui.home.HomeFragment">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/schedule_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/HeaderTextStyle"
-                android:gravity="center"
-                tools:text="Header" />
+                android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/schedule_recycle_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:paddingBottom="48dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:itemCount="16" />
+                <TextView
+                    android:id="@+id/header"
+                    android:text="@{hViewModel.targetDate.toString()}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/HeaderTextStyle"
+                    android:gravity="center"
+                    tools:text="Header" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/schedule_recycle_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingBottom="48dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    tools:itemCount="16" />
 
-    </androidx.core.widget.NestedScrollView>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.core.widget.NestedScrollView>
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

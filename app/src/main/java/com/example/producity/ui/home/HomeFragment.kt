@@ -4,14 +4,13 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -21,7 +20,6 @@ import com.example.producity.databinding.FragmentHomeBinding
 import java.util.*
 
 class HomeFragment : Fragment() {
-    private val newScheduleRequestCode = 1
 
     private val homeViewModel: HomeViewModel by activityViewModels() {
         HomeViewModelFactory((requireActivity().application as MyApplication).scheduleRepository)
@@ -40,21 +38,17 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        //_binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
 
-        val floatingButton : View? = activity?.findViewById(R.id.floating_action_button)
+        // edit
+        val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
         floatingButton?.isVisible = true
 
         val adapter = HomeAdapter(this, homeViewModel)
         _binding?.scheduleRecycleView?.adapter = adapter
 
         val root: View = binding.root
-
-        val header: TextView = binding.header
-
-        homeViewModel.header.observe(viewLifecycleOwner, {
-            header.text = it
-        })
 
         _binding?.topAppBar?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
@@ -67,27 +61,36 @@ class HomeFragment : Fragment() {
         }
 
         homeViewModel.allScheduleDetail.observe(viewLifecycleOwner) {
-            Log.d("jayson", "all")
-            adapter.submitList(homeViewModel.itemlist())
+            adapter.submitList(homeViewModel.updateList())
         }
 
         homeViewModel.targetDate.observe(viewLifecycleOwner) {
-            Log.d("jayson", "target")
-            adapter.submitList(homeViewModel.itemlist())
+            adapter.submitList(homeViewModel.updateList())
         }
 
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        _binding?.apply {
+            hViewModel = homeViewModel
+            lifecycleOwner = viewLifecycleOwner
+        }
+
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        val floatingButton : View? = activity?.findViewById(R.id.floating_action_button)
+        val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
         floatingButton?.isVisible = false
         _binding = null
     }
 
 
-    class DatePickerFragment(val viewModel: HomeViewModel) : DialogFragment(), DatePickerDialog.OnDateSetListener {
+    class DatePickerFragment(val viewModel: HomeViewModel) : DialogFragment(),
+        DatePickerDialog.OnDateSetListener {
 
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             // Use the current date as the default date in the picker
@@ -102,13 +105,13 @@ class HomeFragment : Fragment() {
 
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onDateSet(view: DatePicker, year: Int, month: Int, day: Int) {
-            viewModel.updateDate(year,month + 1,day)
+            viewModel.updateDate(year, month + 1, day)
         }
     }
 
     fun popTimePicker() {
         val newFragment = DatePickerFragment(homeViewModel)
-        newFragment.show(requireFragmentManager(),"dialog")
+        newFragment.show(requireFragmentManager(), "dialog")
     }
 
 }
