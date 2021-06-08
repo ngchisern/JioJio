@@ -1,4 +1,4 @@
-package com.example.producity.ui.dashboard
+package com.example.producity.ui.explore
 
 import android.view.LayoutInflater
 import android.view.View
@@ -37,14 +37,14 @@ class TaskListAdapter(private val context: Fragment, private val taskViewModel: 
         }
 
         // navigate to task details fragment when clicking on the task item
-        holder.itemView.setOnClickListener {
-            val action = DashboardFragmentDirections.actionNavigationDashboardToTaskDetailFragment(
-                current.task, current.start_date.toString(),
-                current.deadline.toString(), current.description
-            )
-            context.findNavController().navigate(action)
-
-        }
+//        holder.itemView.setOnClickListener {
+//            val action = DashboardFragmentDirections.actionNavigationDashboardToTaskDetailFragment(
+//                current.task, current.start_date.toString(),
+//                current.deadline.toString(), current.description
+//            )
+//            context.findNavController().navigate(action)
+//
+//        }
     }
 
     class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

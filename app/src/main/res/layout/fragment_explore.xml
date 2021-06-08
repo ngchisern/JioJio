@@ -20,9 +20,9 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/holo_purple"
             app:layout_scrollFlags="noScroll"
-            app:menu="@menu/task_top_app_bar"
+            app:menu="@menu/explore_top_app_bar"
             app:navigationIcon="@drawable/menu_book"
-            app:title="@string/task" />
+            app:title="@string/explore" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

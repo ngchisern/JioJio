@@ -18,9 +18,8 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.producity.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard">
+        android:name="com.example.producity.ui.explore.ExploreFragment"
+        android:label="@string/title_dashboard">
         <action
             android:id="@+id/action_navigation_dashboard_to_taskDetailFragment"
             app:destination="@id/taskDetailFragment" />
@@ -49,7 +48,7 @@
 
     <fragment
         android:id="@+id/taskDetailFragment"
-        android:name="com.example.producity.ui.dashboard.TaskDetailFragment"
+        android:name="com.example.producity.ui.explore.TaskDetailFragment"
         android:label="fragment_task_detail"
         tools:layout="@layout/fragment_task_detail">
         <argument
@@ -66,6 +65,6 @@
             android:defaultValue="-"
             app:argType="string" />
     </fragment>
-    
+
 
 </navigation>

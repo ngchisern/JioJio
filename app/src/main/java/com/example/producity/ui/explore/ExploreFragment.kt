@@ -1,4 +1,4 @@
-package com.example.producity.ui.dashboard
+package com.example.producity.ui.explore
 
 import android.app.DatePickerDialog
 import android.app.Dialog
@@ -18,14 +18,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.producity.R
-import com.example.producity.databinding.FragmentDashboardBinding
+import com.example.producity.databinding.FragmentExploreBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.time.LocalDate
 import java.util.*
 
-class DashboardFragment : Fragment() {
+class ExploreFragment : Fragment() {
 
-    private var _binding: FragmentDashboardBinding? = null
+    private var _binding: FragmentExploreBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -39,7 +39,7 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        _binding = FragmentExploreBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         return root
@@ -63,8 +63,16 @@ class DashboardFragment : Fragment() {
 
         _binding!!.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.add_task_item -> {
-                    getNewTask()
+                R.id.search_bar -> {
+                    // TODO
+                    true
+                }
+                R.id.filter -> {
+                    // TODO
+                    true
+                }
+                R.id.friends_or_public -> {
+                    // TODO
                     true
                 }
                 else -> false

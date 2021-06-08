@@ -20,4 +20,5 @@
     <string name="start_date_title">Start date:</string>
     <string name="end_date_title">End date:</string>
     <string name="description_title">Description:</string>
+    <string name="explore">Explore</string>
 </resources>

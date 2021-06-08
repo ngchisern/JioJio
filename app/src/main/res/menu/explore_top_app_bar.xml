@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/search_bar"
+        android:title="Search"
+        app:showAsAction="ifRoom"
+        app:actionViewClass="android.widget.SearchView" />
+
+    <item
+        android:id="@+id/filter"
+        android:icon="@drawable/ic_baseline_filter_alt_24"
+        android:title="Filter"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/friends_or_public"
+        android:icon="@drawable/ic_baseline_people_24"
+        android:title="Friends/Public"
+        app:showAsAction="ifRoom" />
+
+</menu>
