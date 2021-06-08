@@ -1,4 +1,4 @@
-package com.example.producity.ui.home
+package com.example.producity.ui.myactivity
 
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
 
-class HomeAdapter(val context: Fragment, val homeViewModel: HomeViewModel) :
-    ListAdapter<ScheduleDetail, HomeAdapter.HomeViewHolder>(ScheduleComparator()) {
+class MyActivityAdapter(val context: Fragment, val myActivityViewModel: MyActivityViewModel) :
+    ListAdapter<ScheduleDetail, MyActivityAdapter.HomeViewHolder>(ScheduleComparator()) {
 
     class HomeViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val time: TextView = view.findViewById(R.id.schedule_time)
@@ -47,7 +47,7 @@ class HomeAdapter(val context: Fragment, val homeViewModel: HomeViewModel) :
         holder.bind2(current.time)
 
         holder.itemView.setOnClickListener {
-            val action = HomeFragmentDirections.actionNavigationHomeToScheduleDetailFragment(
+            val action = MyActivityFragmentDirections.actionNavigationHomeToScheduleDetailFragment(
                 current.title,
                 current.time
             )
@@ -55,7 +55,7 @@ class HomeAdapter(val context: Fragment, val homeViewModel: HomeViewModel) :
         }
 
         holder.button.setOnClickListener {
-            homeViewModel.delete(ScheduleDetail(current.date, current.title, current.time))
+
         }
     }
 
@@ -67,7 +67,6 @@ class HomeAdapter(val context: Fragment, val homeViewModel: HomeViewModel) :
         override fun areContentsTheSame(oldItem: ScheduleDetail, newItem: ScheduleDetail): Boolean {
             return oldItem.title == newItem.title
         }
-
     }
 
 }

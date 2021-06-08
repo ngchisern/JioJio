@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.producity.MyApplication
 import com.example.producity.R
 import com.example.producity.databinding.FragmentDashboardBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -32,15 +31,13 @@ class DashboardFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private val taskViewModel: TaskViewModel by viewModels {
-        TaskViewModelFactory((requireActivity().application as MyApplication).taskRepository)
-    }
+    private val taskViewModel: TaskViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -99,9 +96,12 @@ class DashboardFragment : Fragment() {
                 val text2: EditText = view.findViewById(R.id.task_input_3)
                 val description = text2.text.toString()
 
+                /*
                 taskViewModel.insert(
                     Task(taskName, LocalDate.now(), taskViewModel.newTaskDeadline, description)
                 )
+
+                 */
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.cancel()

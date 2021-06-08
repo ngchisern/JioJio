@@ -29,11 +29,11 @@ class TaskListAdapter(private val context: Fragment, private val taskViewModel: 
         holder.taskDeadline.text = current.deadline.toString()
 
         holder.doneButton.setOnClickListener {
-            taskViewModel.deleteAndReward(current)
+
         }
 
         holder.deleteButton.setOnClickListener {
-            taskViewModel.delete(current)
+
         }
 
         // navigate to task details fragment when clicking on the task item

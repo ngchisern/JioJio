@@ -1,11 +1,11 @@
-package com.example.producity.ui.home
+package com.example.producity.ui.myactivity
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.databinding.FragmentScheduleDetailBinding
-import com.example.producity.ui.home.placeholder.PlaceholderContent.PlaceholderItem
+import com.example.producity.ui.myactivity.placeholder.PlaceholderContent.PlaceholderItem
 
 /**
  * [RecyclerView.Adapter] that can display a [PlaceholderItem].

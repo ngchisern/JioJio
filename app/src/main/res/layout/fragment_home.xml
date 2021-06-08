@@ -7,7 +7,7 @@
     <data>
         <variable
             name="hViewModel"
-            type="com.example.producity.ui.home.HomeViewModel" />
+            type="com.example.producity.ui.myactivity.MyActivityViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -38,7 +38,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:context=".ui.home.HomeFragment">
+            tools:context=".ui.myactivity.MyActivityFragment">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/schedule_linear_layout"

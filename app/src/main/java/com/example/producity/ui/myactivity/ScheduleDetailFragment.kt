@@ -1,4 +1,4 @@
-package com.example.producity.ui.home
+package com.example.producity.ui.myactivity
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
-import com.example.producity.ui.home.placeholder.PlaceholderContent
+import com.example.producity.ui.myactivity.placeholder.PlaceholderContent
 
 /**
  * A fragment representing a list of Items.

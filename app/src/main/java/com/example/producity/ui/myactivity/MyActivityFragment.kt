@@ -1,9 +1,11 @@
-package com.example.producity.ui.home
+package com.example.producity.ui.myactivity
 
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,17 +16,19 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.producity.MyApplication
+import com.example.producity.LoginActivity
 import com.example.producity.R
 import com.example.producity.databinding.FragmentHomeBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import java.util.*
 
-class HomeFragment : Fragment() {
+class MyActivityFragment : Fragment() {
 
-    private val homeViewModel: HomeViewModel by activityViewModels() {
-        HomeViewModelFactory((requireActivity().application as MyApplication).scheduleRepository)
-    }
+    private lateinit var auth: FirebaseAuth
 
+    private val myActivityViewModel: MyActivityViewModel by activityViewModels()
     private var _binding: FragmentHomeBinding? = null
 
 
@@ -45,10 +49,12 @@ class HomeFragment : Fragment() {
         val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
         floatingButton?.isVisible = true
 
-        val adapter = HomeAdapter(this, homeViewModel)
+        val adapter = MyActivityAdapter(this, myActivityViewModel)
         _binding?.scheduleRecycleView?.adapter = adapter
 
         val root: View = binding.root
+
+        auth = Firebase.auth
 
         _binding?.topAppBar?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
@@ -56,16 +62,24 @@ class HomeFragment : Fragment() {
                     popTimePicker()
                     true
                 }
+                R.id.sign_out -> {
+                    Log.d("Main", "sign out")
+                    auth.signOut()
+                    val intent = Intent(activity, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    true
+                }
                 else -> false
             }
         }
 
-        homeViewModel.allScheduleDetail.observe(viewLifecycleOwner) {
-            adapter.submitList(homeViewModel.updateList())
+        myActivityViewModel.allScheduleDetail.observe(viewLifecycleOwner) {
+            adapter.submitList(myActivityViewModel.updateList())
         }
 
-        homeViewModel.targetDate.observe(viewLifecycleOwner) {
-            adapter.submitList(homeViewModel.updateList())
+        myActivityViewModel.targetDate.observe(viewLifecycleOwner) {
+            adapter.submitList(myActivityViewModel.updateList())
         }
 
         return root
@@ -75,7 +89,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         _binding?.apply {
-            hViewModel = homeViewModel
+            hViewModel = myActivityViewModel
             lifecycleOwner = viewLifecycleOwner
         }
 
@@ -89,7 +103,7 @@ class HomeFragment : Fragment() {
     }
 
 
-    class DatePickerFragment(val viewModel: HomeViewModel) : DialogFragment(),
+    class DatePickerFragment(val viewModel: MyActivityViewModel) : DialogFragment(),
         DatePickerDialog.OnDateSetListener {
 
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -110,7 +124,7 @@ class HomeFragment : Fragment() {
     }
 
     fun popTimePicker() {
-        val newFragment = DatePickerFragment(homeViewModel)
+        val newFragment = DatePickerFragment(myActivityViewModel)
         newFragment.show(requireFragmentManager(), "dialog")
     }
 

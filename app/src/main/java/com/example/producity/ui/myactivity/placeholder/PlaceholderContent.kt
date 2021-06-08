@@ -1,4 +1,4 @@
-package com.example.producity.ui.home.placeholder
+package com.example.producity.ui.myactivity.placeholder
 
 import java.util.*
 
