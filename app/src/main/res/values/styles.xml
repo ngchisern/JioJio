@@ -22,4 +22,10 @@
         <item name="android:textSize">45sp</item>
     </style>
 
+    <!-- Style for circle profile picture -->
+    <style name="ShapeAppearance.App.CircleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
 </resources>

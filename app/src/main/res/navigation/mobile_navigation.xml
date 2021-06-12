@@ -17,18 +17,14 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_explore"
         android:name="com.example.producity.ui.explore.ExploreFragment"
-        android:label="@string/title_dashboard">
-        <action
-            android:id="@+id/action_navigation_dashboard_to_taskDetailFragment"
-            app:destination="@id/taskDetailFragment" />
-    </fragment>
+        android:label="@string/explore"/>
 
     <fragment
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_friends"
         android:name="com.example.producity.ui.friends.FriendListFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/friends"
         tools:layout="@layout/fragment_notifications" />
 
     <fragment
@@ -47,24 +43,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/taskDetailFragment"
-        android:name="com.example.producity.ui.explore.TaskDetailFragment"
-        android:label="fragment_task_detail"
-        tools:layout="@layout/fragment_task_detail">
-        <argument
-            android:name="taskName"
-            app:argType="string" />
-        <argument
-            android:name="startDate"
-            app:argType="string" />
-        <argument
-            android:name="endDate"
-            app:argType="string" />
-        <argument
-            android:name="description"
-            android:defaultValue="-"
-            app:argType="string" />
-    </fragment>
+        android:id="@+id/navigation_profile"
+        android:name="com.example.producity.ui.profile.ProfileFragment"
+        android:label="@string/profile"
+        tools:layout="@layout/fragment_profile" />
 
 
 </navigation>

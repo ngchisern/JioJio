@@ -35,7 +35,7 @@ class RegisterActivity: AppCompatActivity() {
     }
 
     private fun signUp() {
-        val username = findViewById<EditText>(R.id.username).text.toString()
+        val username = findViewById<EditText>(R.id.name).text.toString()
         val email = findViewById<EditText>(R.id.sign_up_email).text.toString()
         val password = findViewById<EditText>(R.id.sign_up_password).text.toString()
 
