@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_myActivity">
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_myActivity"
         android:name="com.example.producity.ui.myactivity.MyActivityFragment"
-        android:label="@string/schedule"
+        android:label="@string/title_myactivity"
         tools:layout="@layout/fragment_home">
 
         <action
@@ -17,18 +17,18 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_explore"
         android:name="com.example.producity.ui.explore.ExploreFragment"
-        android:label="@string/title_dashboard">
+        android:label="@string/title_expore">
         <action
             android:id="@+id/action_navigation_dashboard_to_taskDetailFragment"
             app:destination="@id/taskDetailFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_friends"
         android:name="com.example.producity.ui.friends.FriendListFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/title_friend"
         tools:layout="@layout/fragment_notifications" />
 
     <fragment

@@ -38,6 +38,12 @@ class RegisterActivity: AppCompatActivity() {
         val username = findViewById<EditText>(R.id.username).text.toString()
         val email = findViewById<EditText>(R.id.sign_up_email).text.toString()
         val password = findViewById<EditText>(R.id.sign_up_password).text.toString()
+        val confirmPassword = findViewById<EditText>(R.id.confirm_password).text.toString()
+
+        if(password != confirmPassword) {
+            Toast.makeText(this, "passwords does not match", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         if(email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please enter email/pass", Toast.LENGTH_SHORT).show()

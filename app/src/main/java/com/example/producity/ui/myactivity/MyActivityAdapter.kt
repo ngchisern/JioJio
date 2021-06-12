@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -11,27 +12,32 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
+import com.squareup.picasso.Picasso
+import jp.wasabeef.picasso.transformations.CropSquareTransformation
+import java.net.URL
 
 class MyActivityAdapter(val context: Fragment, val myActivityViewModel: MyActivityViewModel) :
-    ListAdapter<ScheduleDetail, MyActivityAdapter.HomeViewHolder>(ScheduleComparator()) {
+    ListAdapter<MyActivityListItem, MyActivityAdapter.HomeViewHolder>(ScheduleComparator()) {
 
     class HomeViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-        val time: TextView = view.findViewById(R.id.schedule_time)
-        val title: TextView = view.findViewById(R.id.schedule_title)
-        val button: ImageButton = view.findViewById(R.id.cancel_button)
 
-        fun bind1(text: String?) {
-            title.text = text
-        }
+        val image : ImageView = view.findViewById(R.id.my_activity_card_image)
+        val title: TextView = view.findViewById(R.id.my_activity_card_title)
+        val time: TextView = view.findViewById(R.id.my_activity_card_time)
+        val pax: TextView = view.findViewById(R.id.participants)
 
-        fun bind2(text: String?) {
-            time.text = text
+        fun bind(imageUrl: String, text1: String?, text2: String?, text3: Int? ) {
+            Picasso.get().load(imageUrl).transform(CropSquareTransformation()).into(image)
+            title.text = text1
+            time.text = text2
+            val temp = "1/${text3.toString()}"
+            pax.text = temp
         }
 
         companion object {
             fun create(parent: ViewGroup): HomeViewHolder {
                 val itemView: View = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.schedule_view_item, parent, false)
+                    .inflate(R.layout.my_activity_view_item, parent, false)
                 return HomeViewHolder(itemView)
             }
         }
@@ -43,8 +49,8 @@ class MyActivityAdapter(val context: Fragment, val myActivityViewModel: MyActivi
 
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val current = getItem(position)
-        holder.bind1(current.title)
-        holder.bind2(current.time)
+
+        holder.bind(current.imageUrl, current.title, current.time, current.pax)
 
         holder.itemView.setOnClickListener {
             val action = MyActivityFragmentDirections.actionNavigationHomeToScheduleDetailFragment(
@@ -54,17 +60,14 @@ class MyActivityAdapter(val context: Fragment, val myActivityViewModel: MyActivi
             context.findNavController().navigate(action)
         }
 
-        holder.button.setOnClickListener {
-
-        }
     }
 
-    class ScheduleComparator : DiffUtil.ItemCallback<ScheduleDetail>() {
-        override fun areItemsTheSame(oldItem: ScheduleDetail, newItem: ScheduleDetail): Boolean {
+    class ScheduleComparator : DiffUtil.ItemCallback<MyActivityListItem>() {
+        override fun areItemsTheSame(oldItem: MyActivityListItem, newItem: MyActivityListItem): Boolean {
             return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: ScheduleDetail, newItem: ScheduleDetail): Boolean {
+        override fun areContentsTheSame(oldItem: MyActivityListItem, newItem: MyActivityListItem): Boolean {
             return oldItem.title == newItem.title
         }
     }

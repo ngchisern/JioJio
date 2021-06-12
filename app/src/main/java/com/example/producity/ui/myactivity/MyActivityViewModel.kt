@@ -14,22 +14,19 @@ class MyActivityViewModel() : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
     val targetDate: LiveData<LocalDate> = _targetDate
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    val allScheduleDetail: LiveData<List<ScheduleDetail>> = MutableLiveData(listOf())
+    val myActivityList: MutableLiveData<List<MyActivityListItem>> = MutableLiveData(listOf())
 
-    //remove
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun updateDate(year: Int, month: Int, day: Int) {
-        val temp = LocalDate.of(year, month, day)
-        _targetDate.value = temp
+
+    fun updateList(newList: List<MyActivityListItem>) {
+        myActivityList.value = newList
     }
 
-    fun updateList(): List<ScheduleDetail> {
-        val list = allScheduleDetail.value ?: return listOf()
+    fun addActivity(newActivity: MyActivityListItem) {
+        val temp: MutableList<MyActivityListItem> = mutableListOf()
+        myActivityList.value?.let { temp.addAll(it) }
+        temp.add(newActivity)
+        myActivityList.value = temp
 
-        return list.filter { elem ->
-            elem.date.equals(targetDate.value)
-        }
     }
 
 
