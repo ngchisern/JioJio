@@ -1,54 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:background="@drawable/rounded_corner"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:layout_marginBottom="10dp">
 
-    <TextView
-        android:id="@+id/task_text_view"
-        android:layout_width="@dimen/task_text_width"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/my_activity_card"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="MyTask" />
+        android:layout_margin="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:checkable="true">
 
-    <TextView
-        android:id="@+id/task_deadline"
-        android:layout_width="@dimen/task_text_width"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/task_text_view"
-        tools:text="2021-12-31" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <ImageButton
-        android:id="@+id/done_button"
-        android:layout_width="@dimen/task_done_delete_button_size"
-        android:layout_height="@dimen/task_done_delete_button_size"
-        android:layout_marginEnd="10dp"
-        android:background="@color/white"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@id/task_deadline"
-        app:layout_constraintEnd_toStartOf="@id/delete_button"
-        app:layout_constraintTop_toTopOf="@id/task_text_view"
-        app:srcCompat="@drawable/ic_baseline_done_24" />
+            <ImageView
+                android:id="@+id/explore_view_item_image"
+                android:layout_width="match_parent"
+                android:layout_height="194dp"
+                app:srcCompat="@drawable/ic_launcher_foreground"
+                android:scaleType="centerCrop"
+                />
 
-    <ImageButton
-        android:id="@+id/delete_button"
-        android:layout_width="@dimen/task_done_delete_button_size"
-        android:layout_height="@dimen/task_done_delete_button_size"
-        android:background="@color/white"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@id/task_deadline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/task_text_view"
-        app:srcCompat="@drawable/ic_baseline_delete_24" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- Title, secondary and supporting text -->
+                <TextView
+                    android:id="@+id/explore_view_item_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="title"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    />
+                <TextView
+                    android:id="@+id/explore_view_item_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="secondary_text"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    />
+                <TextView
+                    android:id="@+id/explore_view_item_pax"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="supporting_text"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+
+</RelativeLayout>

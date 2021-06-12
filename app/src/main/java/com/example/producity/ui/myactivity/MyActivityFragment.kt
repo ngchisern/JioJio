@@ -1,32 +1,30 @@
 package com.example.producity.ui.myactivity
 
-import android.app.DatePickerDialog
-import android.app.Dialog
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.DatePicker
-import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.producity.LoginActivity
 import com.example.producity.R
 import com.example.producity.databinding.FragmentHomeBinding
+import com.example.producity.models.User
+import com.example.producity.ui.friends.FriendListItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.util.*
 
 class MyActivityFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
     private var _binding: FragmentHomeBinding? = null
@@ -55,13 +53,12 @@ class MyActivityFragment : Fragment() {
         val root: View = binding.root
 
         auth = Firebase.auth
+        db = Firebase.firestore
+
+
 
         _binding?.topAppBar?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.favorite -> {
-                    popTimePicker()
-                    true
-                }
                 R.id.sign_out -> {
                     Log.d("Main", "sign out")
                     auth.signOut()
@@ -74,12 +71,8 @@ class MyActivityFragment : Fragment() {
             }
         }
 
-        myActivityViewModel.allScheduleDetail.observe(viewLifecycleOwner) {
-            adapter.submitList(myActivityViewModel.updateList())
-        }
-
-        myActivityViewModel.targetDate.observe(viewLifecycleOwner) {
-            adapter.submitList(myActivityViewModel.updateList())
+        myActivityViewModel.myActivityList.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
         }
 
         return root
@@ -103,6 +96,11 @@ class MyActivityFragment : Fragment() {
     }
 
 
+
+
+
+
+    /*
     class DatePickerFragment(val viewModel: MyActivityViewModel) : DialogFragment(),
         DatePickerDialog.OnDateSetListener {
 
@@ -127,5 +125,7 @@ class MyActivityFragment : Fragment() {
         val newFragment = DatePickerFragment(myActivityViewModel)
         newFragment.show(requireFragmentManager(), "dialog")
     }
+
+     */
 
 }

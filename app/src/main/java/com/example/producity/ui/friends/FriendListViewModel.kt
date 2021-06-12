@@ -2,7 +2,6 @@ package com.example.producity.ui.friends
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.producity.models.FriendSnippet
 import com.example.producity.models.User
 
 class FriendListViewModel : ViewModel() {

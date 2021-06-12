@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_myActivity"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/schedule" />
+        android:title="@string/title_myactivity" />
 
     <item
         android:id="@+id/navigation_explore"

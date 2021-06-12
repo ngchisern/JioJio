@@ -7,21 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
 import com.example.producity.databinding.FragmentNotificationsBinding
-import com.example.producity.models.FriendSnippet
+import com.example.producity.models.Friend
 import com.example.producity.models.User
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -123,10 +117,10 @@ class FriendListFragment : Fragment() {
                 }
 
                 db.document("users/$currentUserName/friends/$username")
-                    .set(FriendSnippet(friend.username, friend.uid))
+                    .set(Friend(friend.username, friend.uid))
 
                 db.document("users/$username/friends/$currentUserName")
-                    .set(FriendSnippet(currentUserName, currentUser.uid))
+                    .set(Friend(currentUserName, currentUser.uid))
 
                 Log.d("Main", "added")
                 friendListViewModel.addFriend(FriendListItem(username))

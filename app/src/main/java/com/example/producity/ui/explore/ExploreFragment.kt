@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,7 +32,7 @@ class ExploreFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private val taskViewModel: TaskViewModel by viewModels()
+    private val exploreViewModel: ExploreViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,14 +50,14 @@ class ExploreFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // Add the RecyclerView
         val recyclerView = binding.taskRecyclerView
-        val adapter = TaskListAdapter(this, taskViewModel)
+        val adapter = ExploreListAdapter(this, exploreViewModel)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this.requireContext())
 
         // Add an observer on the LiveData returned by getTasks.
         // The onChanged() method fires when the observed data changes and the activity is
         // in the foreground.
-        taskViewModel.allTasks.observe(owner = this.viewLifecycleOwner) { tasks ->
+        exploreViewModel.friendActivities.observe(owner = this.viewLifecycleOwner) { tasks ->
             // Update the cached copy of the tasks in the adapter.
             tasks.let { adapter.submitList(it) }
         }
@@ -64,15 +65,12 @@ class ExploreFragment : Fragment() {
         _binding!!.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.search_bar -> {
-                    // TODO
                     true
                 }
                 R.id.filter -> {
-                    // TODO
                     true
                 }
                 R.id.friends_or_public -> {
-                    // TODO
                     true
                 }
                 else -> false
@@ -117,7 +115,7 @@ class ExploreFragment : Fragment() {
             .show()
     }
 
-    class DatePickerFragment(private val prevView: View, private val taskViewModel: TaskViewModel) :
+    class DatePickerFragment(private val prevView: View, private val exploreViewModel: ExploreViewModel) :
         DialogFragment(),
         DatePickerDialog.OnDateSetListener {
 
@@ -134,16 +132,16 @@ class ExploreFragment : Fragment() {
 
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onDateSet(view: DatePicker, year: Int, month: Int, day: Int) {
-            taskViewModel.newTaskDeadline = LocalDate.of(year, month + 1, day)
+            exploreViewModel.newTaskDeadline = LocalDate.of(year, month + 1, day)
 
             // set the text beside the datePickerButton to show the date
             val dateText = prevView.findViewById<TextView>(R.id.task_input_2)
-            dateText.text = taskViewModel.newTaskDeadline.toString()
+            dateText.text = exploreViewModel.newTaskDeadline.toString()
         }
     }
 
     private fun showDatePickerDialog(view: View) {
-        val datePickerFragment = DatePickerFragment(view, taskViewModel)
+        val datePickerFragment = DatePickerFragment(view, exploreViewModel)
         datePickerFragment.show(requireFragmentManager(), "datePicker")
     }
 

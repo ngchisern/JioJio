@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         app:liftOnScroll="false">
 
-
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/top_app_bar"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
