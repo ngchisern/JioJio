@@ -19,12 +19,12 @@
     <fragment
         android:id="@+id/navigation_explore"
         android:name="com.example.producity.ui.explore.ExploreFragment"
-        android:label="@string/explore"/>
+        android:label="@string/title_explore"/>
 
     <fragment
         android:id="@+id/navigation_friends"
         android:name="com.example.producity.ui.friends.FriendListFragment"
-        android:label="@string/friends"
+        android:label="@string/title_friends"
         tools:layout="@layout/fragment_notifications" />
 
     <fragment
@@ -45,8 +45,17 @@
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.producity.ui.profile.ProfileFragment"
-        android:label="@string/profile"
-        tools:layout="@layout/fragment_profile" />
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_navigation_profile_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.producity.ui.profile.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
 
 
 </navigation>

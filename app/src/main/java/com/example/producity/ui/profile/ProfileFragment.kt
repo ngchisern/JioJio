@@ -6,17 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.example.producity.LoginActivity
 import com.example.producity.R
 import com.example.producity.databinding.FragmentProfileBinding
-import com.example.producity.models.Profile
-import com.example.producity.models.User
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import org.w3c.dom.Text
+import com.squareup.picasso.Picasso
+import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 /**
  * A simple [Fragment] subclass.
@@ -25,8 +21,7 @@ import org.w3c.dom.Text
  */
 class ProfileFragment : Fragment() {
 
-    private val auth = Firebase.auth
-    private val db = Firebase.firestore
+    private val profileViewModel: ProfileViewModel by activityViewModels()
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
@@ -38,41 +33,62 @@ class ProfileFragment : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-//        val pic: ImageView = binding.profilePic
-//        val name: TextView = binding.name
-//        val username: TextView = binding.username
-//        val bio: TextView = binding.bio
-//
-//        setTextViews(name, username, bio)
+        binding.topAppBar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.edit_profile -> {
+                    profileViewModel.selectedGender = profileViewModel.currentUserProfile.value!!.gender
+                    // reset gender to prevent incorrect results
+                    // (if another gender radio button is clicked but not saved)
+
+                    navigateEditProfile()
+                    true
+                }
+                R.id.sign_out -> {
+                    quit()
+                    true
+                }
+                else -> false
+            }
+        }
 
         return root
     }
 
-    private fun setTextViews(nameTV: TextView, usernameTV: TextView, bioTV: TextView) {
-        val currentUser = auth.currentUser
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        db.collection("users/")
-            .whereEqualTo("uid", currentUser!!.uid)
-            .limit(1)
-            .get()
-            .addOnSuccessListener {
-                it.forEach { doc ->
-                    val temp = doc.toObject(User::class.java)
-                    val username = temp.username
+        loadProfile()
+    }
 
-                    db.collection("users/$username/profile")
-                        .limit(1)
-                        .get()
-                        .addOnSuccessListener {
-                            it.forEach { doc ->
-                                val profile = doc.toObject(Profile::class.java)
-                                nameTV.text = profile.name
-                                usernameTV.text = profile.username
-                                bioTV.text = profile.bio
-                            }
-                        }
-                }
-            }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun navigateEditProfile() {
+        val action = ProfileFragmentDirections.actionNavigationProfileToEditProfileFragment()
+        findNavController().navigate(action)
+    }
+
+    private fun quit() {
+        val intent = Intent(activity, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
+
+    private fun loadProfile() {
+        val userProfile = profileViewModel.currentUserProfile.value!!
+
+        binding.displayName.text = userProfile.displayName
+        binding.username.text = userProfile.username
+        binding.telegramHandle.text = userProfile.telegramHandle
+        binding.gender.text = userProfile.gender
+        binding.birthday.text = userProfile.birthday
+        binding.bio.text = userProfile.bio
+
+        val imageView = binding.profilePic
+        val imageUrl = userProfile.imageUrl
+        Picasso.get().load(imageUrl).transform(CropCircleTransformation()).into(imageView)
     }
 
 }

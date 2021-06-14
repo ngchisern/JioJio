@@ -21,7 +21,7 @@
             app:layout_scrollFlags="noScroll"
             app:menu="@menu/explore_top_app_bar"
             app:navigationIcon="@drawable/menu_book"
-            app:title="@string/explore" />
+            app:title="@string/title_explore" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -29,6 +29,7 @@ import com.example.producity.ui.friends.FriendListItem
 import com.example.producity.ui.friends.FriendListViewModel
 import com.example.producity.ui.myactivity.MyActivityListItem
 import com.example.producity.ui.myactivity.MyActivityViewModel
+import com.example.producity.ui.profile.ProfileViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -49,11 +50,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var  db: FirebaseFirestore
+    private lateinit var db: FirebaseFirestore
 
     private val friendListViewModel: FriendListViewModel by viewModels()
-    private val myActivityViewModel : MyActivityViewModel by viewModels()
+    private val myActivityViewModel: MyActivityViewModel by viewModels()
     private val exploreViewModel: ExploreViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
 
     private lateinit var binding: ActivityMainBinding
 
@@ -72,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_myActivity, R.id.navigation_explore,
-                R.id.navigation_friends, R.id.navigation_user
+                R.id.navigation_friends, R.id.navigation_profile
             )
         )
 
@@ -89,18 +91,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     var dialogView: View? = null
-    var selectedPhoto: Uri? =null
+    var selectedPhoto: Uri? = null
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == 0 && resultCode == RESULT_OK && data!=null) {
+        if (requestCode == 0 && resultCode == RESULT_OK && data != null) {
             selectedPhoto = data.data
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhoto)
 
             val bitmapDrawable = BitmapDrawable(bitmap)
 
-            val imageButton: ImageButton = dialogView?.findViewById(R.id.add_photo_image_button) ?: return
+            val imageButton: ImageButton =
+                dialogView?.findViewById(R.id.add_photo_image_button) ?: return
 
             Log.d(TAG, "${imageButton.background}")
             imageButton.setBackgroundDrawable(bitmapDrawable)
@@ -113,7 +116,7 @@ class MainActivity : AppCompatActivity() {
     private fun verifyUser() {
         val currentUser = auth.currentUser
 
-        if(currentUser == null) {
+        if (currentUser == null) {
             quit()
             return
         }
@@ -123,7 +126,7 @@ class MainActivity : AppCompatActivity() {
             .limit(1)
             .get()
             .addOnSuccessListener {
-                if(it == null || it.isEmpty) {
+                if (it == null || it.isEmpty) {
                     Log.d("Main", "cant set up user info")
                     quit()
                     return@addOnSuccessListener
@@ -134,6 +137,8 @@ class MainActivity : AppCompatActivity() {
                     friendListViewModel.updateUser(temp)
                     Log.d("Main", "updated username")
                     val username = temp.username
+
+                    profileViewModel.updateUserProfile(temp)
 
                     db.collection("users/$username/friends")
                         .orderBy("username")
@@ -155,8 +160,12 @@ class MainActivity : AppCompatActivity() {
                             val list: MutableList<MyActivityListItem> = mutableListOf()
                             it.forEach { doc ->
                                 val activity = doc.toObject(Activity::class.java)
-                                list.add(MyActivityListItem(activity.imageUrl, activity.title,
-                                    activity.time, activity.pax))
+                                list.add(
+                                    MyActivityListItem(
+                                        activity.imageUrl, activity.title,
+                                        activity.time, activity.pax
+                                    )
+                                )
                             }
                             myActivityViewModel.updateList(list)
                         }
@@ -173,8 +182,12 @@ class MainActivity : AppCompatActivity() {
                             val list: MutableList<ExploreListItem> = mutableListOf()
                             it.forEach { doc ->
                                 val activity = doc.toObject(Activity::class.java)
-                                list.add(ExploreListItem(activity.imageUrl, activity.title,
-                                    activity.time, activity.pax))
+                                list.add(
+                                    ExploreListItem(
+                                        activity.imageUrl, activity.title,
+                                        activity.time, activity.pax
+                                    )
+                                )
                             }
                             exploreViewModel.updateList(list)
                         }
@@ -215,7 +228,7 @@ class MainActivity : AppCompatActivity() {
 
         val pickTime: ImageButton = view.findViewById(R.id.choose_time)
 
-        pickTime.setOnClickListener{
+        pickTime.setOnClickListener {
             showTimeDialog()
         }
 
@@ -238,26 +251,26 @@ class MainActivity : AppCompatActivity() {
 
         mTimePicker = TimePickerDialog(this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
             object : TimePickerDialog.OnTimeSetListener {
-            override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-                var stage = "a.m."
+                override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
+                    var stage = "a.m."
 
-                if(hourOfDay >= 12) stage = "p.m."
+                    if (hourOfDay >= 12) stage = "p.m."
 
-                val text = "${hourOfDay%12} : $minute $stage"
+                    val text = "${hourOfDay % 12} : $minute $stage"
 
-                dialogView?.findViewById<EditText>(R.id.timeInput)
-                    ?.setText(text)
-            }
-        }, hour, minute, false)
+                    dialogView?.findViewById<EditText>(R.id.timeInput)
+                        ?.setText(text)
+                }
+            }, hour, minute, false
+        )
 
         mTimePicker.show()
     }
 
 
-
     private fun uploadImageForFirebaseStorage() {
 
-        if(selectedPhoto == null) {
+        if (selectedPhoto == null) {
             addToDataBase("https://www.enjpg.com/img/2020/cute-2.png")
             return
         }
@@ -288,19 +301,19 @@ class MainActivity : AppCompatActivity() {
         val listOfFriends: MutableList<String> = mutableListOf()
         val src = friendListViewModel.allFriends.value ?: listOf()
 
-        for(elem in src) {
+        for (elem in src) {
             listOfFriends.add(elem.username)
         }
 
 
-
-        val newActivity = Activity(imageUrl,
+        val newActivity = Activity(
+            imageUrl,
             text1.text.toString(),
             user.value?.username.toString(),
             text2.text.toString(),
             text3.text.toString().toInt(),
             listOfFriends
-            )
+        )
 
         db.collection("activity")
             .add(newActivity)
@@ -312,7 +325,8 @@ class MainActivity : AppCompatActivity() {
                         imageUrl,
                         newActivity.title,
                         newActivity.time,
-                        newActivity.pax)
+                        newActivity.pax
+                    )
                 )
             }
             .addOnFailureListener {

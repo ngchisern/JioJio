@@ -14,7 +14,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class RegisterActivity: AppCompatActivity() {
+class RegisterActivity : AppCompatActivity() {
 
     private val db = Firebase.firestore
 
@@ -30,22 +30,22 @@ class RegisterActivity: AppCompatActivity() {
         }
 
         goToSignIn.setOnClickListener {
-           finish()
+            finish()
         }
     }
 
     private fun signUp() {
-        val username = findViewById<EditText>(R.id.name).text.toString()
+        val username = findViewById<EditText>(R.id.display_name).text.toString()
         val email = findViewById<EditText>(R.id.sign_up_email).text.toString()
         val password = findViewById<EditText>(R.id.sign_up_password).text.toString()
         val confirmPassword = findViewById<EditText>(R.id.confirm_password).text.toString()
 
-        if(password != confirmPassword) {
+        if (password != confirmPassword) {
             Toast.makeText(this, "passwords does not match", Toast.LENGTH_SHORT).show()
             return
         }
 
-        if(email.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please enter email/pass", Toast.LENGTH_SHORT).show()
             return
         }
@@ -53,20 +53,25 @@ class RegisterActivity: AppCompatActivity() {
 
         Firebase.auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
-                if(!task.isSuccessful) {
+                if (!task.isSuccessful) {
                     Log.d("Main", "${task.exception}")
                     return@addOnCompleteListener
                 }
                 val uid = FirebaseAuth.getInstance().uid ?: ""
 
-                val user = User(username, uid)
+                val user = User(
+                    username, uid, "",
+                    "", "", "", "",
+                    "https://firebasestorage.googleapis.com/v0/b/jiojio-6a358.appspot.com/o/profile_pictures%2Fblank-profile-picture.png?alt=media&token=7b7b2083-ee3f-493e-bcaf-bab365427694"
+                )
 
                 db.document("users/$username")
                     .set(user)
                     .addOnSuccessListener { documentReference ->
                         Log.d("Main", "Successfully sign up!")
                         val intent = Intent(this, MainActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
                     }
                     .addOnFailureListener { e ->

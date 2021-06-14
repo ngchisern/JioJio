@@ -9,4 +9,15 @@
     <dimen name="task_detail_frag_padding">30dp</dimen>
     <dimen name="task_done_delete_button_size">40dp</dimen>
     <dimen name="task_text_width">280dp</dimen>
+
+    <dimen name="profile_margin_start">32dp</dimen>
+    <dimen name="profile_pic_height">100dp</dimen>
+    <dimen name="profile_margin_top">25dp</dimen>
+    <dimen name="profile_margin_top_title_content">5dp</dimen>
+    <dimen name="profile_margin_top_content_line">2dp</dimen>
+    <dimen name="profile_margin_start_pic_text">25dp</dimen>
+    <dimen name="profile_margin_top_username_displayname">10dp</dimen>
+    <dimen name="profile_title_text_size">15sp</dimen>
+    <dimen name="profile_content_text_size">18sp</dimen>
+    <dimen name="edit_profile_edittext_width">340dp</dimen>
 </resources>

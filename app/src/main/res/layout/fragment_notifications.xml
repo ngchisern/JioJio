@@ -21,7 +21,7 @@
             app:layout_scrollFlags="scroll|enterAlways|snap"
             app:menu="@menu/friend_list_top_app_bar"
             app:navigationIcon="@drawable/ic_baseline_person_24"
-            app:title="@string/friends" />
+            app:title="@string/title_friends" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
