@@ -16,6 +16,6 @@
         android:color="#000000" />
 
     <!-- Default color -->
-    <item android:color="#ffffff" />
+    <item android:color="#808080" />
 
 </selector>

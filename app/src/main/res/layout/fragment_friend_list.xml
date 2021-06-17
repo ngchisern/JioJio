@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.friends.FriendListFragment">
+    tools:context=".ui.friends.my_friends.FriendListFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -20,7 +20,7 @@
             android:background="@android:color/holo_purple"
             app:layout_scrollFlags="scroll|enterAlways|snap"
             app:menu="@menu/friend_list_top_app_bar"
-            app:navigationIcon="@drawable/ic_baseline_person_24"
+            app:navigationIcon="@drawable/ic_baseline_people_24"
             app:title="@string/title_friends" />
 
     </com.google.android.material.appbar.AppBarLayout>

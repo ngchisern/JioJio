@@ -19,9 +19,11 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.example.producity.R
 import com.example.producity.databinding.FragmentEditProfileBinding
 import com.example.producity.models.User
+import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -41,6 +43,7 @@ private const val SELECT_PROFILE_PIC_REQUEST = 1
 class EditProfileFragment : Fragment() {
 
     private val profileViewModel: ProfileViewModel by activityViewModels()
+    private val friendListViewModel: FriendListViewModel by activityViewModels()
 
     private val db = Firebase.firestore
 
@@ -68,7 +71,6 @@ class EditProfileFragment : Fragment() {
             when (item.itemId) {
                 R.id.save_button -> {
                     uploadImageForFirebaseStorage()
-                    showEditSuccessfulDialog()
                     true
                 }
                 else -> false
@@ -127,11 +129,11 @@ class EditProfileFragment : Fragment() {
     private fun loadProfile() {
         val userProfile = profileViewModel.currentUserProfile.value!!
 
-        binding.displayName.setText(userProfile.displayName)
+        binding.editDisplayName.setText(userProfile.displayName)
         binding.username.text = userProfile.username
-        binding.telegramHandle.setText(userProfile.telegramHandle)
+        binding.editTelegramHandle.setText(userProfile.telegramHandle)
         binding.birthday.text = userProfile.birthday
-        binding.bio.setText(userProfile.bio)
+        binding.editBio.setText(userProfile.bio)
 
         val imageView = binding.editProfilePic
         val imageUrl = userProfile.imageUrl
@@ -164,12 +166,12 @@ class EditProfileFragment : Fragment() {
 
     private fun editDataBase(imageUrl: String) {
         val uid = profileViewModel.currentUserProfile.value!!.uid
-        val displayName = binding.displayName.text.toString()
+        val displayName = binding.editDisplayName.text.toString()
         val username = binding.username.text.toString()
-        val telegramHandle = binding.telegramHandle.text.toString()
+        val telegramHandle = binding.editTelegramHandle.text.toString()
         val gender = profileViewModel.selectedGender
         val birthday = binding.birthday.text.toString()
-        val bio = binding.bio.text.toString()
+        val bio = binding.editBio.text.toString()
 
         val editedUserProfile = User(
             username, uid, displayName, telegramHandle, gender, birthday, bio, imageUrl
@@ -179,13 +181,35 @@ class EditProfileFragment : Fragment() {
             .document(username)
             .set(editedUserProfile)
             .addOnSuccessListener {
-                Log.d("EditProfileFragment", "edited user profile")
+                // update view model
+                profileViewModel.currentUserProfile.value = editedUserProfile
+                friendListViewModel.currentUser.value = editedUserProfile
 
-                profileViewModel.currentUserProfile.value = editedUserProfile // update view model
+                updateProfileInFriends(editedUserProfile)
+
+                showEditSuccessfulDialog()
+
+                Log.d("EditProfileFragment", "edited user profile")
             }
             .addOnFailureListener {
                 Log.d("EditProfileFragment", it.toString())
             }
+    }
+
+    private fun updateProfileInFriends(editedUserProfile: User) {
+        val friendUsernames: List<String> = friendListViewModel.allFriends.value!!.map { it.username }
+        friendUsernames.forEach { friendUsername ->
+            val currUsername = editedUserProfile.username
+            db.collection("users/$friendUsername/friends")
+                .document(currUsername)
+                .set(editedUserProfile)
+                .addOnSuccessListener {
+                    Log.d("EditProfileFragment", "updated profile in friend: $friendUsername")
+                }
+                .addOnFailureListener {
+                    Log.d("EditProfileFragment", it.toString())
+                }
+        }
     }
 
     private fun showEditSuccessfulDialog() {
@@ -193,8 +217,14 @@ class EditProfileFragment : Fragment() {
         builder.setTitle("Profile updated!")
             .setPositiveButton("Done") { dialog, _ ->
                 dialog.cancel()
+                navigateToProfile()
             }
             .show()
+    }
+
+    private fun navigateToProfile() {
+        val action = EditProfileFragmentDirections.actionEditProfileFragmentToNavigationProfile()
+        findNavController().navigate(action)
     }
 
 

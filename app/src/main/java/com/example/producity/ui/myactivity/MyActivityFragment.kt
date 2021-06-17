@@ -13,8 +13,6 @@ import androidx.fragment.app.activityViewModels
 import com.example.producity.LoginActivity
 import com.example.producity.R
 import com.example.producity.databinding.FragmentHomeBinding
-import com.example.producity.models.User
-import com.example.producity.ui.friends.FriendListItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore

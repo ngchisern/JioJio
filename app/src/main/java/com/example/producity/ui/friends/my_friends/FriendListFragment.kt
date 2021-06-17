@@ -1,4 +1,4 @@
-package com.example.producity.ui.friends
+package com.example.producity.ui.friends.my_friends
 
 import android.os.Bundle
 import android.text.InputType
@@ -12,8 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
-import com.example.producity.databinding.FragmentNotificationsBinding
-import com.example.producity.models.Friend
+import com.example.producity.databinding.FragmentFriendListBinding
 import com.example.producity.models.User
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.ktx.auth
@@ -23,7 +22,8 @@ import com.google.firebase.ktx.Firebase
 class FriendListFragment : Fragment() {
 
     private val friendListViewModel: FriendListViewModel by activityViewModels()
-    private var _binding: FragmentNotificationsBinding? = null
+
+    private var _binding: FragmentFriendListBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -35,11 +35,11 @@ class FriendListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+        _binding = FragmentFriendListBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        _binding?.topAppBar?.setOnMenuItemClickListener { menuItem ->
-            when(menuItem.itemId) {
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
                 R.id.add_friend -> {
                     popAddFriendDialog()
                     true
@@ -54,10 +54,15 @@ class FriendListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView = _binding?.friendRecycleView
+        val recyclerView = binding.friendRecycleView
         val adapter = FriendListAdapter(this)
-        recyclerView?.adapter = adapter
-        recyclerView?.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        recyclerView.adapter = adapter
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
 
         friendListViewModel.allFriends.observe(viewLifecycleOwner) {
             adapter.submitList(it)
@@ -73,7 +78,7 @@ class FriendListFragment : Fragment() {
     private fun popAddFriendDialog() {
         val builder = context?.let { MaterialAlertDialogBuilder(it) }
 
-        if(builder == null) return
+        if (builder == null) return
 
         val input = EditText(context)
         input.setHint("username")
@@ -100,8 +105,8 @@ class FriendListFragment : Fragment() {
         db.document("users/$username")
             .get()
             .addOnSuccessListener {
-                if(it == null || !it.exists()) {
-                    Toast.makeText(context, "User does not exit", Toast.LENGTH_SHORT).show()
+                if (it == null || !it.exists()) {
+                    Toast.makeText(context, "User does not exist", Toast.LENGTH_SHORT).show()
                     Log.d("Main", "No doc")
                     return@addOnSuccessListener
                 }
@@ -111,19 +116,19 @@ class FriendListFragment : Fragment() {
 
                 Log.d("Main", "$currentUserName")
 
-                if(currentUserName == null || friend == null) {
-                    Log.d("Main","$currentUserName $friend")
+                if (currentUserName == null || friend == null) {
+                    Log.d("Main", "$currentUserName $friend")
                     return@addOnSuccessListener
                 }
 
                 db.document("users/$currentUserName/friends/$username")
-                    .set(Friend(friend.username, friend.uid))
+                    .set(friend)
 
                 db.document("users/$username/friends/$currentUserName")
-                    .set(Friend(currentUserName, currentUser.uid))
+                    .set(friendListViewModel.currentUser.value!!)
 
                 Log.d("Main", "added")
-                friendListViewModel.addFriend(FriendListItem(username))
+                friendListViewModel.addFriend(friend)
             }
             .addOnFailureListener {
                 Log.d("Main", it.toString())

@@ -1,4 +1,4 @@
-package com.example.producity.ui.friends
+package com.example.producity.ui.friends.my_friends
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,18 +8,18 @@ class FriendListViewModel : ViewModel() {
 
     val currentUser : MutableLiveData<User> = MutableLiveData(User())
 
-    val allFriends: MutableLiveData<List<FriendListItem>> = MutableLiveData(listOf())
+    val allFriends: MutableLiveData<List<User>> = MutableLiveData(listOf())
 
     fun updateUser(user: User) {
         currentUser.value = user
     }
 
-    fun updateFriendList(list : List<FriendListItem>) {
+    fun updateFriendList(list : List<User>) {
         allFriends.value = list
     }
 
-    fun addFriend(friend: FriendListItem) {
-        val newList: MutableList<FriendListItem> = mutableListOf()
+    fun addFriend(friend: User) {
+        val newList: MutableList<User> = mutableListOf()
         allFriends.value?.let { newList.addAll(it) }
         newList.add(friend)
         updateFriendList(newList)

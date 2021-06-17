@@ -11,6 +11,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.producity.LoginActivity
 import com.example.producity.R
 import com.example.producity.databinding.FragmentProfileBinding
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
@@ -71,6 +73,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun quit() {
+        Firebase.auth.signOut()
         val intent = Intent(activity, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)

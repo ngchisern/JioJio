@@ -8,11 +8,11 @@ import java.time.LocalDate
 
 class MyActivityViewModel() : ViewModel() {
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val _targetDate = MutableLiveData(LocalDate.now())
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    val targetDate: LiveData<LocalDate> = _targetDate
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    private val _targetDate = MutableLiveData(LocalDate.now())
+//
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    val targetDate: LiveData<LocalDate> = _targetDate
 
     val myActivityList: MutableLiveData<List<MyActivityListItem>> = MutableLiveData(listOf())
 

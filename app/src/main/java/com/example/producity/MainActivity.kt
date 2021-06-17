@@ -21,26 +21,21 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.producity.databinding.ActivityMainBinding
 import com.example.producity.models.Activity
-import com.example.producity.models.Friend
 import com.example.producity.models.User
 import com.example.producity.ui.explore.ExploreListItem
 import com.example.producity.ui.explore.ExploreViewModel
-import com.example.producity.ui.friends.FriendListItem
-import com.example.producity.ui.friends.FriendListViewModel
+import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.myactivity.MyActivityListItem
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.example.producity.ui.profile.ProfileViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import java.sql.Time
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -144,10 +139,10 @@ class MainActivity : AppCompatActivity() {
                         .orderBy("username")
                         .get()
                         .addOnSuccessListener {
-                            val list: MutableList<FriendListItem> = mutableListOf()
+                            val list: MutableList<User> = mutableListOf()
                             it.forEach { doc ->
-                                val friend = doc.toObject(Friend::class.java)
-                                list.add(FriendListItem(friend.username))
+                                val friend = doc.toObject(User::class.java)
+                                list.add(friend)
                             }
                             friendListViewModel.updateFriendList(list)
                         }

@@ -32,5 +32,8 @@
     <string name="bio_title">Bio</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="added_friend">Added Friend</string>
+    <string name="telegram_handle_hint">Do not include the prefix \'@\'</string>
 
 </resources>
