@@ -16,6 +16,11 @@ import com.google.firebase.ktx.Firebase
 
 class RegisterActivity : AppCompatActivity() {
 
+    companion object {
+        val BLANK_PROFILE_IMG_URL =
+            "https://firebasestorage.googleapis.com/v0/b/orbital-7505e.appspot.com/o/profile_pictures%2Fblank-profile-picture.png?alt=media&token=cfaa6afb-1651-4563-9654-a0d6f14fdffc"
+    }
+
     private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +46,7 @@ class RegisterActivity : AppCompatActivity() {
         val confirmPassword = findViewById<EditText>(R.id.confirm_password).text.toString()
 
         if (password != confirmPassword) {
-            Toast.makeText(this, "passwords does not match", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -62,7 +67,7 @@ class RegisterActivity : AppCompatActivity() {
                 val user = User(
                     username, uid, "",
                     "", "", "", "",
-                    "https://firebasestorage.googleapis.com/v0/b/jiojio-6a358.appspot.com/o/profile_pictures%2Fblank-profile-picture.png?alt=media&token=7b7b2083-ee3f-493e-bcaf-bab365427694"
+                    BLANK_PROFILE_IMG_URL
                 )
 
                 db.document("users/$username")

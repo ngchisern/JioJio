@@ -1,5 +1,7 @@
 package com.example.producity.models
 
+import com.example.producity.RegisterActivity
+
 class User(
     val username: String,
     val uid: String,
@@ -13,7 +15,7 @@ class User(
     constructor() : this(
         "", "", "",
         "", "", "", "",
-        "https://firebasestorage.googleapis.com/v0/b/jiojio-6a358.appspot.com/o/profile_pictures%2Fblank-profile-picture.png?alt=media&token=7b7b2083-ee3f-493e-bcaf-bab365427694"
+        RegisterActivity.BLANK_PROFILE_IMG_URL
     ) // the image is a blank profile picture
 
 }
