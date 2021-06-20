@@ -22,14 +22,13 @@ class FriendCommonActivitiesAdapter(private val context: Fragment) :
         val image: ImageView = view.findViewById(R.id.my_activity_card_image)
         val title: TextView = view.findViewById(R.id.my_activity_card_title)
         val time: TextView = view.findViewById(R.id.my_activity_card_time)
-        val pax: TextView = view.findViewById(R.id.participants)
+        val date: TextView = view.findViewById(R.id.my_activity_card_date)
 
-        fun bind(imageUrl: String, text1: String?, text2: String?, text3: Int?) {
+        fun bind(imageUrl: String, text1: String?, text2: String?, text3: String?) {
             Picasso.get().load(imageUrl).transform(CropSquareTransformation()).into(image)
             title.text = text1
             time.text = text2
-            val temp = "1/${text3.toString()}"
-            pax.text = temp
+            date.text = text3
         }
 
         companion object {
@@ -48,7 +47,7 @@ class FriendCommonActivitiesAdapter(private val context: Fragment) :
     override fun onBindViewHolder(holder: ActivityViewHolder, position: Int) {
         val current = getItem(position)
 
-        holder.bind(current.imageUrl, current.title, current.time, current.pax)
+        holder.bind(current.imageUrl, current.title, current.date.time.toString(), current.date.date.toString())
 
         holder.itemView.setOnClickListener {
 //            val action = MyActivityFragmentDirections.actionNavigationHomeToScheduleDetailFragment(

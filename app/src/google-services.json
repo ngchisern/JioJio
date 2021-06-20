@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "155883397629",
-    "project_id": "jiojio-6a358",
-    "storage_bucket": "jiojio-6a358.appspot.com"
+    "project_number": "754696256932",
+    "project_id": "orbital-7505e",
+    "storage_bucket": "orbital-7505e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:155883397629:android:f83e3e59984d40d6183994",
+        "mobilesdk_app_id": "1:754696256932:android:9f87505db56f208be61531",
         "android_client_info": {
           "package_name": "com.example.producity"
         }
       },
       "oauth_client": [
         {
-          "client_id": "155883397629-rhgk04ooh8d33e5ht48lumqrs4vuadev.apps.googleusercontent.com",
+          "client_id": "754696256932-0issvlris2471hvujjtu7hh4dh9b6qjt.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDIkjW2aHStAvo1jflZy0FnZQtyIWGZmxM"
+          "current_key": "AIzaSyCRceh1QsY-xj-_ftLPoTCRIMerWpUEQow"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "155883397629-rhgk04ooh8d33e5ht48lumqrs4vuadev.apps.googleusercontent.com",
+              "client_id": "754696256932-0issvlris2471hvujjtu7hh4dh9b6qjt.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

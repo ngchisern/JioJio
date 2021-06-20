@@ -22,7 +22,8 @@
             app:layout_scrollFlags="noScroll"
             app:menu="@menu/profile_top_app_bar"
             app:navigationIcon="@drawable/ic_baseline_person_24"
-            app:title="Profile" />
+            app:title="Profile"
+            app:titleMarginStart="10dp"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 

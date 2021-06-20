@@ -10,9 +10,11 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.LoginActivity
 import com.example.producity.R
 import com.example.producity.databinding.FragmentHomeBinding
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -41,19 +43,15 @@ class MyActivityFragment : Fragment() {
         //_binding = FragmentHomeBinding.inflate(inflater, container, false)
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
 
-        // edit
-        val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
-        floatingButton?.isVisible = true
 
         val adapter = MyActivityAdapter(this, myActivityViewModel)
         _binding?.scheduleRecycleView?.adapter = adapter
+        binding.scheduleRecycleView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         val root: View = binding.root
 
         auth = Firebase.auth
         db = Firebase.firestore
-
-
 
         _binding?.topAppBar?.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
@@ -70,8 +68,47 @@ class MyActivityFragment : Fragment() {
         }
 
         myActivityViewModel.myActivityList.observe(viewLifecycleOwner) {
+            myActivityViewModel.listInCharge = it
+            myActivityViewModel.documentIdInCharge = myActivityViewModel.documentIds
             adapter.submitList(it)
         }
+
+
+        binding.tabbar.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener  {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                Log.d("Main", "clicked tab")
+                when(tab?.position) {
+                    0 -> {
+                        adapter.submitList(myActivityViewModel.myActivityList.value)
+                        myActivityViewModel.listInCharge = myActivityViewModel.myActivityList.value!!
+                        myActivityViewModel.documentIdInCharge = myActivityViewModel.documentIds
+                        Log.d("Main", "clicked incoming tab")
+                    }
+                    1 -> {
+                        adapter.submitList(myActivityViewModel.pastActivityList.value)
+                        myActivityViewModel.listInCharge = myActivityViewModel.pastActivityList.value!!
+                        myActivityViewModel.documentIdInCharge = myActivityViewModel.pastDocumentIds
+                        Log.d("Main", "clicked  past tab")
+                    }
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+
+        })
+
+        Log.d("TEST", "created")
+        val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
+        floatingButton?.isVisible = true
+
+        val bottomNav: View? = activity?.findViewById(R.id.nav_view)
+        bottomNav?.isVisible = true
 
         return root
     }
@@ -84,19 +121,14 @@ class MyActivityFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
         }
 
+
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
-        val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
-        floatingButton?.isVisible = false
         _binding = null
     }
-
-
-
-
-
 
     /*
     class DatePickerFragment(val viewModel: MyActivityViewModel) : DialogFragment(),
