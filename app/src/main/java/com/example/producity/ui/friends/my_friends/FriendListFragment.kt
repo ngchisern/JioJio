@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -47,6 +48,12 @@ class FriendListFragment : Fragment() {
                 else -> false
             }
         }
+
+        val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
+        floatingButton?.isVisible = false
+
+        val bottomNav: View? = activity?.findViewById(R.id.nav_view)
+        bottomNav?.isVisible = true
 
         return root
     }

@@ -14,5 +14,4 @@ data class ParcelableUser(
     val birthday: String,
     val bio: String,
     val imageUrl: String
-) : Parcelable {
-}
+) : Parcelable

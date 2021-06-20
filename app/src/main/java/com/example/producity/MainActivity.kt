@@ -3,11 +3,9 @@ package com.example.producity
 import android.app.TimePickerDialog
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,20 +20,20 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.producity.databinding.ActivityMainBinding
 import com.example.producity.models.Activity
 import com.example.producity.models.User
-import com.example.producity.ui.explore.ExploreListItem
 import com.example.producity.ui.explore.ExploreViewModel
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
-import com.example.producity.ui.myactivity.MyActivityListItem
+import com.example.producity.ui.myactivity.MyActivityFragmentDirections
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.example.producity.ui.profile.ProfileViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -53,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     private val profileViewModel: ProfileViewModel by viewModels()
 
     private lateinit var binding: ActivityMainBinding
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,30 +81,13 @@ class MainActivity : AppCompatActivity() {
 
         auth = Firebase.auth
         db = Firebase.firestore
+
         verifyUser()
     }
 
     var dialogView: View? = null
     var selectedPhoto: Uri? = null
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == 0 && resultCode == RESULT_OK && data != null) {
-            selectedPhoto = data.data
-            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhoto)
-
-            val bitmapDrawable = BitmapDrawable(bitmap)
-
-            val imageButton: ImageButton =
-                dialogView?.findViewById(R.id.add_photo_image_button) ?: return
-
-            Log.d(TAG, "${imageButton.background}")
-            imageButton.setBackgroundDrawable(bitmapDrawable)
-
-            Log.d(TAG, "${imageButton.background}")
-        }
-    }
 
 
     private fun verifyUser() {
@@ -148,21 +130,36 @@ class MainActivity : AppCompatActivity() {
                         }
 
                     db.collection("activity")
-                        .whereEqualTo("owner", username)
+                        .whereArrayContains("participant", username)
+                        .orderBy("date")
+                        .startAt(Timestamp.now())
+                        .limit(15)
                         .get()
                         .addOnSuccessListener {
                             Log.d(TAG, "updated activities")
-                            val list: MutableList<MyActivityListItem> = mutableListOf()
-                            it.forEach { doc ->
-                                val activity = doc.toObject(Activity::class.java)
-                                list.add(
-                                    MyActivityListItem(
-                                        activity.imageUrl, activity.title,
-                                        activity.time, activity.pax
-                                    )
-                                )
-                            }
+                            val list = it.toObjects(Activity::class.java)
                             myActivityViewModel.updateList(list)
+                            it.documents.forEach{
+                                myActivityViewModel.documentIds.add(it.id)
+                            }
+                        }
+                        .addOnFailureListener {
+                            Log.d(TAG, it.message.toString())
+                        }
+
+                    db.collection("activity")
+                        .whereArrayContains("participant", username)
+                        .orderBy("date", Query.Direction.DESCENDING)
+                        .startAt(Timestamp.now())
+                        .limit(15)
+                        .get()
+                        .addOnSuccessListener {
+                            Log.d(TAG, "updated ${it.size()} activities")
+                            val list = it.toObjects(Activity::class.java)
+                            myActivityViewModel.updatePastList(list)
+                            it.documents.forEach{
+                                myActivityViewModel.pastDocumentIds.add(it.id)
+                            }
                         }
                         .addOnFailureListener {
                             Log.d(TAG, it.message.toString())
@@ -170,19 +167,13 @@ class MainActivity : AppCompatActivity() {
 
                     db.collection("activity")
                         .whereArrayContains("viewers", username)
+                        .orderBy("date")
                         .get()
                         .addOnSuccessListener {
-                            Log.d(TAG, "explore ${it.size()} activities")
                             Log.d(TAG, "updated explore activities")
-                            val list: MutableList<ExploreListItem> = mutableListOf()
-                            it.forEach { doc ->
-                                val activity = doc.toObject(Activity::class.java)
-                                list.add(
-                                    ExploreListItem(
-                                        activity.imageUrl, activity.title,
-                                        activity.time, activity.pax
-                                    )
-                                )
+                            val list = it.toObjects(Activity::class.java)
+                            it.documents.forEach {
+                                exploreViewModel.documentIds.add(it.id)
                             }
                             exploreViewModel.updateList(list)
                         }
@@ -202,131 +193,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showDialog() {
-        val builder = MaterialAlertDialogBuilder(this)
-
-        val input = EditText(this)
-        input.setHint("Enter Activity")
-        input.inputType = InputType.TYPE_CLASS_TEXT
-
-        val view: View = LayoutInflater.from(this).inflate(R.layout.add_schedule, null)
-        dialogView = view
-
-        builder.setView(view)
-
-        val imageButton: ImageButton = view.findViewById(R.id.add_photo_image_button)
-
-        imageButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, 0)
-        }
-
-        val pickTime: ImageButton = view.findViewById(R.id.choose_time)
-
-        pickTime.setOnClickListener {
-            showTimeDialog()
-        }
-
-        builder.setPositiveButton("Done", DialogInterface.OnClickListener { dialog, which ->
-            uploadImageForFirebaseStorage()
-        })
-
-        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-            dialog.cancel()
-        })
-
-        builder.show()
-    }
-
-    private fun showTimeDialog() {
-        val mTimePicker: TimePickerDialog
-        val mcurrentTime = Calendar.getInstance()
-        val hour = mcurrentTime.get(Calendar.HOUR_OF_DAY)
-        val minute = mcurrentTime.get(Calendar.MINUTE)
-
-        mTimePicker = TimePickerDialog(this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
-            object : TimePickerDialog.OnTimeSetListener {
-                override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-                    var stage = "a.m."
-
-                    if (hourOfDay >= 12) stage = "p.m."
-
-                    val text = "${hourOfDay % 12} : $minute $stage"
-
-                    dialogView?.findViewById<EditText>(R.id.timeInput)
-                        ?.setText(text)
-                }
-            }, hour, minute, false
-        )
-
-        mTimePicker.show()
+        val action = MyActivityFragmentDirections.actionNavigationMyActivityToAddActivityFragment()
+        findNavController(R.id.nav_host_fragment_activity_main).navigate(action)
     }
 
 
-    private fun uploadImageForFirebaseStorage() {
 
-        if (selectedPhoto == null) {
-            addToDataBase("https://www.enjpg.com/img/2020/cute-2.png")
-            return
-        }
-
-        val storage = Firebase.storage
-        val filename = UUID.randomUUID().toString()
-        val ref = storage.getReference("/activity_images/$filename")
-
-        ref.putFile(selectedPhoto!!)
-            .addOnSuccessListener {
-                Log.d(TAG, "Successfully uploaded image: ${it.metadata?.path}")
-
-                ref.downloadUrl.addOnSuccessListener {
-                    Log.d(TAG, "FileLocation: $it")
-                    addToDataBase(it.toString())
-                }
-            }
-
-    }
-
-    private fun addToDataBase(imageUrl: String) {
-        val text1: EditText = dialogView!!.findViewById(R.id.titleInput)
-        val text2: EditText = dialogView!!.findViewById(R.id.timeInput)
-        val text3: EditText = dialogView!!.findViewById(R.id.paxInput)
-
-        val user = friendListViewModel.currentUser
-
-        val listOfFriends: MutableList<String> = mutableListOf()
-        val src = friendListViewModel.allFriends.value ?: listOf()
-
-        for (elem in src) {
-            listOfFriends.add(elem.username)
-        }
-
-
-        val newActivity = Activity(
-            imageUrl,
-            text1.text.toString(),
-            user.value?.username.toString(),
-            text2.text.toString(),
-            text3.text.toString().toInt(),
-            listOfFriends
-        )
-
-        db.collection("activity")
-            .add(newActivity)
-            .addOnSuccessListener {
-                Log.d(TAG, "added a new activity")
-
-                myActivityViewModel.addActivity(
-                    MyActivityListItem(
-                        imageUrl,
-                        newActivity.title,
-                        newActivity.time,
-                        newActivity.pax
-                    )
-                )
-            }
-            .addOnFailureListener {
-                Log.d(TAG, it.toString())
-            }
-    }
 
 }

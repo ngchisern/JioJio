@@ -71,6 +71,7 @@ class FriendProfileFragment : Fragment() {
             activity?.onBackPressed()
         }
 
+
         toolbar.title = friend.username
 
         return root

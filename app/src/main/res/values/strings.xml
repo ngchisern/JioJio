@@ -17,7 +17,6 @@
     <string name="title_user">User</string>
     <string name="title_profile">Profile</string>
 
-    <string name="task">Task</string>
     <string name="task_title">Task:</string>
     <string name="deadline_title">Deadline:</string>
     <string name="start_date_title">Start date:</string>
@@ -35,5 +34,9 @@
     <string name="add_friend">Add Friend</string>
     <string name="added_friend">Added Friend</string>
     <string name="telegram_handle_hint">Do not include the prefix \'@\'</string>
+
+    <!-- for activity detail -->
+    <string name="join">Join</string>
+    <string name="inquiry">Inquiry</string>
 
 </resources>

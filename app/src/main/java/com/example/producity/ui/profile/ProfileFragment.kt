@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.producity.LoginActivity
@@ -49,9 +50,19 @@ class ProfileFragment : Fragment() {
                     quit()
                     true
                 }
+                R.id.notification -> {
+                    navigateToNotification()
+                    true
+                }
                 else -> false
             }
         }
+
+        val bottomNav: View? = activity?.findViewById(R.id.nav_view)
+        bottomNav?.isVisible = true
+
+        val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
+        floatingButton?.isVisible = false
 
         return root
     }
@@ -69,6 +80,11 @@ class ProfileFragment : Fragment() {
 
     private fun navigateEditProfile() {
         val action = ProfileFragmentDirections.actionNavigationProfileToEditProfileFragment()
+        findNavController().navigate(action)
+    }
+
+    private fun navigateToNotification() {
+        val action = ProfileFragmentDirections.actionNavigationProfileToNotificationFragment()
         findNavController().navigate(action)
     }
 

@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.producity.models.Activity
 import com.example.producity.models.User
-import com.example.producity.ui.myactivity.MyActivityListItem
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 

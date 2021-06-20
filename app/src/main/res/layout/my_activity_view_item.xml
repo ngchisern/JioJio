@@ -2,78 +2,95 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_marginBottom="10dp">
+    android:padding="8dp">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/my_activity_card"
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:checkable="true">
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/image_card"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            app:cardCornerRadius="12dp"
+            android:padding="6dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/my_activity_card_image"
+                android:layout_width="120dp"
+                android:layout_height="90dp"
+                app:srcCompat="@drawable/ic_launcher_foreground"
+                android:scaleType="centerCrop"/>
 
-                <TextView
-                    android:id="@+id/my_activity_card_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="10dp"
-                    android:textSize="30sp"
-                    android:text="Title"/>
+        </com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                    android:id="@+id/my_activity_card_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/my_activity_card_title"
-                    android:layout_marginStart="10dp"
-                    android:textSize="15sp"
-                    android:text="time"/>
+        <TextView
+            android:id="@+id/my_activity_card_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/image_card"
+            android:text="Title"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
 
-                <TextView
-                    android:id="@+id/participants"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/my_activity_card_time"
-                    android:layout_marginStart="10dp"
-                    android:textSize="15sp"
-                    android:text="2/5"/>
-
-                <ImageView
-                    android:id="@+id/my_activity_card_image"
-                    android:layout_width="100dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintDimensionRatio="H,1:1"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@drawable/ic_launcher_foreground"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/my_activity_card_title"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/image_card"
+            android:text="Date"
+            android:textSize="15sp" />
 
 
-        </LinearLayout>
+        <TextView
+            android:id="@+id/my_activity_card_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/date_text"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/image_card"
+            android:text="June 7, 2019"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
 
-    </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/my_activity_card_title"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@id/my_activity_card_date"
+            android:text="Time"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/my_activity_card_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/time_text"
+            android:layout_marginStart="32dp"
+            android:layout_toRightOf="@id/my_activity_card_date"
+            android:text="07:30pm"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+
+    </RelativeLayout>
+
 
 </RelativeLayout>
 

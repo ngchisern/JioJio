@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
@@ -38,6 +39,9 @@ class FriendlistOfFriendFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             activity?.onBackPressed()
         }
+
+        val bottomNav: View? = activity?.findViewById(R.id.nav_view)
+        bottomNav?.isVisible = false
 
         return root
     }

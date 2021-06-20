@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.example.producity.R
 import com.example.producity.databinding.FragmentStrangerProfileBinding
@@ -80,6 +81,9 @@ class StrangerProfileFragment : Fragment() {
         binding.strangerAddFriendButton.setOnClickListener {
             performAddFriend(stranger.username)
         }
+
+        val bottomNav: View? = activity?.findViewById(R.id.nav_view)
+        bottomNav?.isVisible = false
     }
 
     override fun onDestroyView() {
