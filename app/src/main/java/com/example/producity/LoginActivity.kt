@@ -37,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
         val password = findViewById<EditText>(R.id.login_password).text.toString()
 
         if(email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter email/pass", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please enter email and passord", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -53,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                findViewById<TextView>(R.id.login_error_message).setText("Incorrect email or password.")
             }
     }
 }

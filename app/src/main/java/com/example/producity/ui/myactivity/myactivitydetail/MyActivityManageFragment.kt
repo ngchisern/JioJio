@@ -19,6 +19,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.MainActivity
 import com.example.producity.R
 import com.example.producity.databinding.ActivityDetailManageBinding
@@ -38,6 +40,7 @@ import kotlin.collections.HashMap
 class MyActivityManageFragment: Fragment() {
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
     private val friendViewModel: FriendListViewModel by activityViewModels()
+    private val myActivityDetailViewModel: MyActivityDetailViewModel by activityViewModels()
 
     private var _binding: ActivityDetailManageBinding? = null
     private val binding get() = _binding!!
@@ -68,13 +71,28 @@ class MyActivityManageFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val arguments = MyActivityDetailFragmentArgs.fromBundle(requireArguments())
+        val position = MyActivityDetailFragmentArgs.fromBundle(requireArguments()).position
+        val activity: Activity
 
-        val activity: Activity =
-            myActivityViewModel.listInCharge.get(arguments.position)
+        if(myActivityViewModel.isUpcoming) {
+            activity = myActivityViewModel.myActivityList.value!!.get(position)
+        } else {
+            activity = myActivityViewModel.pastActivityList.value!!.get(position)
+        }
+
+        val recycleView = binding.participantRecyclerView
+
+        val manager = LinearLayoutManager(context, RecyclerView.VERTICAL,  true)
+        val adapter = ParticipantlAdapter(this, true, true)
+
+        recycleView.layoutManager = manager
+        recycleView.adapter = adapter
+
+        myActivityDetailViewModel.participantList.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+        }
 
         updateLayout(activity)
-
         listen()
 
     }
@@ -142,6 +160,16 @@ class MyActivityManageFragment: Fragment() {
     private var isPublic = true
 
     private fun listen() {
+        val position = MyActivityDetailFragmentArgs.fromBundle(requireArguments()).position
+
+        val activity: Activity
+        if(myActivityViewModel.isUpcoming) {
+            activity = myActivityViewModel.myActivityList.value!!.get(position)
+        } else {
+            activity = myActivityViewModel.pastActivityList.value!!.get(position)
+        }
+
+
         binding.apply {
             activityDetailImage.setOnClickListener {
                 val intent = Intent(Intent.ACTION_PICK)
@@ -165,9 +193,6 @@ class MyActivityManageFragment: Fragment() {
                 if(isChecked) {
                     isVirtual = false
                     activityLocationText.text = "Location"
-
-                    val arguments = MyActivityDetailFragmentArgs.fromBundle(requireArguments())
-                    val activity: Activity = myActivityViewModel.listInCharge.get(arguments.position)
                     activityDetailLocation.setText(activity.location)
                 } else {
                     isVirtual = true
@@ -289,8 +314,14 @@ class MyActivityManageFragment: Fragment() {
     private fun update(): HashMap<String, Any> {
         val map = hashMapOf<String, Any>()
 
-        val arguments = MyActivityDetailFragmentArgs.fromBundle(requireArguments())
-        val activity: Activity = myActivityViewModel.listInCharge.get(arguments.position)
+        val position = MyActivityDetailFragmentArgs.fromBundle(requireArguments()).position
+        val activity: Activity
+        if(myActivityViewModel.isUpcoming) {
+            activity = myActivityViewModel.myActivityList.value!!.get(position)
+        } else {
+            activity = myActivityViewModel.pastActivityList.value!!.get(position)
+        }
+
 
 
         if(selectedPhoto != null) {

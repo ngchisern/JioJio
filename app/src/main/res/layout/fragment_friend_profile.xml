@@ -245,57 +245,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/bio_line" />
 
-            <RadioGroup
-                android:id="@+id/friend_activities_toggle"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top"
-                android:layout_marginEnd="@dimen/profile_margin_start"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:checkedButton="@+id/common_activities_button"
-                android:orientation="horizontal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/all_friends_button">
-
-                <RadioButton
-                    android:id="@+id/common_activities_button"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/switch_button"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:text="Common Activities"
-                    android:textColor="@drawable/switch_button_state_color" />
-
-                <RadioButton
-                    android:id="@+id/pending_invitations_button"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginEnd="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/switch_button"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:text="Pending Invitations"
-                    android:textColor="@drawable/switch_button_state_color" />
-            </RadioGroup>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/friend_activities_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginEnd="@dimen/profile_margin_start"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/friend_activities_toggle" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

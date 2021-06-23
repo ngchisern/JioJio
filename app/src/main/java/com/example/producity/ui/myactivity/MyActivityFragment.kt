@@ -68,8 +68,6 @@ class MyActivityFragment : Fragment() {
         }
 
         myActivityViewModel.myActivityList.observe(viewLifecycleOwner) {
-            myActivityViewModel.listInCharge = it
-            myActivityViewModel.documentIdInCharge = myActivityViewModel.documentIds
             adapter.submitList(it)
         }
 
@@ -80,14 +78,12 @@ class MyActivityFragment : Fragment() {
                 when(tab?.position) {
                     0 -> {
                         adapter.submitList(myActivityViewModel.myActivityList.value)
-                        myActivityViewModel.listInCharge = myActivityViewModel.myActivityList.value!!
-                        myActivityViewModel.documentIdInCharge = myActivityViewModel.documentIds
-                        Log.d("Main", "clicked incoming tab")
+                        myActivityViewModel.isUpcoming = true
+                        Log.d("Main", "clicked upcoming tab")
                     }
                     1 -> {
                         adapter.submitList(myActivityViewModel.pastActivityList.value)
-                        myActivityViewModel.listInCharge = myActivityViewModel.pastActivityList.value!!
-                        myActivityViewModel.documentIdInCharge = myActivityViewModel.pastDocumentIds
+                        myActivityViewModel.isUpcoming = false
                         Log.d("Main", "clicked  past tab")
                     }
                 }

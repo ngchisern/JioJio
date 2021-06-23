@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.example.producity.R
+import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentStrangerProfileBinding
 import com.example.producity.models.ParcelableUser
 import com.example.producity.models.User
@@ -36,6 +37,7 @@ class StrangerProfileFragment : Fragment() {
     private lateinit var parcelableStranger: ParcelableUser
     private lateinit var stranger: User
 
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels()
 
     private var _binding: FragmentStrangerProfileBinding? = null
@@ -120,7 +122,7 @@ class StrangerProfileFragment : Fragment() {
                 }
 
                 val friend = it.toObject(User::class.java)
-                val currentUserName = friendListViewModel.currentUser.value?.username
+                val currentUserName = sharedViewModel.currentUser.value?.username
 
                 Log.d("StrangerProfileFragment", "$currentUserName")
 
@@ -133,7 +135,7 @@ class StrangerProfileFragment : Fragment() {
                     .set(friend)
 
                 db.document("users/$username/friends/$currentUserName")
-                    .set(friendListViewModel.currentUser.value!!)
+                    .set(sharedViewModel.currentUser.value!!)
 
                 Log.d("StrangerProfileFragment", "added")
                 friendListViewModel.addFriend(friend)

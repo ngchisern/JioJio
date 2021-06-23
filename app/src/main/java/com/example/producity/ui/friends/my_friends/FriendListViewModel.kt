@@ -6,13 +6,7 @@ import com.example.producity.models.User
 
 class FriendListViewModel : ViewModel() {
 
-    val currentUser : MutableLiveData<User> = MutableLiveData(User())
-
     val allFriends: MutableLiveData<List<User>> = MutableLiveData(listOf())
-
-    fun updateUser(user: User) {
-        currentUser.value = user
-    }
 
     fun updateFriendList(list : List<User>) {
         allFriends.value = list

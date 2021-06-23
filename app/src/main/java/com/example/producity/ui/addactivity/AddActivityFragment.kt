@@ -21,6 +21,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.producity.MainActivity
 import com.example.producity.R
+import com.example.producity.SharedViewModel
 import com.example.producity.databinding.AddActivityBinding
 import com.example.producity.models.Activity
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
@@ -36,6 +37,7 @@ class AddActivityFragment: Fragment() {
 
     private var _binding: AddActivityBinding? = null
 
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels()
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
     private lateinit var db: FirebaseFirestore
@@ -94,7 +96,9 @@ class AddActivityFragment: Fragment() {
         val createButton: Button = requireView().findViewById(R.id.create_button)
 
         createButton.setOnClickListener {
-            uploadImageForFirebaseStorage()
+            if(checkInput()) {
+                uploadImageForFirebaseStorage()
+            }
         }
 
         val radioGroup: RadioGroup = binding.modeRadioGroup
@@ -211,6 +215,42 @@ class AddActivityFragment: Fragment() {
         datePicker.show()
     }
 
+    // Need to handle isPublic and isVirtual
+    private fun checkInput(): Boolean {
+        val title: EditText = requireView().findViewById(R.id.titleInput)
+        val pax: EditText = requireView().findViewById(R.id.paxInput)
+        val isPublic: RadioButton = requireView().findViewById(R.id.public_option)
+        val location: EditText = requireView().findViewById(R.id.location_input)
+        val description: EditText = requireView().findViewById(R.id.description_edittext)
+        val isVirtual: RadioButton = binding.virtualOption
+
+        var isCorrect = true
+
+        if(title.text.isEmpty()) {
+            isCorrect = false
+            title.setError("Title is compulsory")
+        }
+
+        if(pax.text.toString().isEmpty() || pax.text.toString().toInt() < 1) {
+            isCorrect = false
+            pax.setError("Invalid pax")
+
+        }
+
+        if(!isVirtual.isChecked && location.text.isEmpty()) {
+            isCorrect = false
+            location.setError("Location is compulsory for in-person activity")
+        }
+
+        if(listOf<Int>(pyear,pmonth,pday,phour,pminute).contains(-1)) {
+            isCorrect = false
+            Toast.makeText(context, "Date and time are compulsory", Toast.LENGTH_SHORT).show()
+        }
+
+        return isCorrect
+
+    }
+
     private fun uploadImageForFirebaseStorage() {
 
         if (selectedPhoto == null) {
@@ -244,7 +284,7 @@ class AddActivityFragment: Fragment() {
         val description: EditText = requireView().findViewById(R.id.description_edittext)
         val isVirtual: RadioButton = binding.virtualOption
 
-        val user = friendListViewModel.currentUser
+        val user = sharedViewModel.currentUser
 
         val listOfFriends: MutableList<String> = mutableListOf()
         val src = friendListViewModel.allFriends.value ?: listOf()
@@ -253,8 +293,9 @@ class AddActivityFragment: Fragment() {
             listOfFriends.add(elem.username)
         }
 
+        val ref = db.collection("activity").document()
 
-        val newActivity = Activity(
+        val newActivity = Activity(ref.id,
             imageUrl,
             title.text.toString(),
             user.value?.username.toString(),
@@ -269,15 +310,10 @@ class AddActivityFragment: Fragment() {
             listOfFriends
         )
 
-
-        db.collection("activity")
-            .add(newActivity)
+        ref.set(newActivity)
             .addOnSuccessListener {
                 Log.d(MainActivity.TAG, "added a new activity")
 
-                myActivityViewModel.addActivity(
-                    newActivity
-                )
                 val action = AddActivityFragmentDirections.actionAddActivityFragmentToNavigationMyActivity()
                 findNavController().navigate(action)
             }

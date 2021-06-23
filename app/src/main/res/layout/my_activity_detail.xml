@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -187,11 +188,45 @@
                     android:layout_marginStart="15dp"
                     android:text="Creator"/>
 
+                <TextView
+                    android:id="@+id/participant_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Participant"
+                    android:textStyle="bold"
+                    android:textSize="14dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_below="@id/creator_text"/>
+
+                <ImageView
+                    android:id="@+id/participant_show"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/participant_text"
+                    android:layout_below="@id/creator_text"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginStart="10dp"/>
+
+                <LinearLayout
+                    android:id="@+id/linearlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/participant_text">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/participant_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="9dp"
+                        android:padding="6dp"
+                        tools:itemCount="100"/>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/creator_text"
+                    android:layout_below="@id/linearlayout"
                     android:layout_marginTop="40dp"
                     android:gravity="center|start"
                     android:weightSum="10">

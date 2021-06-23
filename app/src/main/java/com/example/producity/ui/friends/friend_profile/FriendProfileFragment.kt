@@ -15,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
+import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendProfileBinding
 import com.example.producity.models.ParcelableUser
 import com.example.producity.models.User
@@ -26,17 +27,13 @@ import java.lang.Exception
 
 private const val FRIEND_PROFILE = "friendProfile"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [FriendProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class FriendProfileFragment : Fragment() {
 
     private lateinit var parcelableFriend: ParcelableUser
     private lateinit var friend: User
 
-    private val friendListViewModel: FriendListViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendlistOfFriendViewModel: FriendlistOfFriendViewModel by activityViewModels()
     private val friendCommonActivitiesViewModel: FriendCommonActivitiesViewModel by activityViewModels()
     private val friendPendingInvitationActivitiesViewModel: FriendPendingInvitationActivitiesViewModel by activityViewModels()
@@ -105,6 +102,7 @@ class FriendProfileFragment : Fragment() {
 
 
         // Add the RecyclerView (Common Activities / Pending Invitations)
+            /*
         val recyclerView = binding.friendActivitiesRecyclerView
         val adapter = FriendCommonActivitiesAdapter(this)
         recyclerView.adapter = adapter
@@ -115,8 +113,12 @@ class FriendProfileFragment : Fragment() {
             )
         )
 
-        val currentUser = friendListViewModel.currentUser.value!!
+             */
 
+        val currentUser = sharedViewModel.currentUser.value!!
+
+
+        /*
         // Default checked radio button is Common Activities
         friendCommonActivitiesViewModel.loadCommonActivitiesFromDB(currentUser, friend)
         friendCommonActivitiesViewModel.commonActivitiesList.observe(viewLifecycleOwner) {
@@ -140,6 +142,8 @@ class FriendProfileFragment : Fragment() {
                 adapter.submitList(it)
             }
         }
+
+         */
     }
 
     override fun onDestroyView() {

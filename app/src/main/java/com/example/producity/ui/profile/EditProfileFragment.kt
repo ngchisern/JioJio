@@ -21,6 +21,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.producity.R
+import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentEditProfileBinding
 import com.example.producity.models.User
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
@@ -42,6 +43,7 @@ private const val SELECT_PROFILE_PIC_REQUEST = 1
  */
 class EditProfileFragment : Fragment() {
 
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels()
 
@@ -183,7 +185,7 @@ class EditProfileFragment : Fragment() {
             .addOnSuccessListener {
                 // update view model
                 profileViewModel.currentUserProfile.value = editedUserProfile
-                friendListViewModel.currentUser.value = editedUserProfile
+                sharedViewModel.currentUser.value = editedUserProfile
 
                 updateProfileInFriends(editedUserProfile)
 

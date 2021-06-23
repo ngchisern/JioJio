@@ -40,22 +40,43 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun signUp() {
-        val username = findViewById<EditText>(R.id.display_name).text.toString()
-        val email = findViewById<EditText>(R.id.sign_up_email).text.toString()
-        val password = findViewById<EditText>(R.id.sign_up_password).text.toString()
-        val confirmPassword = findViewById<EditText>(R.id.confirm_password).text.toString()
+        val username = findViewById<EditText>(R.id.display_name)
+        val email = findViewById<EditText>(R.id.sign_up_email)
+        val password = findViewById<EditText>(R.id.sign_up_password)
+        val confirmPassword = findViewById<EditText>(R.id.confirm_password)
 
-        if (password != confirmPassword) {
-            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
-            return
+        if (email.text.toString().isEmpty()) {
+            email.setError("Please enter your email.")
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email.text.toString()).matches()) {
+            email.setError("Wrong email format.")
+        } else if(password.text.toString().length < 6) {
+            password.setError("Password must contain at least 6 characters.")
+        } else if (password.text.toString() != confirmPassword.text.toString()) {
+            confirmPassword.setError("Password does not match.")
+        } else if (username.text.toString().isEmpty()) {
+            username.setError("Please enter your username.")
+        } else {
+            db.document("users/${username.text}")
+                .get()
+                .addOnSuccessListener {
+                    if (it.exists()) {
+                        username.setError("Your username is already taken.")
+                        return@addOnSuccessListener
+                    }
+
+                    createUser(
+                        username.text.toString(),
+                        email.text.toString(),
+                        password.text.toString()
+                    )
+                }
         }
 
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter email/pass", Toast.LENGTH_SHORT).show()
-            return
-        }
 
 
+    }
+
+    private fun createUser(username: String, email: String, password: String) {
         Firebase.auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {

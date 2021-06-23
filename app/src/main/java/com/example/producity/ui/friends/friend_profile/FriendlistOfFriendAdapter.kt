@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
+import com.example.producity.SharedViewModel
 import com.example.producity.models.ParcelableUser
 import com.example.producity.models.User
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
@@ -19,7 +20,8 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 class FriendlistOfFriendAdapter(
     private val context: Fragment,
-    private val friendListViewModel: FriendListViewModel
+    private val friendListViewModel: FriendListViewModel,
+    private val sharedViewModel: SharedViewModel
 ) :
     ListAdapter<User, FriendlistOfFriendAdapter.FriendsViewHolder>(FriendsComparator()) {
 
@@ -56,7 +58,7 @@ class FriendlistOfFriendAdapter(
                 current.bio, current.imageUrl
             )
 
-            if (nextUser.username == friendListViewModel.currentUser.value!!.username) { // go to own profile
+            if (nextUser.username == sharedViewModel.currentUser.value!!.username) { // go to own profile
                 val action =
                     FriendlistOfFriendFragmentDirections.actionFriendlistOfFriendFragmentToNavigationProfile()
                 context.findNavController().navigate(action)

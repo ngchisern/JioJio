@@ -27,6 +27,7 @@ import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.example.producity.ui.profile.ProfileViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -34,7 +35,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.absoluteValue
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
 
+    private val sharedViewModel: SharedViewModel by viewModels()
     private val friendListViewModel: FriendListViewModel by viewModels()
     private val myActivityViewModel: MyActivityViewModel by viewModels()
     private val exploreViewModel: ExploreViewModel by viewModels()
@@ -82,6 +87,9 @@ class MainActivity : AppCompatActivity() {
         auth = Firebase.auth
         db = Firebase.firestore
 
+        val a = Timestamp.now().toDate().time
+        Log.d("Main", a.toString())
+
         verifyUser()
     }
 
@@ -98,6 +106,8 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        Log.d("Main", currentUser.uid)
+
         db.collection("users")
             .whereEqualTo("uid", currentUser.uid)
             .limit(1)
@@ -111,7 +121,7 @@ class MainActivity : AppCompatActivity() {
 
                 it.forEach { doc ->
                     val temp = doc.toObject(User::class.java)
-                    friendListViewModel.updateUser(temp)
+                    sharedViewModel.updateUser(temp)
                     Log.d("Main", "updated username")
                     val username = temp.username
 
@@ -129,22 +139,20 @@ class MainActivity : AppCompatActivity() {
                             friendListViewModel.updateFriendList(list)
                         }
 
+
                     db.collection("activity")
                         .whereArrayContains("participant", username)
                         .orderBy("date")
                         .startAt(Timestamp.now())
                         .limit(15)
-                        .get()
-                        .addOnSuccessListener {
-                            Log.d(TAG, "updated activities")
-                            val list = it.toObjects(Activity::class.java)
-                            myActivityViewModel.updateList(list)
-                            it.documents.forEach{
-                                myActivityViewModel.documentIds.add(it.id)
+                        .addSnapshotListener { value, error ->
+                            if(error != null) {
+                                Log.w(TAG, "Listen failed.", error)
+                                return@addSnapshotListener
                             }
-                        }
-                        .addOnFailureListener {
-                            Log.d(TAG, it.message.toString())
+
+                            val list = value?.toObjects(Activity::class.java) ?: return@addSnapshotListener
+                            myActivityViewModel.updateList(list)
                         }
 
                     db.collection("activity")
@@ -157,9 +165,6 @@ class MainActivity : AppCompatActivity() {
                             Log.d(TAG, "updated ${it.size()} activities")
                             val list = it.toObjects(Activity::class.java)
                             myActivityViewModel.updatePastList(list)
-                            it.documents.forEach{
-                                myActivityViewModel.pastDocumentIds.add(it.id)
-                            }
                         }
                         .addOnFailureListener {
                             Log.d(TAG, it.message.toString())

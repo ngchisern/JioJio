@@ -15,7 +15,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.producity.R
+import com.example.producity.SharedViewModel
 import com.example.producity.databinding.ActivityDetailLogBinding
+import com.example.producity.models.Activity
 import com.example.producity.models.ActivityLog
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.myactivity.MyActivityViewModel
@@ -28,9 +30,9 @@ import com.squareup.picasso.Picasso
 
 class MyActivityLogFragment: Fragment() {
 
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val myActivityLogViewModel: MyActivityLogViewModel by viewModels()
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
-    private val friendViewModel: FriendListViewModel by activityViewModels()
 
     private var _binding: ActivityDetailLogBinding? = null
 
@@ -56,7 +58,15 @@ class MyActivityLogFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val position =MyActivityDetailFragmentArgs.fromBundle(requireArguments()).position
-        myActivityLogViewModel.updateList(myActivityViewModel.documentIdInCharge[position])
+
+        val activity: Activity
+        if(myActivityViewModel.isUpcoming) {
+            activity = myActivityViewModel.myActivityList.value!!.get(position)
+            myActivityLogViewModel.updateList(activity.docId)
+        } else {
+            activity = myActivityViewModel.pastActivityList.value!!.get(position)
+            myActivityLogViewModel.updateList(activity.docId)
+        }
 
         val preparationView = binding.activityPreparationRecyclerview
         val happeningView = binding.activityHappeningRecyclerview
@@ -132,7 +142,14 @@ class MyActivityLogFragment: Fragment() {
         builder.setView(view)
 
         builder.setPositiveButton("Okay", DialogInterface.OnClickListener { dialog, which ->
-            val documentId = myActivityViewModel.documentIdInCharge[position]
+            val documentId: String
+
+            if(myActivityViewModel.isUpcoming) {
+                documentId = myActivityViewModel.myActivityList.value!![position].docId
+            } else {
+                documentId = myActivityViewModel.pastActivityList.value!![position].docId
+            }
+
             addToDatabase(documentId, view)
 
         })
@@ -151,7 +168,7 @@ class MyActivityLogFragment: Fragment() {
         val mention: EditText = view.findViewById(R.id.add_log_mention)
         val radioGroup: RadioGroup = view.findViewById(R.id.log_state_toggle)
 
-        val user = friendViewModel.currentUser.value ?: return
+        val user = sharedViewModel.currentUser.value ?: return
 
         val index = radioGroup.indexOfChild(radioGroup.findViewById<RadioButton>(radioGroup.checkedRadioButtonId))
 

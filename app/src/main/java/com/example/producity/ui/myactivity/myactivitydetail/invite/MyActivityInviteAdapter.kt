@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
+import com.example.producity.SharedViewModel
 import com.example.producity.models.Notification
+import com.example.producity.models.Participant
 import com.example.producity.models.User
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -24,7 +26,7 @@ import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
-class MyActivityInviteAdapter(val context: Fragment, val friendListViewModel: FriendListViewModel, val doc: String):
+class MyActivityInviteAdapter(val context: Fragment, val sharedViewModel: SharedViewModel, val doc: String):
     ListAdapter<User, MyActivityInviteAdapter.InviteViewHolder>(InviteComparator()) {
 
     class InviteViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -100,11 +102,13 @@ class MyActivityInviteAdapter(val context: Fragment, val friendListViewModel: Fr
     }
 
     private fun addToNotification(user: User) {
-        val sender = friendListViewModel.currentUser.value ?: return
+        val sender = sharedViewModel.currentUser.value ?: return
 
         val noti = Notification(sender.imageUrl,
                                 "${sender.username} invited to join an activity",
-                                Timestamp.now().seconds,
+                                false,
+                                null,
+                                Timestamp.now().toDate().time,
                                 doc)
 
         val rtdb = Firebase.database
@@ -112,7 +116,18 @@ class MyActivityInviteAdapter(val context: Fragment, val friendListViewModel: Fr
         rtdb.getReference().child("notification/${user.username}").push()
             .setValue(noti)
             .addOnSuccessListener {
-                Log.d("Main", "added noti")
+                Log.d("Main", "added noti to database")
+            }
+            .addOnFailureListener {
+                Log.d("Main", it.message.toString())
+            }
+
+        val participant = Participant(user.imageUrl, user.displayName, user.username, doc)
+
+        rtdb.getReference().child("participant/$doc").push()
+            .setValue(participant)
+            .addOnSuccessListener {
+                Log.d("Main", "added participant to database")
             }
             .addOnFailureListener {
                 Log.d("Main", it.message.toString())

@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
+import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendListBinding
 import com.example.producity.databinding.NotificationBinding
 import com.example.producity.ui.friends.my_friends.FriendListAdapter
@@ -20,12 +21,11 @@ import com.example.producity.ui.myactivity.MyActivityViewModel
 class NotificationFragment: Fragment() {
 
     private var _binding: NotificationBinding? = null
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+
     private val binding get() = _binding!!
 
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val notificationViewModel: NotificationViewModel by viewModels()
-    private val friendListViewModel: FriendListViewModel by activityViewModels()
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -51,10 +51,10 @@ class NotificationFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        notificationViewModel.updateList(friendListViewModel.currentUser.value!!.username)
+        notificationViewModel.updateList(sharedViewModel.currentUser.value!!.username)
 
         val recyclerView = binding.notificationRecycleView
-        val adapter = NotificationAdapter(this, myActivityViewModel)
+        val adapter = NotificationAdapter(this, myActivityViewModel, sharedViewModel, notificationViewModel)
         recyclerView.adapter = adapter
 
         recyclerView.addItemDecoration(

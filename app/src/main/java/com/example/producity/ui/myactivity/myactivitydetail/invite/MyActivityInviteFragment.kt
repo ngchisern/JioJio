@@ -8,6 +8,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
+import com.example.producity.SharedViewModel
 import com.example.producity.models.Activity
 import com.example.producity.ui.friends.my_friends.FriendListAdapter
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
@@ -15,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class MyActivityInviteFragment(val doc: String): BottomSheetDialogFragment() {
 
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels()
 
     override fun setupDialog(dialog: Dialog, style: Int) {
@@ -22,7 +24,7 @@ class MyActivityInviteFragment(val doc: String): BottomSheetDialogFragment() {
 
         val recyclerView = contentView.findViewById<RecyclerView>(R.id.friend_recycle_view)
 
-        val adapter = MyActivityInviteAdapter(this, friendListViewModel, doc)
+        val adapter = MyActivityInviteAdapter(this, sharedViewModel, doc)
         recyclerView.adapter = adapter
 
 

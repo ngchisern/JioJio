@@ -75,7 +75,8 @@
                     android:id="@+id/private_option"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Private" />
+                    android:text="Private"
+                    android:checked="true"/>
 
                 <RadioButton
                     android:id="@+id/public_option"
@@ -96,14 +97,14 @@
                     android:id="@+id/in_person_option"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="in person" />
+                    android:text="in person"
+                    android:checked="true"/>
 
                 <RadioButton
                     android:id="@+id/virtual_option"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="virtual"
-                    android:checked="true"/>
+                    android:text="virtual"/>
 
             </RadioGroup>
 
@@ -114,8 +115,7 @@
                 android:layout_below="@id/category_radio_group"
                 android:layout_toEndOf="@id/mode_radio_group"
                 android:layout_marginStart="30dp"
-                android:hint="Location"
-                android:visibility="invisible"/>
+                android:hint="Location"/>
 
             <TextView
                 android:id="@+id/dateTextView"

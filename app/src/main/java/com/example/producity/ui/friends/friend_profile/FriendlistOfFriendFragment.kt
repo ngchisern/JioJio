@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
+import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendlistOfFriendBinding
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
 
@@ -19,6 +20,7 @@ import com.example.producity.ui.friends.my_friends.FriendListViewModel
  */
 class FriendlistOfFriendFragment : Fragment() {
 
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendlistOfFriendViewModel: FriendlistOfFriendViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels()
 
@@ -50,7 +52,7 @@ class FriendlistOfFriendFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val recyclerView = binding.friendlistOfFriendRecyclerView
-        val adapter = FriendlistOfFriendAdapter(this, friendListViewModel)
+        val adapter = FriendlistOfFriendAdapter(this, friendListViewModel, sharedViewModel)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
             DividerItemDecoration(
