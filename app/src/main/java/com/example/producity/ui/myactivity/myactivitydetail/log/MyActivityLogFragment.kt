@@ -51,7 +51,7 @@ class MyActivityLogFragment: Fragment() {
         floatingButton?.isVisible = false
 
         val bottomNav: View? = activity?.findViewById(R.id.nav_view)
-        bottomNav?.isVisible = true
+        bottomNav?.isVisible = false
 
         return root
     }

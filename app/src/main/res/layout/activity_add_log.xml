@@ -32,30 +32,31 @@
                 android:layout_marginStart="10dp">
 
                 <EditText
-                    android:id="@+id/add_log_mention"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="mention"/>
-
-                <EditText
                     android:id="@+id/add_log_subject"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="20dp"
-                    android:hint="Subject: "
-                    android:layout_below="@id/add_log_mention"/>
+                    android:hint="Subject"/>
+
+                <EditText
+                    android:id="@+id/add_log_mention"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Mention users"
+                    android:layout_below="@id/add_log_subject"/>
+
 
                 <LinearLayout
                     android:id="@+id/linear_layout"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:layout_below="@id/add_log_subject">
+                    android:layout_below="@id/add_log_mention">
 
                     <EditText
                         android:id="@+id/add_log_content"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="I want Big Fat Chicken"
+                        android:hint="Addition of more detail"
                         android:paddingBottom="10dp"
                         />
 
