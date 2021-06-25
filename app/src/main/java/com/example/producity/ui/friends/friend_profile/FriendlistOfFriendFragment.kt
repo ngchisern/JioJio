@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
+import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendlistOfFriendBinding
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
@@ -21,7 +22,9 @@ import com.example.producity.ui.friends.my_friends.FriendListViewModel
 class FriendlistOfFriendFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val friendlistOfFriendViewModel: FriendlistOfFriendViewModel by activityViewModels()
+    private val friendlistOfFriendViewModel: FriendlistOfFriendViewModel by activityViewModels {
+        FriendlistOfFriendViewModelFactory(ServiceLocator.provideFriendlistOfFriendRepository())
+    }
     private val friendListViewModel: FriendListViewModel by activityViewModels()
 
     private var _binding: FragmentFriendlistOfFriendBinding? = null
@@ -61,7 +64,7 @@ class FriendlistOfFriendFragment : Fragment() {
             )
         )
 
-        friendlistOfFriendViewModel.allFriends.observe(viewLifecycleOwner) {
+        friendlistOfFriendViewModel.getAllFriends().observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
     }

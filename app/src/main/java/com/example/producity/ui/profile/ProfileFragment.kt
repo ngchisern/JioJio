@@ -39,7 +39,7 @@ class ProfileFragment : Fragment() {
         binding.topAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.edit_profile -> {
-                    profileViewModel.selectedGender = profileViewModel.currentUserProfile.value!!.gender
+                    profileViewModel.selectedGender = profileViewModel.getUserProfile().gender
                     // reset gender to prevent incorrect results
                     // (if another gender radio button is clicked but not saved)
 
@@ -96,7 +96,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun loadProfile() {
-        val userProfile = profileViewModel.currentUserProfile.value!!
+        val userProfile = profileViewModel.getUserProfile()
 
         binding.displayName.text = userProfile.displayName
         binding.username.text = userProfile.username

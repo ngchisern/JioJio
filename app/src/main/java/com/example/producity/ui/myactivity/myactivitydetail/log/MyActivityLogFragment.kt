@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.*
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -19,14 +18,11 @@ import com.example.producity.SharedViewModel
 import com.example.producity.databinding.ActivityDetailLogBinding
 import com.example.producity.models.Activity
 import com.example.producity.models.ActivityLog
-import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.example.producity.ui.myactivity.myactivitydetail.MyActivityDetailFragmentArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
 
 class MyActivityLogFragment: Fragment() {
 

@@ -140,7 +140,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/profile_margin_start"
-                        android:checked="@{pViewModel.currentUserProfile.gender.equals(@string/male)}"
+                        android:checked="@{pViewModel.getUserProfile().gender.equals(@string/male)}"
                         android:onClick="@{() -> pViewModel.setSelectedGender(@string/male)}"
                         android:text="@string/male"
                         android:textSize="@dimen/profile_content_text_size" />
@@ -149,7 +149,7 @@
                         android:id="@+id/female_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="@{pViewModel.currentUserProfile.gender.equals(@string/female)}"
+                        android:checked="@{pViewModel.getUserProfile().gender.equals(@string/female)}"
                         android:onClick="@{() -> pViewModel.setSelectedGender(@string/female)}"
                         android:text="@string/female"
                         android:textSize="@dimen/profile_content_text_size" />

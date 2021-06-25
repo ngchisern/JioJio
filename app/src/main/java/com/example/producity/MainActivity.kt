@@ -25,6 +25,7 @@ import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.myactivity.MyActivityFragmentDirections
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.example.producity.ui.profile.ProfileViewModel
+import com.example.producity.ui.profile.ProfileViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.TimeFormat
@@ -53,7 +54,9 @@ class MainActivity : AppCompatActivity() {
     private val friendListViewModel: FriendListViewModel by viewModels()
     private val myActivityViewModel: MyActivityViewModel by viewModels()
     private val exploreViewModel: ExploreViewModel by viewModels()
-    private val profileViewModel: ProfileViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels {
+        ProfileViewModelFactory(ServiceLocator.provideProfileRepository())
+    }
 
     private lateinit var binding: ActivityMainBinding
 

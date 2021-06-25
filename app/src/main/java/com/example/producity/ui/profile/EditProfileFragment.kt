@@ -129,7 +129,7 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun loadProfile() {
-        val userProfile = profileViewModel.currentUserProfile.value!!
+        val userProfile = profileViewModel.getUserProfile()
 
         binding.editDisplayName.setText(userProfile.displayName)
         binding.username.text = userProfile.username
@@ -147,7 +147,7 @@ class EditProfileFragment : Fragment() {
         val profilePicUri = profilePicUri
 
         if (profilePicUri == null) { // no new image selected
-            editDataBase(profileViewModel.currentUserProfile.value!!.imageUrl) // use current profile pic
+            editDataBase(profileViewModel.getUserProfile().imageUrl) // use current profile pic
             return
         }
 
@@ -167,7 +167,7 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun editDataBase(imageUrl: String) {
-        val uid = profileViewModel.currentUserProfile.value!!.uid
+        val uid = profileViewModel.getUserProfile().uid
         val displayName = binding.editDisplayName.text.toString()
         val username = binding.username.text.toString()
         val telegramHandle = binding.editTelegramHandle.text.toString()
@@ -184,7 +184,7 @@ class EditProfileFragment : Fragment() {
             .set(editedUserProfile)
             .addOnSuccessListener {
                 // update view model
-                profileViewModel.currentUserProfile.value = editedUserProfile
+                profileViewModel.updateUserProfile(editedUserProfile)
                 sharedViewModel.currentUser.value = editedUserProfile
 
                 updateProfileInFriends(editedUserProfile)

@@ -1,20 +1,29 @@
 package com.example.producity.ui.profile
 
-import android.net.Uri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.producity.models.User
 
-class ProfileViewModel : ViewModel() {
+class ProfileViewModel(private val profileRepository: IProfileRepository) : ViewModel() {
 
-    val currentUserProfile: MutableLiveData<User> = MutableLiveData(User())
-
-    var selectedGender: String = currentUserProfile.value?.gender.toString()
+    var selectedGender: String = profileRepository.getUserProfile().gender
     // used to update gender in database
 
     fun updateUserProfile(userProfile: User) {
-        currentUserProfile.value = userProfile
+        profileRepository.updateUserProfile(userProfile)
     }
 
+    fun getUserProfile(): User {
+        return profileRepository.getUserProfile()
+    }
+
+}
+
+
+@Suppress("UNCHECKED_CAST")
+class ProfileViewModelFactory(private val profileRepository: IProfileRepository) :
+    ViewModelProvider.NewInstanceFactory() {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return (ProfileViewModel(profileRepository) as T)
+    }
 }

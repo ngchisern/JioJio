@@ -15,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
+import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendProfileBinding
 import com.example.producity.models.ParcelableUser
@@ -34,7 +35,9 @@ class FriendProfileFragment : Fragment() {
     private lateinit var friend: User
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val friendlistOfFriendViewModel: FriendlistOfFriendViewModel by activityViewModels()
+    private val friendlistOfFriendViewModel: FriendlistOfFriendViewModel by activityViewModels {
+        FriendlistOfFriendViewModelFactory(ServiceLocator.provideFriendlistOfFriendRepository())
+    }
     private val friendCommonActivitiesViewModel: FriendCommonActivitiesViewModel by activityViewModels()
     private val friendPendingInvitationActivitiesViewModel: FriendPendingInvitationActivitiesViewModel by activityViewModels()
 
