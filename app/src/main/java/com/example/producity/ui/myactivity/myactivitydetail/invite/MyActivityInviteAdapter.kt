@@ -16,7 +16,6 @@ import com.example.producity.SharedViewModel
 import com.example.producity.models.Notification
 import com.example.producity.models.Participant
 import com.example.producity.models.User
-import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Timestamp
 import com.google.firebase.database.ktx.database

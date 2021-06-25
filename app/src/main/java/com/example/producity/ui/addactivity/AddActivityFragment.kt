@@ -21,10 +21,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.producity.MainActivity
 import com.example.producity.R
+import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.AddActivityBinding
 import com.example.producity.models.Activity
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
+import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.firestore.FirebaseFirestore
@@ -38,7 +40,9 @@ class AddActivityFragment: Fragment() {
     private var _binding: AddActivityBinding? = null
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val friendListViewModel: FriendListViewModel by activityViewModels()
+    private val friendListViewModel: FriendListViewModel by activityViewModels {
+        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+    }
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
     private lateinit var db: FirebaseFirestore
 
@@ -287,7 +291,7 @@ class AddActivityFragment: Fragment() {
         val user = sharedViewModel.currentUser
 
         val listOfFriends: MutableList<String> = mutableListOf()
-        val src = friendListViewModel.allFriends.value ?: listOf()
+        val src = friendListViewModel.getAllFriends().value ?: listOf()
 
         for (elem in src) {
             listOfFriends.add(elem.username)

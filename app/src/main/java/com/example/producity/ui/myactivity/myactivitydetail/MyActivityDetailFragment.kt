@@ -8,14 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
@@ -23,7 +19,6 @@ import com.example.producity.SharedViewModel
 import com.example.producity.databinding.MyActivityDetailBinding
 import com.example.producity.models.Activity
 import com.example.producity.models.Participant
-import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.example.producity.ui.myactivity.myactivitydetail.invite.MyActivityInviteFragment
 import com.google.firebase.database.DataSnapshot

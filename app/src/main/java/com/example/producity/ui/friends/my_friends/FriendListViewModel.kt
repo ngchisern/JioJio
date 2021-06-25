@@ -1,21 +1,31 @@
 package com.example.producity.ui.friends.my_friends
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.producity.models.User
 
-class FriendListViewModel : ViewModel() {
+class FriendListViewModel(private val friendListRepository: IFriendListRepository) : ViewModel() {
 
-    val allFriends: MutableLiveData<List<User>> = MutableLiveData(listOf())
+    fun getAllFriends(): LiveData<List<User>> {
+        return friendListRepository.getAllFriends()
+    }
 
-    fun updateFriendList(list : List<User>) {
-        allFriends.value = list
+    fun updateFriendList(list: List<User>) {
+        friendListRepository.updateFriendList(list)
     }
 
     fun addFriend(friend: User) {
-        val newList: MutableList<User> = mutableListOf()
-        allFriends.value?.let { newList.addAll(it) }
-        newList.add(friend)
-        updateFriendList(newList)
+        friendListRepository.addFriend(friend)
+    }
+}
+
+
+@Suppress("UNCHECKED_CAST")
+class FriendListViewModelFactory(private val friendListRepository: IFriendListRepository) :
+    ViewModelProvider.NewInstanceFactory() {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return (FriendListViewModel(friendListRepository) as T)
     }
 }

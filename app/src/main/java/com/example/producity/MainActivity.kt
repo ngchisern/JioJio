@@ -22,6 +22,7 @@ import com.example.producity.models.Activity
 import com.example.producity.models.User
 import com.example.producity.ui.explore.ExploreViewModel
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
+import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
 import com.example.producity.ui.myactivity.MyActivityFragmentDirections
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.example.producity.ui.profile.ProfileViewModel
@@ -51,7 +52,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
 
     private val sharedViewModel: SharedViewModel by viewModels()
-    private val friendListViewModel: FriendListViewModel by viewModels()
+    private val friendListViewModel: FriendListViewModel by viewModels {
+        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+    }
     private val myActivityViewModel: MyActivityViewModel by viewModels()
     private val exploreViewModel: ExploreViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels {

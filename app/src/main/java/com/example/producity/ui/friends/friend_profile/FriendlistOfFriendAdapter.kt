@@ -80,7 +80,7 @@ class FriendlistOfFriendAdapter(
 
     private fun isFriend(username: String): Boolean {
         val friendUsernames: List<String> =
-            friendListViewModel.allFriends.value!!.map { it.username }
+            friendListViewModel.getAllFriends().value!!.map { it.username }
         return friendUsernames.contains(username)
     }
 

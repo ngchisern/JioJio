@@ -13,15 +13,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
 import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendProfileBinding
 import com.example.producity.models.ParcelableUser
 import com.example.producity.models.User
-import com.example.producity.ui.friends.my_friends.FriendListViewModel
-import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import java.lang.Exception

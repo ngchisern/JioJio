@@ -13,11 +13,13 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.example.producity.R
+import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentStrangerProfileBinding
 import com.example.producity.models.ParcelableUser
 import com.example.producity.models.User
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
+import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -38,7 +40,9 @@ class StrangerProfileFragment : Fragment() {
     private lateinit var stranger: User
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val friendListViewModel: FriendListViewModel by activityViewModels()
+    private val friendListViewModel: FriendListViewModel by activityViewModels {
+        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+    }
 
     private var _binding: FragmentStrangerProfileBinding? = null
     private val binding get() = _binding!!

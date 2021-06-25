@@ -13,6 +13,7 @@ import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendlistOfFriendBinding
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
+import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
 
 /**
  * A simple [Fragment] subclass.
@@ -25,7 +26,9 @@ class FriendlistOfFriendFragment : Fragment() {
     private val friendlistOfFriendViewModel: FriendlistOfFriendViewModel by activityViewModels {
         FriendlistOfFriendViewModelFactory(ServiceLocator.provideFriendlistOfFriendRepository())
     }
-    private val friendListViewModel: FriendListViewModel by activityViewModels()
+    private val friendListViewModel: FriendListViewModel by activityViewModels {
+        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+    }
 
     private var _binding: FragmentFriendlistOfFriendBinding? = null
     private val binding get() = _binding!!

@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
+import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendListBinding
 import com.example.producity.models.Notification
@@ -28,7 +29,9 @@ import com.google.firebase.ktx.Firebase
 class FriendListFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val friendListViewModel: FriendListViewModel by activityViewModels()
+    private val friendListViewModel: FriendListViewModel by activityViewModels {
+        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+    }
 
     private var _binding: FragmentFriendListBinding? = null
 
@@ -77,7 +80,7 @@ class FriendListFragment : Fragment() {
             )
         )
 
-        friendListViewModel.allFriends.observe(viewLifecycleOwner) {
+        friendListViewModel.getAllFriends().observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
 

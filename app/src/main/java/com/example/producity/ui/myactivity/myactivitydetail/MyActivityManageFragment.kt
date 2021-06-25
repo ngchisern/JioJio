@@ -23,10 +23,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.MainActivity
 import com.example.producity.R
+import com.example.producity.ServiceLocator
 import com.example.producity.databinding.ActivityDetailManageBinding
 import com.example.producity.databinding.MyActivityDetailBinding
 import com.example.producity.models.Activity
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
+import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -39,7 +41,9 @@ import kotlin.collections.HashMap
 
 class MyActivityManageFragment: Fragment() {
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
-    private val friendViewModel: FriendListViewModel by activityViewModels()
+    private val friendViewModel: FriendListViewModel by activityViewModels {
+        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+    }
     private val myActivityDetailViewModel: MyActivityDetailViewModel by activityViewModels()
 
     private var _binding: ActivityDetailManageBinding? = null

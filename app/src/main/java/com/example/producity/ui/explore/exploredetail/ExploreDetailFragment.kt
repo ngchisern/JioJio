@@ -14,11 +14,8 @@ import com.example.producity.R
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.ExploreDetailBinding
 import com.example.producity.models.Activity
-import com.example.producity.models.Notification
 import com.example.producity.models.Participant
 import com.example.producity.ui.explore.ExploreViewModel
-import com.example.producity.ui.friends.my_friends.FriendListViewModel
-import com.google.firebase.Timestamp
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore

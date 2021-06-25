@@ -12,10 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
 import com.example.producity.SharedViewModel
-import com.example.producity.databinding.FragmentFriendListBinding
 import com.example.producity.databinding.NotificationBinding
-import com.example.producity.ui.friends.my_friends.FriendListAdapter
-import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.myactivity.MyActivityViewModel
 
 class NotificationFragment: Fragment() {

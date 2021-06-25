@@ -21,10 +21,12 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.producity.R
+import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentEditProfileBinding
 import com.example.producity.models.User
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
+import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -45,7 +47,9 @@ class EditProfileFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels()
-    private val friendListViewModel: FriendListViewModel by activityViewModels()
+    private val friendListViewModel: FriendListViewModel by activityViewModels {
+        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+    }
 
     private val db = Firebase.firestore
 
@@ -199,7 +203,7 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun updateProfileInFriends(editedUserProfile: User) {
-        val friendUsernames: List<String> = friendListViewModel.allFriends.value!!.map { it.username }
+        val friendUsernames: List<String> = friendListViewModel.getAllFriends().value!!.map { it.username }
         friendUsernames.forEach { friendUsername ->
             val currUsername = editedUserProfile.username
             db.collection("users/$friendUsername/friends")
