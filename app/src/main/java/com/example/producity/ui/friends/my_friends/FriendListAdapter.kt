@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
-import com.example.producity.models.ParcelableUser
+import com.example.producity.ui.friends.ParcelableUser
 import com.example.producity.models.User
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation

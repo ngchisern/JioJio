@@ -1,4 +1,4 @@
-package com.example.producity.models
+package com.example.producity.ui.friends
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

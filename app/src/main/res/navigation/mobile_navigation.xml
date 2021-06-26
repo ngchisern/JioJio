@@ -45,7 +45,7 @@
         android:label="FriendProfileFragment" >
         <argument
             android:name="friendProfile"
-            app:argType="com.example.producity.models.ParcelableUser" />
+            app:argType="com.example.producity.ui.friends.ParcelableUser" />
         <action
             android:id="@+id/action_friendProfileFragment_to_friendlistOfFriendFragment"
             app:destination="@id/friendlistOfFriendFragment" />
@@ -74,7 +74,7 @@
         tools:layout="@layout/fragment_stranger_profile" >
         <argument
             android:name="strangerProfile"
-            app:argType="com.example.producity.models.ParcelableUser" />
+            app:argType="com.example.producity.ui.friends.ParcelableUser" />
     </fragment>
 
     <fragment

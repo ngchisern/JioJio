@@ -1,11 +1,9 @@
 package com.example.producity.ui.friends.friend_profile
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +15,7 @@ import com.example.producity.R
 import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendProfileBinding
-import com.example.producity.models.ParcelableUser
+import com.example.producity.ui.friends.ParcelableUser
 import com.example.producity.models.User
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation

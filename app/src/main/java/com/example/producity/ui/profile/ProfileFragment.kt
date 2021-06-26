@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.producity.LoginActivity
 import com.example.producity.R
+import com.example.producity.ServiceLocator
 import com.example.producity.databinding.FragmentProfileBinding
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -24,7 +25,9 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation
  */
 class ProfileFragment : Fragment() {
 
-    private val profileViewModel: ProfileViewModel by activityViewModels()
+    private val profileViewModel: ProfileViewModel by activityViewModels {
+        ProfileViewModelFactory(ServiceLocator.provideProfileRepository())
+    }
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!

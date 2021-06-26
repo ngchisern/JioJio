@@ -46,7 +46,9 @@ private const val SELECT_PROFILE_PIC_REQUEST = 1
 class EditProfileFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val profileViewModel: ProfileViewModel by activityViewModels()
+    private val profileViewModel: ProfileViewModel by activityViewModels {
+        ProfileViewModelFactory(ServiceLocator.provideProfileRepository())
+    }
     private val friendListViewModel: FriendListViewModel by activityViewModels {
         FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
     }

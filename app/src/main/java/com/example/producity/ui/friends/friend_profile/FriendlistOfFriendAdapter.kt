@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
 import com.example.producity.SharedViewModel
-import com.example.producity.models.ParcelableUser
+import com.example.producity.ui.friends.ParcelableUser
 import com.example.producity.models.User
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.squareup.picasso.Picasso
