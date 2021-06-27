@@ -107,11 +107,13 @@ class ExploreDetailFragment: Fragment() {
         val username = sharedViewModel.currentUser.value?.username ?: return
         Toast.makeText(context, "adding to firestore", Toast.LENGTH_SHORT).show()
 
+        val docId = exploreViewModel.friendActivities.value!![position].docId
+
         val union = hashMapOf<String, Any>(
             "participant" to FieldValue.arrayUnion(username)
         )
 
-        db.document("activity/${exploreViewModel.documentIds[position]}")
+        db.document("activity/$docId")
             .update(union)
             .addOnSuccessListener {
                 Log.d("Main", "DocumentSnapshot successfully updated!")
@@ -128,12 +130,14 @@ class ExploreDetailFragment: Fragment() {
 
         val rtdb = Firebase.database
 
+        val docId = exploreViewModel.friendActivities.value!![position].docId
+
         val participant = Participant(user.imageUrl,
             user.displayName,
             user.username,
-            exploreViewModel.documentIds[position])
+            docId)
 
-        rtdb.getReference().child("participant/${exploreViewModel.documentIds[position]}").push()
+        rtdb.getReference().child("participant/$docId").push()
             .setValue(participant)
             .addOnSuccessListener {
                 Log.d("Main", "added participant")

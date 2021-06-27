@@ -9,6 +9,13 @@ import com.example.producity.ui.profile.IProfileRepository
 
 class FakeUserRepository(private val userRemoteDataSource: IUserRemoteDataSource) :
     IUserRepository {
+    override fun createUser(username: String, uid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun isUsernameTaken(username: String): Boolean {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun loadUserProfile(username: String): User {
         return userRemoteDataSource.loadUserProfile(username)

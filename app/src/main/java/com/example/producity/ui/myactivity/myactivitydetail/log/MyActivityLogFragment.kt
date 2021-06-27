@@ -57,10 +57,10 @@ class MyActivityLogFragment: Fragment() {
 
         val activity: Activity
         if(myActivityViewModel.isUpcoming) {
-            activity = myActivityViewModel.myActivityList.value!!.get(position)
+            activity = myActivityViewModel.myActivityList.value!![position]
             myActivityLogViewModel.updateList(activity.docId)
         } else {
-            activity = myActivityViewModel.pastActivityList.value!!.get(position)
+            activity = myActivityViewModel.pastActivityList.value!![position]
             myActivityLogViewModel.updateList(activity.docId)
         }
 

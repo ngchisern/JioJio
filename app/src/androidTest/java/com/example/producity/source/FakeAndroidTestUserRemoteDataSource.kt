@@ -4,6 +4,8 @@ import android.net.Uri
 import com.example.producity.RegisterActivity
 import com.example.producity.models.User
 import com.example.producity.models.source.remote.IUserRemoteDataSource
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentSnapshot
 
 class FakeAndroidTestUserRemoteDataSource : IUserRemoteDataSource {
 
@@ -21,6 +23,14 @@ class FakeAndroidTestUserRemoteDataSource : IUserRemoteDataSource {
         User("friend1", "uid1", "",
             "", "", "", "", "")
     )
+
+    override fun createUser(username: String, uid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun isUsernmeTaken(username: String): Task<DocumentSnapshot> {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun loadUserProfile(username: String): User {
         return user

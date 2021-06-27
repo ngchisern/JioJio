@@ -1,6 +1,8 @@
 package com.example.producity
 
 import androidx.annotation.VisibleForTesting
+import com.example.producity.models.source.AuthRepository
+import com.example.producity.models.source.IAuthRepository
 import com.example.producity.models.source.IUserRepository
 import com.example.producity.models.source.UserRepository
 import com.example.producity.models.source.remote.UserRemoteDataSource
@@ -26,6 +28,14 @@ object ServiceLocator {
     var friendListRepository: IFriendListRepository? = null
     @VisibleForTesting set
 
+    @Volatile
+    var authRepository: IAuthRepository? = null
+        @VisibleForTesting set
+
+    @Volatile
+    var userRepository: IUserRepository? = null
+        @VisibleForTesting set
+
     fun provideProfileRepository(): IProfileRepository {
         synchronized(this) {
             return profileRepository ?: ProfileRepository()
@@ -44,6 +54,18 @@ object ServiceLocator {
         }
     }
 
+    fun provideAuthRepository(): IAuthRepository {
+        synchronized(this) {
+            return authRepository ?: AuthRepository
+        }
+    }
+
+    fun provideUserRepository(): IUserRepository {
+        synchronized(this) {
+            return userRepository ?: UserRepository(UserRemoteDataSource())
+        }
+    }
+
     @VisibleForTesting
     fun resetAllRepositories() {
         synchronized(Any()) {
@@ -51,24 +73,8 @@ object ServiceLocator {
             profileRepository = null
             friendlistOfFriendRepository = null
             friendListRepository = null
-            // clear the above later
-
-
-
+            authRepository = null
             userRepository = null
-        }
-    }
-
-
-
-
-    @Volatile
-    var userRepository: IUserRepository? = null
-    @VisibleForTesting set
-
-    fun provideUserRepository(): IUserRepository {
-        synchronized(this) {
-            return userRepository ?: UserRepository(UserRemoteDataSource())
         }
     }
 

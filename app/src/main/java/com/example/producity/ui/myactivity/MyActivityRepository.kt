@@ -1,14 +1,9 @@
 package com.example.producity.ui.myactivity
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
 import com.example.producity.models.Activity
-import java.time.LocalDate
 
-
-class MyActivityViewModel() : ViewModel() {
-
+class MyActivityRepository {
     val myActivityList: MutableLiveData<List<Activity>> = MutableLiveData(listOf())
 
     val pastActivityList: MutableLiveData<List<Activity>> = MutableLiveData(listOf())
@@ -19,9 +14,7 @@ class MyActivityViewModel() : ViewModel() {
         myActivityList.value = newList
     }
 
-
     fun updatePastList(newList: List<Activity>) {
         pastActivityList.value = newList
     }
 }
-

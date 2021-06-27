@@ -3,15 +3,42 @@ package com.example.producity.models.source.remote
 import android.net.Uri
 import android.util.Log
 import com.example.producity.MyFirebase
+import com.example.producity.RegisterActivity
 import com.example.producity.models.User
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import kotlinx.coroutines.*
-import java.util.*
+import com.google.firebase.firestore.DocumentSnapshot
 
 private const val TAG = "UserRemoteDataSource"
 
 class UserRemoteDataSource : IUserRemoteDataSource {
+
+    override fun createUser(username: String, uid: String) {
+        val user = User(
+            username, uid, "",
+            "", "", "", "",
+            RegisterActivity.BLANK_PROFILE_IMG_URL
+        )
+
+        MyFirebase.db.document("users/$username")
+            .set(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d("Main", "Successfully sign up!")
+            }
+            .addOnFailureListener { e ->
+                Log.d("Main", "Error adding document", e)
+            }
+    }
+
+    override fun isUsernmeTaken(username: String): Task<DocumentSnapshot> {
+
+        return MyFirebase.db.document("users/$username")
+            .get()
+            .addOnSuccessListener {
+                Log.d("Main", it.exists().toString())
+            }
+
+    }
 
     override suspend fun loadUserProfile(username: String): User {
         var userProfile = User()
@@ -149,85 +176,75 @@ class UserRemoteDataSource : IUserRemoteDataSource {
         val ref = storage.getReference("/profile_pictures/${userProfile.username}")
 
         var newUrl = userProfile.imageUrl // original url, to be updated later
-        var editedUserProfile = User() // to be updated later and returned to the caller
 
+        val editedUserProfile = User(
+            userProfile.username,
+            userProfile.uid,
+            userProfile.displayName,
+            userProfile.telegramHandle,
+            userProfile.gender,
+            userProfile.birthday,
+            userProfile.bio)
 
-        val uploadImage = ref.putFile(imageUri) // upload image to Firebase Storage
+        val task = ref.putFile(imageUri) // upload image to Firebase Storage
             .addOnSuccessListener {
                 Log.d(TAG, "Successfully uploaded image at: ${it.metadata?.path}")
+                ref.downloadUrl.addOnSuccessListener {
+                    newUrl = it.toString()
+                    Log.d(TAG, "Downloaded new image url: $newUrl")
+
+                    editedUserProfile.imageUrl = newUrl
+
+                    val currUsername = editedUserProfile.username
+                    // Update the user profile details
+                    db.collection("users")
+                        .document(currUsername)
+                        .set(editedUserProfile)
+                        .addOnSuccessListener { // get friends and update the profile details in friends
+                            Log.d(TAG, "Edited user profile")
+
+                            // get list of friends
+                            val friendList: MutableList<User> = mutableListOf()
+                            db.collection("users/$currUsername/friends")
+                                .orderBy("username")
+                                .get()
+                                .addOnSuccessListener {
+                                    it.forEach { doc ->
+                                        val friend = doc.toObject(User::class.java)
+                                        friendList.add(friend)
+                                    }
+
+                                    // update the current user profile details in each of the friends
+                                    val friendUsernames: List<String> =
+                                        friendList.map { it.username }
+                                    friendUsernames.forEach { friendUsername ->
+                                        db.collection("users/$friendUsername/friends")
+                                            .document(currUsername)
+                                            .set(editedUserProfile)
+                                            .addOnSuccessListener {
+                                                Log.d(
+                                                    TAG,
+                                                    "updated profile in friend: $friendUsername"
+                                                )
+                                            }
+                                            .addOnFailureListener {
+                                                Log.d(TAG, it.toString())
+                                            }
+                                    }
+                                }
+                        }
+
+
+                }
             }
             .addOnFailureListener {
                 Log.d(TAG, it.toString())
             }
 
+        while(!task.isComplete) {}
 
-        while(!uploadImage.isComplete) {
-
-        }
-
-        val a = ref.downloadUrl.addOnSuccessListener {
-            newUrl = it.toString()
-            Log.d(TAG, "Downloaded new image url: $newUrl")
-
-            editedUserProfile = User(
-                userProfile.username,
-                userProfile.uid,
-                userProfile.displayName,
-                userProfile.telegramHandle,
-                userProfile.gender,
-                userProfile.birthday,
-                userProfile.bio,
-                newUrl
-            )
-
-        }
-
-
-        val b = Tasks.whenAll(a).addOnCompleteListener {
-            val currUsername = editedUserProfile.username
-            // Update the user profile details
-            db.collection("users")
-                .document(currUsername)
-                .set(editedUserProfile)
-                .addOnSuccessListener { // get friends and update the profile details in friends
-                    Log.d(TAG, "Edited user profile")
-
-                    // get list of friends
-                    val friendList: MutableList<User> = mutableListOf()
-                    db.collection("users/$currUsername/friends")
-                        .orderBy("username")
-                        .get()
-                        .addOnSuccessListener {
-                            it.forEach { doc ->
-                                val friend = doc.toObject(User::class.java)
-                                friendList.add(friend)
-                            }
-
-                            // update the current user profile details in each of the friends
-                            val friendUsernames: List<String> =
-                                friendList.map { it.username }
-                            friendUsernames.forEach { friendUsername ->
-                                db.collection("users/$friendUsername/friends")
-                                    .document(currUsername)
-                                    .set(editedUserProfile)
-                                    .addOnSuccessListener {
-                                        Log.d(
-                                            TAG,
-                                            "updated profile in friend: $friendUsername"
-                                        )
-                                    }
-                                    .addOnFailureListener {
-                                        Log.d(TAG, it.toString())
-                                    }
-                            }
-                        }
-                }
-        }
-
-        while(!a.isComplete) {}
-
-        Log.d(TAG, editedUserProfile.toString())
         return editedUserProfile
     }
+
 
 }

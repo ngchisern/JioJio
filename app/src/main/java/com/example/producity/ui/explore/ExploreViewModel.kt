@@ -7,8 +7,12 @@ import com.example.producity.models.Activity
 import java.time.LocalDate
 
 class ExploreViewModel() : ViewModel() {
+
     val friendActivities: MutableLiveData<List<Activity>> = MutableLiveData(listOf())
-    val documentIds: MutableList<String> = mutableListOf()
+
+    fun getList(): List<Activity> {
+        return friendActivities.value!!
+    }
 
     fun updateList(newList: MutableList<Activity>) {
         friendActivities.value = newList

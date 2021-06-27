@@ -177,9 +177,6 @@ class MainActivity : AppCompatActivity() {
                         .addOnSuccessListener {
                             Log.d(TAG, "updated explore activities")
                             val list = it.toObjects(Activity::class.java)
-                            it.documents.forEach {
-                                exploreViewModel.documentIds.add(it.id)
-                            }
                             exploreViewModel.updateList(list)
                         }
                         .addOnFailureListener {

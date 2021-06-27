@@ -116,8 +116,9 @@ dependencies {
 
     // AndroidX Test - Instrumented testing
     androidTestImplementation "androidx.test.ext:junit:$androidXTestExtKotlinRunnerVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-contrib:$espressoVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:3.3.0"
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.3.0')
+    androidTestImplementation('androidx.test.espresso:espresso-intents:3.3.0')
 
 }
