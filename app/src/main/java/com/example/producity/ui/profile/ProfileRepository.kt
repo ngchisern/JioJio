@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.producity.models.User
 
-class ProfileRepository : IProfileRepository {
+class ProfileRepository : IProfileRepository { // DELETE THIS CLASS
 
     private val _currentUserProfile: MutableLiveData<User> = MutableLiveData(User())
     val currentUserProfile: LiveData<User> = _currentUserProfile

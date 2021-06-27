@@ -1,10 +1,12 @@
-package com.example.producity.models.source
+package com.example.producity.source
 
 import android.net.Uri
 import com.example.producity.models.User
+import com.example.producity.models.source.IUserRepository
 import com.example.producity.models.source.remote.IUserRemoteDataSource
 
-class UserRepository(private val userRemoteDataSource: IUserRemoteDataSource) : IUserRepository {
+class FakeAndroidTestUserRepository(private val userRemoteDataSource: IUserRemoteDataSource) :
+    IUserRepository {
 
     override suspend fun loadUserProfile(username: String): User {
         return userRemoteDataSource.loadUserProfile(username)
@@ -36,5 +38,4 @@ class UserRepository(private val userRemoteDataSource: IUserRemoteDataSource) : 
     ): User {
         return userRemoteDataSource.uploadImageToFirebaseStorageAndEditProfile(imageUri, userProfile)
     }
-
 }

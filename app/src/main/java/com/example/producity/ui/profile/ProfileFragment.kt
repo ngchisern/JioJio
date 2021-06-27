@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.producity.LoginActivity
 import com.example.producity.R
 import com.example.producity.ServiceLocator
+import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentProfileBinding
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -25,9 +26,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation
  */
 class ProfileFragment : Fragment() {
 
-    private val profileViewModel: ProfileViewModel by activityViewModels {
-        ProfileViewModelFactory(ServiceLocator.provideProfileRepository())
-    }
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
@@ -42,10 +41,6 @@ class ProfileFragment : Fragment() {
         binding.topAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.edit_profile -> {
-                    profileViewModel.selectedGender = profileViewModel.getUserProfile().gender
-                    // reset gender to prevent incorrect results
-                    // (if another gender radio button is clicked but not saved)
-
                     navigateEditProfile()
                     true
                 }
@@ -99,7 +94,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun loadProfile() {
-        val userProfile = profileViewModel.getUserProfile()
+        val userProfile = sharedViewModel.currentUser.value!!
 
         binding.displayName.text = userProfile.displayName
         binding.username.text = userProfile.username

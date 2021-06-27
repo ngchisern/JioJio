@@ -4,10 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
-            name="pViewModel"
-            type="com.example.producity.ui.profile.ProfileViewModel" />
+            name="sViewModel"
+            type="com.example.producity.SharedViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -140,8 +139,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/profile_margin_start"
-                        android:checked="@{pViewModel.getUserProfile().gender.equals(@string/male)}"
-                        android:onClick="@{() -> pViewModel.setSelectedGender(@string/male)}"
+                        android:checked="@{sViewModel.currentUser.gender.equals(@string/male)}"
                         android:text="@string/male"
                         android:textSize="@dimen/profile_content_text_size" />
 
@@ -149,8 +147,7 @@
                         android:id="@+id/female_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="@{pViewModel.getUserProfile().gender.equals(@string/female)}"
-                        android:onClick="@{() -> pViewModel.setSelectedGender(@string/female)}"
+                        android:checked="@{sViewModel.currentUser.gender.equals(@string/female)}"
                         android:text="@string/female"
                         android:textSize="@dimen/profile_content_text_size" />
 

@@ -17,6 +17,8 @@ import android.widget.DatePicker
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -25,14 +27,10 @@ import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentEditProfileBinding
 import com.example.producity.models.User
-import com.example.producity.ui.friends.my_friends.FriendListViewModel
-import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
+import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.util.*
 
@@ -47,13 +45,10 @@ class EditProfileFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels {
-        ProfileViewModelFactory(ServiceLocator.provideProfileRepository())
-    }
-    private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+        ProfileViewModelFactory(ServiceLocator.provideUserRepository())
     }
 
-    private val db = Firebase.firestore
+    private lateinit var userProfile: User // current user profile
 
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
@@ -78,7 +73,8 @@ class EditProfileFragment : Fragment() {
         binding.topAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.save_button -> {
-                    uploadImageForFirebaseStorage()
+//                    uploadImageForFirebaseStorage()
+                    uploadImageToFirebaseStorageAndEditProfile()
                     true
                 }
                 else -> false
@@ -92,9 +88,11 @@ class EditProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            pViewModel = profileViewModel
+            sViewModel = sharedViewModel
             lifecycleOwner = viewLifecycleOwner
         }
+
+        userProfile = sharedViewModel.currentUser.value!!
 
         loadProfile()
 
@@ -109,7 +107,10 @@ class EditProfileFragment : Fragment() {
 
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
-            startActivityForResult(intent, SELECT_PROFILE_PIC_REQUEST) // handle result in onActivityResult()
+            startActivityForResult(
+                intent,
+                SELECT_PROFILE_PIC_REQUEST
+            ) // handle result in onActivityResult()
         }
     }
 
@@ -135,8 +136,6 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun loadProfile() {
-        val userProfile = profileViewModel.getUserProfile()
-
         binding.editDisplayName.setText(userProfile.displayName)
         binding.username.text = userProfile.username
         binding.editTelegramHandle.setText(userProfile.telegramHandle)
@@ -149,35 +148,25 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun uploadImageForFirebaseStorage() {
-
         val profilePicUri = profilePicUri
 
         if (profilePicUri == null) { // no new image selected
-            editDataBase(profileViewModel.getUserProfile().imageUrl) // use current profile pic
+            editDataBase(userProfile.imageUrl) // use current profile pic
             return
         }
 
-        val storage = Firebase.storage
-        val filename = UUID.randomUUID().toString()
-        val ref = storage.getReference("/profile_pictures/$filename")
-
-        ref.putFile(profilePicUri)
-            .addOnSuccessListener {
-                Log.d("EditProfileFragment", "Successfully uploaded image: ${it.metadata?.path}")
-
-                ref.downloadUrl.addOnSuccessListener {
-                    Log.d("EditProfileFragment", "FileLocation: $it")
-                    editDataBase(it.toString())
-                }
-            }
+        val currPicUrl =
+            profileViewModel.uploadImageToFirebaseStorage(profilePicUri, userProfile.username)
+        // upload image and get the url
+        editDataBase(currPicUrl)
     }
 
     private fun editDataBase(imageUrl: String) {
-        val uid = profileViewModel.getUserProfile().uid
+        val uid = sharedViewModel.currentUser.value!!.uid
         val displayName = binding.editDisplayName.text.toString()
         val username = binding.username.text.toString()
         val telegramHandle = binding.editTelegramHandle.text.toString()
-        val gender = profileViewModel.selectedGender
+        val gender = if (binding.maleButton.isChecked) "Male" else "Female"
         val birthday = binding.birthday.text.toString()
         val bio = binding.editBio.text.toString()
 
@@ -185,39 +174,68 @@ class EditProfileFragment : Fragment() {
             username, uid, displayName, telegramHandle, gender, birthday, bio, imageUrl
         )
 
-        db.collection("users")
-            .document(username)
-            .set(editedUserProfile)
-            .addOnSuccessListener {
-                // update view model
-                profileViewModel.updateUserProfile(editedUserProfile)
-                sharedViewModel.currentUser.value = editedUserProfile
-
-                updateProfileInFriends(editedUserProfile)
-
-                showEditSuccessfulDialog()
-
-                Log.d("EditProfileFragment", "edited user profile")
-            }
-            .addOnFailureListener {
-                Log.d("EditProfileFragment", it.toString())
-            }
+        profileViewModel.updateUserProfile(editedUserProfile) // update profile in database
+        sharedViewModel.currentUser.value = editedUserProfile // update shared view model
+        updateProfileInFriends(editedUserProfile)
     }
 
     private fun updateProfileInFriends(editedUserProfile: User) {
-        val friendUsernames: List<String> = friendListViewModel.getAllFriends().value!!.map { it.username }
+        val currUsername = editedUserProfile.username
+        val friendUsernames: List<String> = profileViewModel.loadFriends(currUsername)
+            .map { it.username }
         friendUsernames.forEach { friendUsername ->
-            val currUsername = editedUserProfile.username
-            db.collection("users/$friendUsername/friends")
-                .document(currUsername)
-                .set(editedUserProfile)
-                .addOnSuccessListener {
-                    Log.d("EditProfileFragment", "updated profile in friend: $friendUsername")
-                }
-                .addOnFailureListener {
-                    Log.d("EditProfileFragment", it.toString())
-                }
+            profileViewModel.updateProfileInFriends(editedUserProfile, friendUsername)
         }
+
+        showEditSuccessfulDialog()
+    }
+
+
+    private fun uploadImageToFirebaseStorageAndEditProfile() {
+        var profilePicUri = profilePicUri
+
+        val uid = sharedViewModel.currentUser.value!!.uid
+        val displayName = binding.editDisplayName.text.toString()
+        val username = binding.username.text.toString()
+        val telegramHandle = binding.editTelegramHandle.text.toString()
+        val gender = if (binding.maleButton.isChecked) "Male" else "Female"
+        val birthday = binding.birthday.text.toString()
+        val bio = binding.editBio.text.toString()
+
+        val editedUserProfile = User(
+            username, uid, displayName, telegramHandle, gender, birthday, bio, userProfile.imageUrl
+        )
+
+        if (profilePicUri == null) { // no new image selected
+            profileViewModel.updateUserProfile(editedUserProfile)
+            // with current imageUrl, no need to upload image again
+            sharedViewModel.updateUser(editedUserProfile)
+            showEditSuccessfulDialog()
+        } else {
+            runBlocking {
+//                val job = CoroutineScope(Dispatchers.IO).launch {
+                     val returnedUser = profileViewModel.uploadImageToFirebaseStorageAndEditProfile(
+                        profilePicUri, editedUserProfile
+                    )
+//                }
+                Log.d("EDIT_PROFILE_FRAGMENT", "returnedUser: $returnedUser username: ${returnedUser.username}")
+                    sharedViewModel.currentUser.postValue(returnedUser)
+                    //showEditSuccessfulDialog()
+                    ContextCompat.getMainExecutor(context).execute {
+                        showEditSuccessfulDialog()
+                    }
+//                }
+            }
+
+
+//            val returnedUser = profileViewModel.uploadImageToFirebaseStorageAndEditProfile(
+//                profilePicUri, editedUserProfile
+//            )
+//            //sharedViewModel.updateUser(returnedUser) // TODO bug view model not updated
+//            sharedViewModel.updateUser(profileViewModel.currentUser)
+        }
+
+//        showEditSuccessfulDialog()
     }
 
     private fun showEditSuccessfulDialog() {

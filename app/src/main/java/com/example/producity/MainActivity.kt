@@ -25,8 +25,6 @@ import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
 import com.example.producity.ui.myactivity.MyActivityFragmentDirections
 import com.example.producity.ui.myactivity.MyActivityViewModel
-import com.example.producity.ui.profile.ProfileViewModel
-import com.example.producity.ui.profile.ProfileViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.TimeFormat
@@ -57,9 +55,6 @@ class MainActivity : AppCompatActivity() {
     }
     private val myActivityViewModel: MyActivityViewModel by viewModels()
     private val exploreViewModel: ExploreViewModel by viewModels()
-    private val profileViewModel: ProfileViewModel by viewModels {
-        ProfileViewModelFactory(ServiceLocator.provideProfileRepository())
-    }
 
     private lateinit var binding: ActivityMainBinding
 
@@ -131,7 +126,6 @@ class MainActivity : AppCompatActivity() {
                     Log.d("Main", "updated username")
                     val username = temp.username
 
-                    profileViewModel.updateUserProfile(temp)
 
                     db.collection("users/$username/friends")
                         .orderBy("username")
@@ -207,8 +201,6 @@ class MainActivity : AppCompatActivity() {
         val action = MyActivityFragmentDirections.actionNavigationMyActivityToAddActivityFragment()
         findNavController(R.id.nav_host_fragment_activity_main).navigate(action)
     }
-
-
 
 
 }

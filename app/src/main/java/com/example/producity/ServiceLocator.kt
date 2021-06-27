@@ -1,6 +1,9 @@
 package com.example.producity
 
 import androidx.annotation.VisibleForTesting
+import com.example.producity.models.source.IUserRepository
+import com.example.producity.models.source.UserRepository
+import com.example.producity.models.source.remote.UserRemoteDataSource
 import com.example.producity.ui.friends.friend_profile.FriendlistOfFriendRepository
 import com.example.producity.ui.friends.friend_profile.IFriendlistOfFriendRepository
 import com.example.producity.ui.friends.my_friends.FriendListRepository
@@ -48,6 +51,24 @@ object ServiceLocator {
             profileRepository = null
             friendlistOfFriendRepository = null
             friendListRepository = null
+            // clear the above later
+
+
+
+            userRepository = null
+        }
+    }
+
+
+
+
+    @Volatile
+    var userRepository: IUserRepository? = null
+    @VisibleForTesting set
+
+    fun provideUserRepository(): IUserRepository {
+        synchronized(this) {
+            return userRepository ?: UserRepository(UserRemoteDataSource())
         }
     }
 

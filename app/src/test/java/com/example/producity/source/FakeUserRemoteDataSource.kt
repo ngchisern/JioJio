@@ -1,40 +1,57 @@
-package com.example.producity.models.source
+package com.example.producity.source
 
 import android.net.Uri
+import com.example.producity.RegisterActivity
 import com.example.producity.models.User
 import com.example.producity.models.source.remote.IUserRemoteDataSource
 
-class UserRepository(private val userRemoteDataSource: IUserRemoteDataSource) : IUserRepository {
+class FakeUserRemoteDataSource : IUserRemoteDataSource {
+
+    // fake user
+    private var user = User(
+        "testUsername", "testUid", "testDisplayName",
+        "test_tele", "Male", "2000-01-01",
+        "testBio", RegisterActivity.BLANK_PROFILE_IMG_URL
+    )
+
+    // fake friend list
+    private var friends = listOf(
+        User("friend0", "uid0", "",
+            "", "", "", "", ""),
+        User("friend1", "uid1", "",
+            "", "", "", "", "")
+    )
 
     override suspend fun loadUserProfile(username: String): User {
-        return userRemoteDataSource.loadUserProfile(username)
+        return user
     }
 
     override suspend fun editUserProfile(editedUserProfile: User) {
-        userRemoteDataSource.editUserProfile(editedUserProfile)
+        user = editedUserProfile
     }
 
     override suspend fun loadFriends(username: String): List<User> {
-        return userRemoteDataSource.loadFriends(username)
+        return friends
     }
 
     override suspend fun uploadImageToFirebaseStorage(imageUri: Uri, username: String): String {
-        return userRemoteDataSource.uploadImageToFirebaseStorage(imageUri, username)
+        return ""
     }
 
     override suspend fun getProfilePicUrl(username: String): String {
-        return userRemoteDataSource.getProfilePicUrl(username)
+        return ""
     }
 
     override suspend fun updateProfileInFriends(editedUserProfile: User, friendUsername: String) {
-        userRemoteDataSource.updateProfileInFriends(editedUserProfile, friendUsername)
+
     }
 
     override suspend fun uploadImageToFirebaseStorageAndEditProfile(
         imageUri: Uri,
         userProfile: User
     ): User {
-        return userRemoteDataSource.uploadImageToFirebaseStorageAndEditProfile(imageUri, userProfile)
+        user = userProfile
+        return user
     }
 
 }
