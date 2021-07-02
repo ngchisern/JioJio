@@ -38,7 +38,7 @@ class StrangerProfileFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
     }
 
     private var _binding: FragmentStrangerProfileBinding? = null
@@ -139,7 +139,7 @@ class StrangerProfileFragment : Fragment() {
                     .set(sharedViewModel.currentUser.value!!)
 
                 Log.d("StrangerProfileFragment", "added")
-                friendListViewModel.addFriend(friend)
+//                friendListViewModel.addFriend(friend)
 
                 // set button to light purple and not clickable
                 val button = binding.strangerAddFriendButton

@@ -94,7 +94,7 @@
 
             <TextView
                 android:id="@+id/friend_telegram_handle"
-                android:layout_width="300dp"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/profile_margin_start"
                 android:layout_marginTop="@dimen/profile_margin_top_title_content"

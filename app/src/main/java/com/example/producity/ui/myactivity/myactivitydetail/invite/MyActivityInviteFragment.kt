@@ -15,12 +15,13 @@ import com.example.producity.ui.friends.my_friends.FriendListAdapter
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.runBlocking
 
 class MyActivityInviteFragment(val doc: String): BottomSheetDialogFragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
     }
 
     override fun setupDialog(dialog: Dialog, style: Int) {
@@ -39,7 +40,8 @@ class MyActivityInviteFragment(val doc: String): BottomSheetDialogFragment() {
             )
         )
 
-        friendListViewModel.getAllFriends().observe(this) {
+        val currentUsername = sharedViewModel.currentUser.value!!.username
+        friendListViewModel.getAllFriends(currentUsername).observe(this) {
             adapter.submitList(it)
         }
 

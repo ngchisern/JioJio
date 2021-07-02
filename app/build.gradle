@@ -91,6 +91,9 @@ dependencies {
     apply plugin: 'androidx.navigation.safeargs.kotlin'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
 
+    // Support coroutine calls (eg. await()) for Firebase objects
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1'
+
 
     // Dependencies for local unit tests
     testImplementation "junit:junit:$junitVersion"

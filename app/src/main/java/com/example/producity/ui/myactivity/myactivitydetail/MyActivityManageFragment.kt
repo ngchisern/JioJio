@@ -42,7 +42,7 @@ import kotlin.collections.HashMap
 class MyActivityManageFragment: Fragment() {
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
     private val friendViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
     }
     private val myActivityDetailViewModel: MyActivityDetailViewModel by activityViewModels()
 

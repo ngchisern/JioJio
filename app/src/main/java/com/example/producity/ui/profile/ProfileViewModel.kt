@@ -55,26 +55,16 @@ class ProfileViewModel(private val userRepository: IUserRepository) : ViewModel(
         imageUri: Uri,
         userProfile: User
     ): User {
-//        var editedUserProfile = User()
-//        viewModelScope.launch {
-//            _currentUser = userRepository.uploadImageToFirebaseStorageAndEditProfile(
-//                imageUri, userProfile
-//            )
-//        }
         val returnedUser: Deferred<User> = viewModelScope.async {
             userRepository.uploadImageToFirebaseStorageAndEditProfile(
                 imageUri, userProfile
             )
         }
         val result: User = returnedUser.await()
-        Log.d("PROFILE_VIEW_MODEL", "RESULT: $result, username: ${result.username}")
+        Log.d("ProfileViewModel", "RESULT: $result, username: ${result.username}")
         return result
-//        return returnedUser.await()
-//        return editedUserProfile
     }
 
-//    private var _currentUser = User()
-//    val currentUser: User = _currentUser
 }
 
 

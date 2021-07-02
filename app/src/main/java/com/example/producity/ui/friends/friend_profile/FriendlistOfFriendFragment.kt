@@ -24,10 +24,10 @@ class FriendlistOfFriendFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendlistOfFriendViewModel: FriendlistOfFriendViewModel by activityViewModels {
-        FriendlistOfFriendViewModelFactory(ServiceLocator.provideFriendlistOfFriendRepository())
+        FriendlistOfFriendViewModelFactory(ServiceLocator.provideUserRepository())
     }
     private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
     }
 
     private var _binding: FragmentFriendlistOfFriendBinding? = null
@@ -67,7 +67,7 @@ class FriendlistOfFriendFragment : Fragment() {
             )
         )
 
-        friendlistOfFriendViewModel.getAllFriends().observe(viewLifecycleOwner) {
+        friendlistOfFriendViewModel.friendList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
     }

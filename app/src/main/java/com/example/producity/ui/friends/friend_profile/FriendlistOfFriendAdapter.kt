@@ -22,8 +22,7 @@ class FriendlistOfFriendAdapter(
     private val context: Fragment,
     private val friendListViewModel: FriendListViewModel,
     private val sharedViewModel: SharedViewModel
-) :
-    ListAdapter<User, FriendlistOfFriendAdapter.FriendsViewHolder>(FriendsComparator()) {
+) : ListAdapter<User, FriendlistOfFriendAdapter.FriendsViewHolder>(FriendsComparator()) {
 
     class FriendsViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val username: TextView = view.findViewById(R.id.friend_username)
@@ -80,7 +79,7 @@ class FriendlistOfFriendAdapter(
 
     private fun isFriend(username: String): Boolean {
         val friendUsernames: List<String> =
-            friendListViewModel.getAllFriends().value!!.map { it.username }
+            friendListViewModel.friendList.value!!.map { it.username }
         return friendUsernames.contains(username)
     }
 

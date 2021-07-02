@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
 import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
@@ -31,10 +32,8 @@ class FriendProfileFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendlistOfFriendViewModel: FriendlistOfFriendViewModel by activityViewModels {
-        FriendlistOfFriendViewModelFactory(ServiceLocator.provideFriendlistOfFriendRepository())
+        FriendlistOfFriendViewModelFactory(ServiceLocator.provideUserRepository())
     }
-    private val friendCommonActivitiesViewModel: FriendCommonActivitiesViewModel by activityViewModels()
-    private val friendPendingInvitationActivitiesViewModel: FriendPendingInvitationActivitiesViewModel by activityViewModels()
 
     private var _binding: FragmentFriendProfileBinding? = null
     private val binding get() = _binding!!
@@ -90,8 +89,8 @@ class FriendProfileFragment : Fragment() {
 
         // Open friends list
         binding.allFriendsButton.setOnClickListener {
-            // Pass current friend to friendlistOfFriendViewModel and load their friend list
-            friendlistOfFriendViewModel.loadFriendsFromDB(friend)
+            // Pass current friend username to friendlistOfFriendViewModel and load their friend list
+            friendlistOfFriendViewModel.loadFriendsFromDB(friend.username)
 
             val action =
                 FriendProfileFragmentDirections.actionFriendProfileFragmentToFriendlistOfFriendFragment()
@@ -99,49 +98,16 @@ class FriendProfileFragment : Fragment() {
         }
 
 
-        // Add the RecyclerView (Common Activities / Pending Invitations)
-            /*
-        val recyclerView = binding.friendActivitiesRecyclerView
-        val adapter = FriendCommonActivitiesAdapter(this)
-        recyclerView.adapter = adapter
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                context,
-                DividerItemDecoration.VERTICAL
-            )
-        )
-
-             */
-
-        val currentUser = sharedViewModel.currentUser.value!!
-
-
-        /*
-        // Default checked radio button is Common Activities
-        friendCommonActivitiesViewModel.loadCommonActivitiesFromDB(currentUser, friend)
-        friendCommonActivitiesViewModel.commonActivitiesList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-        }
-
-
-        // Update list of activities to be displayed based on radio button clicked
-        binding.commonActivitiesButton.setOnClickListener {
-            friendCommonActivitiesViewModel.loadCommonActivitiesFromDB(currentUser, friend)
-            friendCommonActivitiesViewModel.commonActivitiesList.observe(viewLifecycleOwner) {
-                adapter.submitList(it)
-            }
-        }
-
-        binding.pendingInvitationsButton.setOnClickListener {
-            //friendPendingInvitationActivitiesViewModel.loadPendingInvitationsFromDB(currentUser, friend) //TODO
-            friendPendingInvitationActivitiesViewModel.pendingInvitationActivitiesList.observe(
-                viewLifecycleOwner
-            ) {
-                adapter.submitList(it)
-            }
-        }
-
-         */
+//        // Add the RecyclerView (Upcoming activities) //TODO
+//        val recyclerView = binding.friendActivitiesRecyclerView
+//        val adapter = FriendCommonActivitiesAdapter(this)
+//        recyclerView.adapter = adapter
+//        recyclerView.addItemDecoration(
+//            DividerItemDecoration(
+//                context,
+//                DividerItemDecoration.VERTICAL
+//            )
+//        )
     }
 
     override fun onDestroyView() {

@@ -1,31 +1,41 @@
 package com.example.producity.ui.friends.my_friends
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.example.producity.models.User
+import com.example.producity.models.source.IUserRepository
+import kotlinx.coroutines.launch
 
-class FriendListViewModel(private val friendListRepository: IFriendListRepository) : ViewModel() {
+class FriendListViewModel(private val userRepository: IUserRepository) : ViewModel() {
 
-    fun getAllFriends(): LiveData<List<User>> {
-        return friendListRepository.getAllFriends()
+    // stores the friend list returned by Firestore instead of calling database code again when needed
+    // call getAllFriends(username) to set the friend list
+    private var _friendList: MutableLiveData<List<User>> = MutableLiveData(listOf())
+    val friendList: LiveData<List<User>> = _friendList
+
+    fun getAllFriends(username: String): LiveData<List<User>> {
+        val friends: MutableLiveData<List<User>> = MutableLiveData(listOf())
+        viewModelScope.launch {
+            friends.value = userRepository.loadFriends(username)
+            _friendList.value = friends.value
+        }
+        return friends
     }
 
-    fun updateFriendList(list: List<User>) {
-        friendListRepository.updateFriendList(list)
+    fun addFriend(currUser: User, friend: User) {
+        viewModelScope.launch { userRepository.addFriend(currUser, friend) }
     }
 
-    fun addFriend(friend: User) {
-        friendListRepository.addFriend(friend)
+    fun deleteFriend(currUser: User, friend: User) {
+        viewModelScope.launch { userRepository.deleteFriend(currUser, friend) }
     }
+
 }
 
 
 @Suppress("UNCHECKED_CAST")
-class FriendListViewModelFactory(private val friendListRepository: IFriendListRepository) :
+class FriendListViewModelFactory(private val userRepository: IUserRepository) :
     ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return (FriendListViewModel(friendListRepository) as T)
+        return (FriendListViewModel(userRepository) as T)
     }
 }

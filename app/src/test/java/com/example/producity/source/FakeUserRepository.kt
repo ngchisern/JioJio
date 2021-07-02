@@ -1,11 +1,9 @@
 package com.example.producity.source
 
 import android.net.Uri
-import androidx.lifecycle.MutableLiveData
 import com.example.producity.models.User
 import com.example.producity.models.source.IUserRepository
 import com.example.producity.models.source.remote.IUserRemoteDataSource
-import com.example.producity.ui.profile.IProfileRepository
 
 class FakeUserRepository(private val userRemoteDataSource: IUserRemoteDataSource) :
     IUserRepository {

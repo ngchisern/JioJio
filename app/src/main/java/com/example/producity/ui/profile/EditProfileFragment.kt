@@ -73,7 +73,6 @@ class EditProfileFragment : Fragment() {
         binding.topAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.save_button -> {
-//                    uploadImageForFirebaseStorage()
                     uploadImageToFirebaseStorageAndEditProfile()
                     true
                 }
@@ -147,50 +146,6 @@ class EditProfileFragment : Fragment() {
         Picasso.get().load(imageUrl).transform(CropCircleTransformation()).into(imageView)
     }
 
-    private fun uploadImageForFirebaseStorage() {
-        val profilePicUri = profilePicUri
-
-        if (profilePicUri == null) { // no new image selected
-            editDataBase(userProfile.imageUrl) // use current profile pic
-            return
-        }
-
-        val currPicUrl =
-            profileViewModel.uploadImageToFirebaseStorage(profilePicUri, userProfile.username)
-        // upload image and get the url
-        editDataBase(currPicUrl)
-    }
-
-    private fun editDataBase(imageUrl: String) {
-        val uid = sharedViewModel.currentUser.value!!.uid
-        val displayName = binding.editDisplayName.text.toString()
-        val username = binding.username.text.toString()
-        val telegramHandle = binding.editTelegramHandle.text.toString()
-        val gender = if (binding.maleButton.isChecked) "Male" else "Female"
-        val birthday = binding.birthday.text.toString()
-        val bio = binding.editBio.text.toString()
-
-        val editedUserProfile = User(
-            username, uid, displayName, telegramHandle, gender, birthday, bio, imageUrl
-        )
-
-        profileViewModel.updateUserProfile(editedUserProfile) // update profile in database
-        sharedViewModel.currentUser.value = editedUserProfile // update shared view model
-        updateProfileInFriends(editedUserProfile)
-    }
-
-    private fun updateProfileInFriends(editedUserProfile: User) {
-        val currUsername = editedUserProfile.username
-        val friendUsernames: List<String> = profileViewModel.loadFriends(currUsername)
-            .map { it.username }
-        friendUsernames.forEach { friendUsername ->
-            profileViewModel.updateProfileInFriends(editedUserProfile, friendUsername)
-        }
-
-        showEditSuccessfulDialog()
-    }
-
-
     private fun uploadImageToFirebaseStorageAndEditProfile() {
         var profilePicUri = profilePicUri
 
@@ -213,29 +168,19 @@ class EditProfileFragment : Fragment() {
             showEditSuccessfulDialog()
         } else {
             runBlocking {
-//                val job = CoroutineScope(Dispatchers.IO).launch {
-                     val returnedUser = profileViewModel.uploadImageToFirebaseStorageAndEditProfile(
-                        profilePicUri, editedUserProfile
-                    )
-//                }
-                Log.d("EDIT_PROFILE_FRAGMENT", "returnedUser: $returnedUser username: ${returnedUser.username}")
-                    sharedViewModel.currentUser.postValue(returnedUser)
-                    //showEditSuccessfulDialog()
-                    ContextCompat.getMainExecutor(context).execute {
-                        showEditSuccessfulDialog()
-                    }
-//                }
+                val returnedUser = profileViewModel.uploadImageToFirebaseStorageAndEditProfile(
+                    profilePicUri, editedUserProfile
+                )
+                Log.d(
+                    "EditProfileFragment",
+                    "returnedUser: $returnedUser username: ${returnedUser.username}"
+                )
+                sharedViewModel.currentUser.postValue(returnedUser)
+                ContextCompat.getMainExecutor(context).execute {
+                    showEditSuccessfulDialog()
+                }
             }
-
-
-//            val returnedUser = profileViewModel.uploadImageToFirebaseStorageAndEditProfile(
-//                profilePicUri, editedUserProfile
-//            )
-//            //sharedViewModel.updateUser(returnedUser) // TODO bug view model not updated
-//            sharedViewModel.updateUser(profileViewModel.currentUser)
         }
-
-//        showEditSuccessfulDialog()
     }
 
     private fun showEditSuccessfulDialog() {

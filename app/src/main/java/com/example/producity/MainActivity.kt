@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
     private val sharedViewModel: SharedViewModel by viewModels()
     private val friendListViewModel: FriendListViewModel by viewModels {
-        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
     }
     private val myActivityViewModel: MyActivityViewModel by viewModels()
     private val exploreViewModel: ExploreViewModel by viewModels()
@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                                 val friend = doc.toObject(User::class.java)
                                 list.add(friend)
                             }
-                            friendListViewModel.updateFriendList(list)
+//                            friendListViewModel.updateFriendList(list)
                         }
 
 

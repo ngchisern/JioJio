@@ -8,10 +8,16 @@ import com.example.producity.models.User
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 
 private const val TAG = "UserRemoteDataSource"
 
 class UserRemoteDataSource : IUserRemoteDataSource {
+
+    private val db = MyFirebase.db
+    private val storage = MyFirebase.storage
 
     override fun createUser(username: String, uid: String) {
         val user = User(
@@ -20,7 +26,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
             RegisterActivity.BLANK_PROFILE_IMG_URL
         )
 
-        MyFirebase.db.document("users/$username")
+        db.document("users/$username")
             .set(user)
             .addOnSuccessListener { documentReference ->
                 Log.d("Main", "Successfully sign up!")
@@ -32,7 +38,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
 
     override fun isUsernmeTaken(username: String): Task<DocumentSnapshot> {
 
-        return MyFirebase.db.document("users/$username")
+        return db.document("users/$username")
             .get()
             .addOnSuccessListener {
                 Log.d("Main", it.exists().toString())
@@ -43,7 +49,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
     override suspend fun loadUserProfile(username: String): User {
         var userProfile = User()
 
-        MyFirebase.db.collection("users")
+        db.collection("users")
             .whereEqualTo("username", username)
             .limit(1)
             .get()
@@ -64,8 +70,6 @@ class UserRemoteDataSource : IUserRemoteDataSource {
     }
 
     override suspend fun editUserProfile(editedUserProfile: User) {
-        val db = MyFirebase.db
-
         db.collection("users")
             .document(editedUserProfile.username)
             .set(editedUserProfile)
@@ -106,23 +110,61 @@ class UserRemoteDataSource : IUserRemoteDataSource {
     }
 
     override suspend fun loadFriends(username: String): List<User> {
-        val list: MutableList<User> = mutableListOf()
+        return try {
+            db.collection("users/$username/friends")
+                .orderBy("username")
+                .get()
+                .await()
+                .documents
+                .mapNotNull { it.toObject(User::class.java) }
+        } catch (e: Exception) {
+            Log.d(TAG, "Error getting friends: $e")
+            listOf()
+        }
+    }
 
-        MyFirebase.db.collection("users/$username/friends")
-            .orderBy("username")
+    override suspend fun addFriend(currUser: User, friend: User) {
+        db.document("users/${friend.username}")
             .get()
             .addOnSuccessListener {
-                it.forEach { doc ->
-                    val friend = doc.toObject(User::class.java)
-                    list.add(friend)
+                if (it == null || !it.exists()) {
+                    Log.d(TAG, "No doc")
+                    return@addOnSuccessListener
                 }
+
+                db.document("users/${currUser.username}/friends/${friend.username}")
+                    .set(friend)
+
+                db.document("users/${friend.username}/friends/${currUser.username}")
+                    .set(currUser)
+
+            }
+            .addOnFailureListener {
+                Log.d(TAG, it.toString())
+            }
+    }
+
+    override suspend fun deleteFriend(currUser: User, friend: User) {
+        db.document("users/${currUser.username}/friends/${friend.username}")
+            .delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "Deleted ${currUser.username}'s friend: ${friend.username}")
+            }
+            .addOnFailureListener {
+                Log.d(TAG, it.toString())
             }
 
-        return list
+        db.document("users/${friend.username}/friends/${currUser.username}")
+            .delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "Deleted ${friend.username}'s friend: ${currUser.username}")
+            }
+            .addOnFailureListener {
+                Log.d(TAG, it.toString())
+            }
     }
 
     override suspend fun uploadImageToFirebaseStorage(imageUri: Uri, username: String): String {
-        val storage = MyFirebase.storage
         val ref = storage.getReference("/profile_pictures/$username")
 
         var url = ""
@@ -141,7 +183,6 @@ class UserRemoteDataSource : IUserRemoteDataSource {
 
 
     override suspend fun getProfilePicUrl(username: String): String {
-        val storage = MyFirebase.storage
         val ref = storage.getReference("/profile_pictures/$username")
 
         var url = ""
@@ -154,7 +195,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
     }
 
     override suspend fun updateProfileInFriends(editedUserProfile: User, friendUsername: String) {
-        MyFirebase.db.collection("users/$friendUsername/friends")
+        db.collection("users/$friendUsername/friends")
             .document(editedUserProfile.username)
             .set(editedUserProfile)
             .addOnSuccessListener {
@@ -170,9 +211,6 @@ class UserRemoteDataSource : IUserRemoteDataSource {
         imageUri: Uri,
         userProfile: User
     ): User {
-
-        val db = MyFirebase.db
-        val storage = MyFirebase.storage
         val ref = storage.getReference("/profile_pictures/${userProfile.username}")
 
         var newUrl = userProfile.imageUrl // original url, to be updated later
@@ -184,7 +222,8 @@ class UserRemoteDataSource : IUserRemoteDataSource {
             userProfile.telegramHandle,
             userProfile.gender,
             userProfile.birthday,
-            userProfile.bio)
+            userProfile.bio
+        )
 
         val task = ref.putFile(imageUri) // upload image to Firebase Storage
             .addOnSuccessListener {
@@ -241,7 +280,8 @@ class UserRemoteDataSource : IUserRemoteDataSource {
                 Log.d(TAG, it.toString())
             }
 
-        while(!task.isComplete) {}
+        while (!task.isComplete) {
+        }
 
         return editedUserProfile
     }

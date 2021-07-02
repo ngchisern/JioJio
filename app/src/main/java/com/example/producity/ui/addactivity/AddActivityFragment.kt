@@ -25,6 +25,7 @@ import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.AddActivityBinding
 import com.example.producity.models.Activity
+import com.example.producity.models.User
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
 import com.example.producity.ui.myactivity.MyActivityViewModel
@@ -33,6 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class AddActivityFragment: Fragment() {
@@ -41,7 +43,7 @@ class AddActivityFragment: Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
     }
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
     private lateinit var db: FirebaseFirestore
@@ -289,9 +291,10 @@ class AddActivityFragment: Fragment() {
         val isVirtual: RadioButton = binding.virtualOption
 
         val user = sharedViewModel.currentUser
+        val currentUsername = user.value!!.username
 
         val listOfFriends: MutableList<String> = mutableListOf()
-        val src = friendListViewModel.getAllFriends().value ?: listOf()
+        val src = friendListViewModel.getAllFriends(currentUsername).value ?: listOf()
 
         for (elem in src) {
             listOfFriends.add(elem.username)

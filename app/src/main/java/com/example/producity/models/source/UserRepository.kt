@@ -1,18 +1,8 @@
 package com.example.producity.models.source
 
-import android.content.Intent
 import android.net.Uri
-import android.util.Log
-import com.example.producity.MainActivity
-import com.example.producity.MyFirebase
-import com.example.producity.RegisterActivity
 import com.example.producity.models.User
 import com.example.producity.models.source.remote.IUserRemoteDataSource
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 class UserRepository(private val userRemoteDataSource: IUserRemoteDataSource) : IUserRepository {
 
@@ -40,6 +30,14 @@ class UserRepository(private val userRemoteDataSource: IUserRemoteDataSource) : 
 
     override suspend fun loadFriends(username: String): List<User> {
         return userRemoteDataSource.loadFriends(username)
+    }
+
+    override suspend fun addFriend(currUser: User, friend: User) {
+        userRemoteDataSource.addFriend(currUser, friend)
+    }
+
+    override suspend fun deleteFriend(currUser: User, friend: User) {
+        userRemoteDataSource.deleteFriend(currUser, friend)
     }
 
     override suspend fun uploadImageToFirebaseStorage(imageUri: Uri, username: String): String {

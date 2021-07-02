@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
 import com.example.producity.ServiceLocator
@@ -25,12 +26,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.runBlocking
 
 class FriendListFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideFriendListRepository())
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
     }
 
     private var _binding: FragmentFriendListBinding? = null
@@ -80,10 +82,10 @@ class FriendListFragment : Fragment() {
             )
         )
 
-        friendListViewModel.getAllFriends().observe(viewLifecycleOwner) {
+        val currentUsername = sharedViewModel.currentUser.value!!.username
+        friendListViewModel.getAllFriends(currentUsername).observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
-
     }
 
     override fun onDestroyView() {
