@@ -32,7 +32,7 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="add_friend">Add Friend</string>
-    <string name="added_friend">Added Friend</string>
+    <string name="friend_request_sent">Friend request sent</string>
     <string name="telegram_handle_hint">Do not include the prefix \'@\'</string>
 
     <!-- for activity detail -->

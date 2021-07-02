@@ -4,9 +4,12 @@ import android.net.Uri
 import android.util.Log
 import com.example.producity.MyFirebase
 import com.example.producity.RegisterActivity
+import com.example.producity.models.Notification
 import com.example.producity.models.User
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.Timestamp
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -17,6 +20,7 @@ private const val TAG = "UserRemoteDataSource"
 class UserRemoteDataSource : IUserRemoteDataSource {
 
     private val db = MyFirebase.db
+    private val rtdb = MyFirebase.rtdb
     private val storage = MyFirebase.storage
 
     override fun createUser(username: String, uid: String) {
@@ -44,6 +48,19 @@ class UserRemoteDataSource : IUserRemoteDataSource {
                 Log.d("Main", it.exists().toString())
             }
 
+    }
+
+    override suspend fun checkUserExists(username: String): Boolean {
+        return try {
+            val user = db.document("users/$username")
+                .get()
+                .await()
+                .data
+            user !== null // return true if user exists
+        } catch (e: Exception) {
+            Log.d(TAG, e.toString())
+            false
+        }
     }
 
     override suspend fun loadUserProfile(username: String): User {
@@ -121,6 +138,24 @@ class UserRemoteDataSource : IUserRemoteDataSource {
             Log.d(TAG, "Error getting friends: $e")
             listOf()
         }
+    }
+
+    override suspend fun sendFriendRequest(sender: User, receiverUsername: String) {
+        val noti = Notification(sender.imageUrl,
+            "${sender.username} sent you a friend request",
+            true,
+            null,
+            Timestamp.now().toDate().time,
+            sender.username)
+
+        rtdb.getReference().child("notification/$receiverUsername").push()
+            .setValue(noti)
+            .addOnSuccessListener {
+                Log.d(TAG, "added noti")
+            }
+            .addOnFailureListener {
+                Log.d(TAG, it.message.toString())
+            }
     }
 
     override suspend fun addFriend(currUser: User, friend: User) {

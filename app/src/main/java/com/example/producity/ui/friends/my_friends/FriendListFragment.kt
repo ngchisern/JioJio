@@ -12,21 +12,13 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
 import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendListBinding
-import com.example.producity.models.Notification
-import com.example.producity.models.User
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.Timestamp
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 class FriendListFragment : Fragment() {
 
@@ -53,7 +45,7 @@ class FriendListFragment : Fragment() {
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.add_friend -> {
-                    popAddFriendDialog()
+                    popSendFriendRequestDialog()
                     true
                 }
                 else -> false
@@ -93,7 +85,7 @@ class FriendListFragment : Fragment() {
         _binding = null
     }
 
-    private fun popAddFriendDialog() {
+    private fun popSendFriendRequestDialog() {
         val builder = context?.let { MaterialAlertDialogBuilder(it) }
 
         if (builder == null) return
@@ -102,9 +94,9 @@ class FriendListFragment : Fragment() {
         input.setHint("username")
         input.inputType = InputType.TYPE_CLASS_TEXT
 
-        builder.setTitle("Add friends")
+        builder.setTitle("Send friend request")
             .setView(input)
-            .setPositiveButton("Add", null)
+            .setPositiveButton("Send", null)
             .setNeutralButton("Cancel") { dialog, which ->
                 dialog.cancel()
             }
@@ -127,50 +119,19 @@ class FriendListFragment : Fragment() {
     }
 
     private fun checkUser(input: EditText) {
-        val db = Firebase.firestore
-        val currentUser = Firebase.auth.currentUser ?: return
-
-        db.document("users/${input.text}")
-            .get()
-            .addOnSuccessListener {
-                if (it == null || !it.exists()) {
-                    input.setError("User does not exist")
-                    Log.d("Main", "No doc")
-                    return@addOnSuccessListener
-                }
-
-                val friend = it.toObject(User::class.java) ?: return@addOnSuccessListener
-
-                sendFriendRequest(friend)
-
+        CoroutineScope(Dispatchers.Main).launch {
+            val checkUsername = input.text.toString()
+            val exists = friendListViewModel.checkUserExists(checkUsername)
+            if (exists) {
+                friendListViewModel.sendFriendRequest(sharedViewModel.currentUser.value!!, checkUsername)
+                Toast.makeText(context, resources.getText(R.string.friend_request_sent), Toast.LENGTH_LONG)
+                    .show()
+                Log.d("FriendListFragment", "Send friend request to: $checkUsername")
+            } else {
+                input.error = "User does not exist"
+                Log.d("FriendListFragment", "checkUser: does not exist")
             }
-            .addOnFailureListener {
-                Log.d("Main", it.toString())
-            }
+        }
     }
-
-    private fun sendFriendRequest(user: User) {
-        val sender = sharedViewModel.currentUser.value ?: return
-
-        val rtdb = Firebase.database
-
-        val noti = Notification(sender.imageUrl,
-            "${sender.username} sent you a friend request",
-            true,
-            null,
-            Timestamp.now().toDate().time,
-            sender.username)
-
-        rtdb.getReference().child("notification/${user.username}").push()
-            .setValue(noti)
-            .addOnSuccessListener {
-                Log.d("Main", "added noti")
-            }
-            .addOnFailureListener {
-                Log.d("Main", it.message.toString())
-            }
-
-    }
-
 
 }

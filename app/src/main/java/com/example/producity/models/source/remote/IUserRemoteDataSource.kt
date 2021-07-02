@@ -8,9 +8,11 @@ import com.google.firebase.firestore.DocumentSnapshot
 interface IUserRemoteDataSource {
     fun createUser(username: String, uid: String)
     fun isUsernmeTaken(username: String): Task<DocumentSnapshot>
+    suspend fun checkUserExists(username: String): Boolean
     suspend fun loadUserProfile(username: String): User
     suspend fun editUserProfile(editedUserProfile: User)
     suspend fun loadFriends(username: String): List<User>
+    suspend fun sendFriendRequest(sender: User, receiverUsername: String)
     suspend fun addFriend(currUser: User, friend: User)
     suspend fun deleteFriend(currUser: User, friend: User)
     suspend fun uploadImageToFirebaseStorage(imageUri: Uri, username: String): String

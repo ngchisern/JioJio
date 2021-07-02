@@ -20,6 +20,10 @@ class UserRepository(private val userRemoteDataSource: IUserRemoteDataSource) : 
         return task.result!!.exists()
     }
 
+    override suspend fun checkUserExists(username: String): Boolean {
+        return userRemoteDataSource.checkUserExists(username)
+    }
+
     override suspend fun loadUserProfile(username: String): User {
         return userRemoteDataSource.loadUserProfile(username)
     }
@@ -30,6 +34,10 @@ class UserRepository(private val userRemoteDataSource: IUserRemoteDataSource) : 
 
     override suspend fun loadFriends(username: String): List<User> {
         return userRemoteDataSource.loadFriends(username)
+    }
+
+    override suspend fun sendFriendRequest(sender: User, receiverUsername: String) {
+        userRemoteDataSource.sendFriendRequest(sender, receiverUsername)
     }
 
     override suspend fun addFriend(currUser: User, friend: User) {
