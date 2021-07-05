@@ -49,6 +49,14 @@
         <action
             android:id="@+id/action_friendProfileFragment_to_friendlistOfFriendFragment"
             app:destination="@id/friendlistOfFriendFragment" />
+        <action
+            android:id="@+id/action_friendProfileFragment_to_strangerProfileFragment"
+            app:destination="@id/strangerProfileFragment"
+            app:popUpTo="@id/friendProfileFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_friendProfileFragment_to_scheduleDetailFragment"
+            app:destination="@id/scheduleDetailFragment" />
     </fragment>
 
     <fragment

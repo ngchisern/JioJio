@@ -38,5 +38,6 @@
     <!-- for activity detail -->
     <string name="join">Join</string>
     <string name="inquiry">Inquiry</string>
+    <string name="remove_friend">Remove friend</string>
 
 </resources>

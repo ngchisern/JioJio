@@ -1,10 +1,8 @@
 package com.example.producity
 
 import androidx.annotation.VisibleForTesting
-import com.example.producity.models.source.AuthRepository
-import com.example.producity.models.source.IAuthRepository
-import com.example.producity.models.source.IUserRepository
-import com.example.producity.models.source.UserRepository
+import com.example.producity.models.source.*
+import com.example.producity.models.source.remote.ActivityRemoteDataSource
 import com.example.producity.models.source.remote.UserRemoteDataSource
 
 object ServiceLocator {
@@ -16,6 +14,10 @@ object ServiceLocator {
     @Volatile
     var userRepository: IUserRepository? = null
         @VisibleForTesting set
+
+    @Volatile
+    var activityRepository: IActivityRepository? = null
+    @VisibleForTesting set
 
     fun provideAuthRepository(): IAuthRepository {
         synchronized(this) {
@@ -29,12 +31,19 @@ object ServiceLocator {
         }
     }
 
+    fun provideActivityRepository(): IActivityRepository {
+        synchronized(this) {
+            return activityRepository ?: ActivityRepository(ActivityRemoteDataSource)
+        }
+    }
+
     @VisibleForTesting
     fun resetAllRepositories() {
         synchronized(Any()) {
             // Clear all data to avoid test pollution.
             authRepository = null
             userRepository = null
+            activityRepository = null
         }
     }
 

@@ -16,10 +16,17 @@ import com.example.producity.R
 import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendProfileBinding
+import com.example.producity.models.Activity
 import com.example.producity.ui.friends.ParcelableUser
 import com.example.producity.models.User
+import com.example.producity.ui.friends.my_friends.FriendListViewModel
+import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.Exception
 
 private const val FRIEND_PROFILE = "friendProfile"
@@ -31,8 +38,14 @@ class FriendProfileFragment : Fragment() {
     private lateinit var friend: User
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val friendListViewModel: FriendListViewModel by activityViewModels {
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
+    }
     private val friendlistOfFriendViewModel: FriendlistOfFriendViewModel by activityViewModels {
         FriendlistOfFriendViewModelFactory(ServiceLocator.provideUserRepository())
+    }
+    private val friendUpcomingActivitiesViewModel: FriendUpcomingActivitiesViewModel by activityViewModels {
+        FriendUpcomingActivitiesViewModelFactory(ServiceLocator.provideActivityRepository())
     }
 
     private var _binding: FragmentFriendProfileBinding? = null
@@ -65,8 +78,17 @@ class FriendProfileFragment : Fragment() {
             activity?.onBackPressed()
         }
 
-
         toolbar.title = friend.username
+
+        toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.remove_friend -> {
+                    popRemoveFriendDialog()
+                    true
+                }
+                else -> false
+            }
+        }
 
         return root
     }
@@ -98,16 +120,20 @@ class FriendProfileFragment : Fragment() {
         }
 
 
-//        // Add the RecyclerView (Upcoming activities) //TODO
-//        val recyclerView = binding.friendActivitiesRecyclerView
-//        val adapter = FriendCommonActivitiesAdapter(this)
-//        recyclerView.adapter = adapter
-//        recyclerView.addItemDecoration(
-//            DividerItemDecoration(
-//                context,
-//                DividerItemDecoration.VERTICAL
-//            )
-//        )
+        // Add the RecyclerView (Upcoming activities)
+        val recyclerView = binding.friendUpcomingActivitiesRecyclerView
+        val adapter = FriendUpcomingActivitiesAdapter(this)
+        recyclerView.adapter = adapter
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
+
+        friendUpcomingActivitiesViewModel.getUpcomingActivities(friend.username).observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+        }
     }
 
     override fun onDestroyView() {
@@ -137,6 +163,27 @@ class FriendProfileFragment : Fragment() {
         } catch (e: Exception) {
             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun popRemoveFriendDialog() {
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        builder.setTitle("Remove ${friend.username} as your friend?")
+            .setPositiveButton("Confirm") { dialog, _ ->
+                friendListViewModel.deleteFriend(sharedViewModel.currentUser.value!!, friend)
+                dialog.cancel()
+                navigateToStrangerProfile()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.cancel()
+            }
+            .show()
+    }
+
+    private fun navigateToStrangerProfile() {
+        val action = FriendProfileFragmentDirections.actionFriendProfileFragmentToStrangerProfileFragment(
+            parcelableFriend
+        )
+        findNavController().navigate(action)
     }
 
 }

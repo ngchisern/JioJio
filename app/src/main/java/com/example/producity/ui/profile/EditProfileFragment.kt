@@ -167,7 +167,7 @@ class EditProfileFragment : Fragment() {
             sharedViewModel.updateUser(editedUserProfile)
             showEditSuccessfulDialog()
         } else {
-            runBlocking {
+            CoroutineScope(Dispatchers.Main).launch {
                 val returnedUser = profileViewModel.uploadImageToFirebaseStorageAndEditProfile(
                     profilePicUri, editedUserProfile
                 )
