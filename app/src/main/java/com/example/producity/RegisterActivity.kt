@@ -68,7 +68,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         if (password.text.toString() != confirmPassword.text.toString()) {
-            confirmPassword.setError("Passwords does not match.")
+            confirmPassword.setError("Passwords do not match.")
             isValid = false
         }
 
@@ -95,6 +95,9 @@ class RegisterActivity : AppCompatActivity() {
 
 
             val intent = Intent(this, MainActivity::class.java)
+            /* TODO Uncomment to display sent email verification page
+            val intent = Intent(this, SentEmailVerificationActivity::class.java)
+            */
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
 

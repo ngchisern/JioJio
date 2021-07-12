@@ -21,6 +21,18 @@ object AuthRepository: IAuthRepository {
                 if (!task.isSuccessful) {
                     Log.d("Main", "${task.exception}")
                 }
+                /* TODO Uncomment to send email verification when creating new account
+                else {
+                    auth.currentUser!!.sendEmailVerification()
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Log.d("AuthRepository", "Created account and sent email verification.")
+                            } else {
+                                Log.d("AuthRepository", task.exception.toString())
+                            }
+                        }
+                }
+                */
             }
 
         while(!task.isComplete) {

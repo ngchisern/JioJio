@@ -38,6 +38,9 @@
     <!-- for activity detail -->
     <string name="join">Join</string>
     <string name="inquiry">Inquiry</string>
+
     <string name="remove_friend">Remove friend</string>
+    <string name="or">OR</string>
+    <string name="email_verification_text">Please check your email to verify your account.</string>
 
 </resources>
