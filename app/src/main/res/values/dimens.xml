@@ -9,6 +9,7 @@
     <dimen name="task_detail_frag_padding">30dp</dimen>
     <dimen name="task_done_delete_button_size">40dp</dimen>
     <dimen name="task_text_width">280dp</dimen>
+    <dimen name="status_bar_height">24dp</dimen>
 
     <dimen name="profile_margin_start">32dp</dimen>
     <dimen name="profile_pic_height">100dp</dimen>

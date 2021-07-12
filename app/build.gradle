@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.producity"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -96,6 +96,18 @@ dependencies {
     // Support coroutine calls (eg. await()) for Firebase objects
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1'
 
+    // circle image view
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //gif
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+    implementation 'com.giphy.sdk:ui:2.1.2'
+
+    //location autocomplete
+    implementation 'com.google.android.libraries.places:places:2.4.0'
+    // Google Play services library
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
 
     // Dependencies for local unit tests
     testImplementation "junit:junit:$junitVersion"

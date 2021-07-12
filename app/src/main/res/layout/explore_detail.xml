@@ -156,7 +156,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_baseline_person_24_2"
+                    android:src="@drawable/ic_baseline_person_24"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="5dp"
                     android:layout_below="@id/creator_text"

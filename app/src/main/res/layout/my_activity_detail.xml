@@ -14,14 +14,15 @@
             android:layout_height="match_parent"
             app:contentScrim="@android:color/transparent"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-            app:statusBarScrim="@android:color/transparent">
+            app:statusBarScrim="@android:color/transparent"
+            android:background="@color/white">
 
             <ImageView
                 android:id="@+id/activity_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax" />
+                app:layout_collapseMode="parallax"/>
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/topAppBar"
@@ -219,7 +220,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="9dp"
                         android:padding="6dp"
-                        tools:itemCount="100"/>
+                        tools:itemCount="12"/>
 
                 </LinearLayout>
 
@@ -248,12 +249,12 @@
                         android:layout_weight="1" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/log_button"
+                        android:id="@+id/chat_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         app:cornerRadius="20dp"
                         android:elevation="10dp"
-                        android:text="Activity log"
+                        android:text="Chat"
                         android:layout_weight="6"
                         android:backgroundTint="@android:color/holo_purple"
                         />

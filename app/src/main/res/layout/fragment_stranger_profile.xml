@@ -41,7 +41,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearance="@style/ShapeAppearance.App.CircleImageView"
-                app:srcCompat="@drawable/ic_baseline_person_24_2" />
+                app:srcCompat="@drawable/ic_baseline_person_24" />
 
             <TextView
                 android:id="@+id/stranger_display_name"

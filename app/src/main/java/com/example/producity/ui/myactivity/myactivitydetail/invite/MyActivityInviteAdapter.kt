@@ -16,6 +16,7 @@ import com.example.producity.SharedViewModel
 import com.example.producity.models.Notification
 import com.example.producity.models.Participant
 import com.example.producity.models.User
+import com.example.producity.ui.myactivity.myactivitydetail.MyActivityDetailViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Timestamp
 import com.google.firebase.database.ktx.database
@@ -25,7 +26,7 @@ import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
-class MyActivityInviteAdapter(val context: Fragment, val sharedViewModel: SharedViewModel, val doc: String):
+class MyActivityInviteAdapter(val context: Fragment, val currentUser: User, val activityDetailViewModel: MyActivityDetailViewModel):
     ListAdapter<User, MyActivityInviteAdapter.InviteViewHolder>(InviteComparator()) {
 
     class InviteViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -33,9 +34,9 @@ class MyActivityInviteAdapter(val context: Fragment, val sharedViewModel: Shared
         val pic: ImageView = view.findViewById(R.id.friend_image)
         val inviteButton: Button = view.findViewById(R.id.dialog_invite_button)
 
-        fun bind(text: String?, imageUrl: String) {
+        fun bind(text: String?) {
             username.text = text
-            Picasso.get().load(imageUrl).transform(CropCircleTransformation()).into(pic)
+            //Picasso.get().load(imageUrl).transform(CropCircleTransformation()).into(pic)
         }
 
         companion object {
@@ -53,14 +54,13 @@ class MyActivityInviteAdapter(val context: Fragment, val sharedViewModel: Shared
 
     override fun onBindViewHolder(holder: InviteViewHolder, position: Int) {
         val current = getItem(position)
-        holder.bind(current.username, current.imageUrl)
+        holder.bind(current.username)
 
         holder.inviteButton.setOnClickListener {
             val builder = context.context?.let { MaterialAlertDialogBuilder(it) } ?: return@setOnClickListener
 
             builder.setMessage("Invite ${current.username} to the activity?")
                 .setPositiveButton("Yes") { dialog, which ->
-                    addToActivity(current)
                     addToNotification(current)
                 }
                 .setNegativeButton("No") { dialog, which ->
@@ -82,33 +82,15 @@ class MyActivityInviteAdapter(val context: Fragment, val sharedViewModel: Shared
         }
     }
 
-    private fun addToActivity(user: User) {
-        val db = Firebase.firestore
-
-        val union = hashMapOf<String, Any>(
-            "participant" to FieldValue.arrayUnion(user.username)
-        )
-
-        db.document("activity/$doc")
-            .update(union)
-            .addOnSuccessListener {
-                Log.d("Main", "Invited to firestore")
-            }
-            .addOnFailureListener {
-                Log.d("Main", it.message.toString())
-            }
-
-    }
-
     private fun addToNotification(user: User) {
-        val sender = sharedViewModel.currentUser.value ?: return
 
-        val noti = Notification(sender.imageUrl,
-                                "${sender.username} invited to join an activity",
-                                false,
+        val docId = activityDetailViewModel.currentActivity!!.docId
+
+        val noti = Notification(currentUser.username,
+                                Notification.INVITE,
                                 null,
                                 Timestamp.now().toDate().time,
-                                doc)
+                                docId)
 
         val rtdb = Firebase.database
 
@@ -121,16 +103,10 @@ class MyActivityInviteAdapter(val context: Fragment, val sharedViewModel: Shared
                 Log.d("Main", it.message.toString())
             }
 
-        val participant = Participant(user.imageUrl, user.displayName, user.username, doc)
 
-        rtdb.getReference().child("participant/$doc").push()
-            .setValue(participant)
-            .addOnSuccessListener {
-                Log.d("Main", "added participant to database")
-            }
-            .addOnFailureListener {
-                Log.d("Main", it.message.toString())
-            }
+        val participant = Participant(user.nickname, user.username)
+
+        activityDetailViewModel.addActivity(participant, docId)
     }
 
 

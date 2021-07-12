@@ -1,6 +1,7 @@
 package com.example.producity.ui.myactivity.myactivitydetail.invite
 
 import android.app.Dialog
+import android.app.Service
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -14,14 +15,21 @@ import com.example.producity.models.Activity
 import com.example.producity.ui.friends.my_friends.FriendListAdapter
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
+import com.example.producity.ui.myactivity.myactivitydetail.MyActivityDetailViewModel
+import com.example.producity.ui.myactivity.myactivitydetail.MyActivityDetailViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.runBlocking
 
 class MyActivityInviteFragment(val doc: String): BottomSheetDialogFragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
+
+    private val activityDetailViewModel: MyActivityDetailViewModel by activityViewModels() {
+        MyActivityDetailViewModelFactory(ServiceLocator.provideParticipantRepository(), ServiceLocator.provideActivityRepository())
+    }
+
     private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository(), ServiceLocator.provideActivityRepository())
     }
 
     override fun setupDialog(dialog: Dialog, style: Int) {
@@ -29,9 +37,10 @@ class MyActivityInviteFragment(val doc: String): BottomSheetDialogFragment() {
 
         val recyclerView = contentView.findViewById<RecyclerView>(R.id.friend_recycle_view)
 
-        val adapter = MyActivityInviteAdapter(this, sharedViewModel, doc)
-        recyclerView.adapter = adapter
+        val currentUser = sharedViewModel.currentUser.value
 
+        val adapter = MyActivityInviteAdapter(this, currentUser!!, activityDetailViewModel)
+        recyclerView.adapter = adapter
 
         recyclerView.addItemDecoration(
             DividerItemDecoration(
@@ -44,7 +53,6 @@ class MyActivityInviteFragment(val doc: String): BottomSheetDialogFragment() {
         friendListViewModel.getAllFriends(currentUsername).observe(this) {
             adapter.submitList(it)
         }
-
 
         dialog.setContentView(contentView)
         (contentView.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))

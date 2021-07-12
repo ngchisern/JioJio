@@ -6,9 +6,13 @@ import com.example.producity.MyFirebase
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.EmailAuthCredential
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.auth.CredentialsProvider
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 
 object AuthRepository: IAuthRepository {
 
@@ -68,6 +72,29 @@ object AuthRepository: IAuthRepository {
 
         return task.isSuccessful
     }
+
+    override fun verifyPassword(pass: String): Boolean {
+        val user = Firebase.auth.currentUser!!
+        val credential = EmailAuthProvider.getCredential(user.email!!, pass)
+
+        val task = user.reauthenticate(credential)
+
+        while(!task.isComplete) {
+
+        }
+
+        return task.isSuccessful
+    }
+
+    override fun changeEmail(email: String) {
+        Firebase.auth.currentUser!!.updateEmail(email)
+    }
+
+    override fun changePassword(pass: String) {
+        Firebase.auth.currentUser!!.updatePassword(pass)
+    }
+
+
 
 
 }

@@ -12,12 +12,9 @@ import com.example.producity.R
 import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentStrangerProfileBinding
-import com.example.producity.ui.friends.ParcelableUser
 import com.example.producity.models.User
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 private const val STRANGER_PROFILE = "strangerProfile"
 
@@ -28,12 +25,11 @@ private const val STRANGER_PROFILE = "strangerProfile"
  */
 class StrangerProfileFragment : Fragment() {
 
-    private lateinit var parcelableStranger: ParcelableUser
     private lateinit var stranger: User
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository(), ServiceLocator.provideActivityRepository())
     }
 
     private var _binding: FragmentStrangerProfileBinding? = null
@@ -42,17 +38,16 @@ class StrangerProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            parcelableStranger = it.getParcelable(STRANGER_PROFILE)!!
+            stranger = it.getParcelable(STRANGER_PROFILE)!!
         }
         stranger = User(
-            parcelableStranger.username,
-            parcelableStranger.uid,
-            parcelableStranger.displayName,
-            parcelableStranger.telegramHandle,
-            parcelableStranger.gender,
-            parcelableStranger.birthday,
-            parcelableStranger.bio,
-            parcelableStranger.imageUrl
+            stranger.username,
+            stranger.uid,
+            stranger.nickname,
+            stranger.telegramHandle,
+            stranger.gender,
+            stranger.birthday,
+            stranger.bio
         )
     }
 
@@ -96,14 +91,13 @@ class StrangerProfileFragment : Fragment() {
 
     private fun loadStrangerProfile() {
         val imageView = binding.strangerProfilePic
-        val imageUrl = stranger.imageUrl
-        Picasso.get().load(imageUrl).transform(CropCircleTransformation()).into(imageView)
+        //Picasso.get().load(imageUrl).transform(CropCircleTransformation()).into(imageView)
 
-        binding.strangerDisplayName.text = stranger.displayName
+        binding.strangerDisplayName.text = stranger.nickname
         binding.strangerUsername.text = stranger.username
         binding.strangerTelegramHandle.text = stranger.telegramHandle
-        binding.strangerGender.text = stranger.gender
-        binding.strangerBirthday.text = stranger.birthday
+        //binding.strangerGender.text = stranger.gender
+        //binding.strangerBirthday.text = stranger.birthday
         binding.strangerBio.text = stranger.bio
     }
 

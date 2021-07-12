@@ -14,6 +14,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import java.util.*
 
 private const val TAG = "UserRemoteDataSource"
 
@@ -25,18 +26,16 @@ class UserRemoteDataSource : IUserRemoteDataSource {
 
     override fun createUser(username: String, uid: String) {
         val user = User(
-            username, uid, "",
-            "", "", "", "",
-            RegisterActivity.BLANK_PROFILE_IMG_URL
+            username, uid
         )
 
         db.document("users/$username")
             .set(user)
-            .addOnSuccessListener { documentReference ->
+            .addOnSuccessListener {
                 Log.d("Main", "Successfully sign up!")
             }
             .addOnFailureListener { e ->
-                Log.d("Main", "Error adding document", e)
+                Log.d("Main", "Error adding document")
             }
     }
 
@@ -50,16 +49,15 @@ class UserRemoteDataSource : IUserRemoteDataSource {
 
     }
 
-    override suspend fun checkUserExists(username: String): Boolean {
+    override suspend fun checkUserExists(username: String): User? {
         return try {
             val user = db.document("users/$username")
                 .get()
                 .await()
-                .data
-            user !== null // return true if user exists
+                .toObject(User::class.java)
+            user // return true if user exists
         } catch (e: Exception) {
-            Log.d(TAG, e.toString())
-            false
+            null
         }
     }
 
@@ -141,12 +139,11 @@ class UserRemoteDataSource : IUserRemoteDataSource {
     }
 
     override suspend fun sendFriendRequest(sender: User, receiverUsername: String) {
-        val noti = Notification(sender.imageUrl,
-            "${sender.username} sent you a friend request",
-            true,
+        val noti = Notification(sender.username,
+            Notification.FRIENDREQUEST,
             null,
             Timestamp.now().toDate().time,
-            sender.username)
+            null)
 
         rtdb.getReference().child("notification/$receiverUsername").push()
             .setValue(noti)
@@ -248,12 +245,10 @@ class UserRemoteDataSource : IUserRemoteDataSource {
     ): User {
         val ref = storage.getReference("/profile_pictures/${userProfile.username}")
 
-        var newUrl = userProfile.imageUrl // original url, to be updated later
-
         val editedUserProfile = User(
             userProfile.username,
             userProfile.uid,
-            userProfile.displayName,
+            userProfile.nickname,
             userProfile.telegramHandle,
             userProfile.gender,
             userProfile.birthday,
@@ -264,11 +259,6 @@ class UserRemoteDataSource : IUserRemoteDataSource {
             .addOnSuccessListener {
                 Log.d(TAG, "Successfully uploaded image at: ${it.metadata?.path}")
                 ref.downloadUrl.addOnSuccessListener {
-                    newUrl = it.toString()
-                    Log.d(TAG, "Downloaded new image url: $newUrl")
-
-                    editedUserProfile.imageUrl = newUrl
-
                     val currUsername = editedUserProfile.username
                     // Update the user profile details
                     db.collection("users")

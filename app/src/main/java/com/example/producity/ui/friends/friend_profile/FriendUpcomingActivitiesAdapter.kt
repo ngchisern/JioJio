@@ -36,7 +36,7 @@ class FriendUpcomingActivitiesAdapter(private val context: Fragment) :
             val timeFormat: DateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
             val dateFormat: DateFormat = SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault())
 
-            Picasso.get().load(current.imageUrl).into(image)
+            //Picasso.get().load(current.imageUrl).into(image)
             title.text = current.title
             time.text = timeFormat.format(current.date)
             date.text = dateFormat.format(current.date)

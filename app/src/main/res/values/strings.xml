@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ProduCity</string>
+    <string name="app_name">JioJio</string>
     <string name="login">Login</string>
     <string name="login_email">Email address</string>
     <string name="login_password">Password</string>
@@ -13,10 +13,14 @@
 
     <string name="title_explore">Explore</string>
     <string name="title_myactivity">My Activity</string>
-    <string name="title_friends">Friends</string>
-    <string name="title_user">User</string>
+    <string name="title_addEvent">Add Event</string>
+    <string name="title_chat">Chat</string>
     <string name="title_profile">Profile</string>
 
+    <string name="title_friends">Friends</string>
+
+
+    <string name="title_user">User</string>
     <string name="task_title">Task:</string>
     <string name="deadline_title">Deadline:</string>
     <string name="start_date_title">Start date:</string>

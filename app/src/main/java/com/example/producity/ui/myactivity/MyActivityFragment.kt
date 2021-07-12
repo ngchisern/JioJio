@@ -1,7 +1,7 @@
 package com.example.producity.ui.myactivity
 
-import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,24 +10,35 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.example.producity.LoginActivity
 import com.example.producity.R
+import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentHomeBinding
-import com.google.android.material.tabs.TabLayout
+import com.example.producity.models.Activity
+import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import com.squareup.picasso.Picasso
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MyActivityFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
 
+    private val sharedViewModel: SharedViewModel by activityViewModels()
+
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
     private var _binding: FragmentHomeBinding? = null
+
+    private var timer = Timer()
 
 
     // This property is only valid between onCreateView and
@@ -39,69 +50,59 @@ class MyActivityFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        //_binding = FragmentHomeBinding.inflate(inflater, container, false)
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
-
-
-        val adapter = MyActivityAdapter(this, myActivityViewModel)
-        _binding?.scheduleRecycleView?.adapter = adapter
-        binding.scheduleRecycleView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         val root: View = binding.root
 
         auth = Firebase.auth
         db = Firebase.firestore
 
-        _binding?.topAppBar?.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.sign_out -> {
-                    Log.d("Main", "sign out")
-                    auth.signOut()
-                    val intent = Intent(activity, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                    true
-                }
-                else -> false
-            }
-        }
+        val upcomingAdapter = MyActivityAdapter(this, myActivityViewModel)
+        val recyclerView = binding.scheduleRecycleView
+
+        recyclerView.adapter = upcomingAdapter
+        recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         myActivityViewModel.myActivityList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+            if(it.isEmpty()) return@observe
+
+            upcomingAdapter.submitList(it.subList(1, it.size))
         }
 
 
-        binding.tabbar.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener  {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                Log.d("Main", "clicked tab")
-                when(tab?.position) {
-                    0 -> {
-                        adapter.submitList(myActivityViewModel.myActivityList.value)
-                        myActivityViewModel.isUpcoming = true
-                        Log.d("Main", "clicked upcoming tab")
-                    }
-                    1 -> {
-                        adapter.submitList(myActivityViewModel.pastActivityList.value)
-                        myActivityViewModel.isUpcoming = false
-                        Log.d("Main", "clicked  past tab")
-                    }
+        val viewPager = binding.homePager
+        val pagerAdapter = PagerAdapter(this)
+        viewPager.adapter = pagerAdapter
+
+        val tabLayout = binding.tabLayout
+
+        myActivityViewModel.myActivityList.observe(viewLifecycleOwner) {
+            pagerAdapter.submitList(it)
+        }
+
+        var count = 0
+        timer = Timer()
+        timer.schedule(object: TimerTask(){
+
+            override fun run() {
+                // handle empty count
+                if(pagerAdapter.itemCount == 0) return
+
+                requireActivity().runOnUiThread {
+                    viewPager.setCurrentItem(count%pagerAdapter.itemCount)
                 }
+
+                count ++
             }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
+        },5000, 5000)
 
-            }
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
 
-            override fun onTabReselected(tab: TabLayout.Tab?) {
+        }.attach()
 
-            }
 
-        })
 
-        Log.d("TEST", "created")
-        val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
-        floatingButton?.isVisible = true
 
         val bottomNav: View? = activity?.findViewById(R.id.nav_view)
         bottomNav?.isVisible = true
@@ -111,47 +112,91 @@ class MyActivityFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         _binding?.apply {
             hViewModel = myActivityViewModel
             lifecycleOwner = viewLifecycleOwner
         }
 
+        updateLayout()
+        listen()
 
     }
-
 
     override fun onDestroyView() {
+        timer.cancel()
         super.onDestroyView()
-        _binding = null
     }
 
-    /*
-    class DatePickerFragment(val viewModel: MyActivityViewModel) : DialogFragment(),
-        DatePickerDialog.OnDateSetListener {
+    private fun updateLayout() {
 
-        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-            // Use the current date as the default date in the picker
-            val c = Calendar.getInstance()
-            val year = c.get(Calendar.YEAR)
-            val month = c.get(Calendar.MONTH)
-            val day = c.get(Calendar.DAY_OF_MONTH)
+        sharedViewModel.userImage.observe(viewLifecycleOwner) { url ->
+            if(url == "") return@observe
 
-            // Create a new instance of DatePickerDialog and return it
-            return DatePickerDialog(this.requireContext(), this, year, month, day)
+            Picasso.get().load(url).into(binding.profileImage)
+
         }
 
-        @RequiresApi(Build.VERSION_CODES.O)
-        override fun onDateSet(view: DatePicker, year: Int, month: Int, day: Int) {
-            viewModel.updateDate(year, month + 1, day)
+        myActivityViewModel.myActivityList.observe(viewLifecycleOwner) {
+            if(it.isEmpty()) return@observe
+
+            val subject = it[0]
+            updatePrimaryActivity(subject)
+
+        }
+
+    }
+
+    private fun listen() {
+        binding.homePrimaryEvent.setOnClickListener {
+            val action = MyActivityFragmentDirections.actionNavigationHomeToScheduleDetailFragment(myActivityViewModel.getActivity(0))
+            findNavController().navigate(action)
+        }
+
+        binding.welcomeNoti.setOnClickListener {
+            val action = MyActivityFragmentDirections.actionNavigationMyActivityToNotificationFragment()
+            findNavController().navigate(action)
         }
     }
 
-    fun popTimePicker() {
-        val newFragment = DatePickerFragment(myActivityViewModel)
-        newFragment.show(requireFragmentManager(), "dialog")
-    }
+    private fun updatePrimaryActivity(subject: Activity) {
+        binding.apply {
+            //primaryCountdownText.setText()
+            primaryTitle.text = subject.title
+            primaryDescription.text = subject.description
+            primaryLocation.text = subject.location
 
-     */
+            val format = SimpleDateFormat("d MMM yyyy hh:mm aaa", Locale.getDefault())
+            primaryTime.text = format.format(subject.date)
+
+            val difference = subject.date.time - Timestamp.now().toDate().time
+            val timeFrame: Long
+
+            if(difference < 86400000) {
+                timeFrame = 3600000
+            } else {
+                timeFrame = 86400000
+            }
+
+            val countDownTimer = object: CountDownTimer(difference, timeFrame) {
+                override fun onTick(millisUntilFinished: Long) {
+                    if(timeFrame == 3600000L) {
+                        val hour = millisUntilFinished / timeFrame % 24
+                        primaryCountdownText.text = "In about $hour hours"
+                    } else {
+                        val day = millisUntilFinished / timeFrame
+                        primaryCountdownText.text = "In about $day days"
+                    }
+                }
+
+                override fun onFinish() {
+                    primaryCountdownText.text = "happening now"
+                }
+
+            }
+
+            countDownTimer.start()
+
+        }
+    }
 
 }

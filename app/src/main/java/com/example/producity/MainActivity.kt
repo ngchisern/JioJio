@@ -3,6 +3,7 @@ package com.example.producity
 import android.app.TimePickerDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -10,17 +11,22 @@ import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.producity.databinding.ActivityMainBinding
 import com.example.producity.models.Activity
 import com.example.producity.models.User
+import com.example.producity.ui.chatlist.ChatListViewModel
 import com.example.producity.ui.explore.ExploreViewModel
+import com.example.producity.ui.explore.ExploreViewModelFactory
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
 import com.example.producity.ui.myactivity.MyActivityFragmentDirections
@@ -35,6 +41,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import com.squareup.picasso.Picasso
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -50,14 +58,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
 
     private val sharedViewModel: SharedViewModel by viewModels()
-    private val friendListViewModel: FriendListViewModel by viewModels {
-        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
-    }
     private val myActivityViewModel: MyActivityViewModel by viewModels()
-    private val exploreViewModel: ExploreViewModel by viewModels()
+
+    private val chatListViewModel: ChatListViewModel by viewModels()
+
+    private val exploreViewModel: ExploreViewModel by viewModels() {
+        ExploreViewModelFactory(ServiceLocator.provideParticipantRepository(), ServiceLocator.provideActivityRepository())
+    }
 
     private lateinit var binding: ActivityMainBinding
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,35 +78,13 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_myActivity, R.id.navigation_explore,
-                R.id.navigation_friends, R.id.navigation_profile
-            )
-        )
-
-        //setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        binding.floatingActionButton.setOnClickListener {
-            showDialog()
-        }
 
         auth = Firebase.auth
         db = Firebase.firestore
 
-        val a = Timestamp.now().toDate().time
-        Log.d("Main", a.toString())
-
         verifyUser()
     }
-
-    var dialogView: View? = null
-    var selectedPhoto: Uri? = null
-
-
 
     private fun verifyUser() {
         val currentUser = auth.currentUser
@@ -106,8 +93,6 @@ class MainActivity : AppCompatActivity() {
             quit()
             return
         }
-
-        Log.d("Main", currentUser.uid)
 
         db.collection("users")
             .whereEqualTo("uid", currentUser.uid)
@@ -123,9 +108,9 @@ class MainActivity : AppCompatActivity() {
                 it.forEach { doc ->
                     val temp = doc.toObject(User::class.java)
                     sharedViewModel.updateUser(temp)
-                    Log.d("Main", "updated username")
                     val username = temp.username
 
+                    sharedViewModel.loadUserImage()
 
                     db.collection("users/$username/friends")
                         .orderBy("username")
@@ -153,21 +138,7 @@ class MainActivity : AppCompatActivity() {
 
                             val list = value?.toObjects(Activity::class.java) ?: return@addSnapshotListener
                             myActivityViewModel.updateList(list)
-                        }
-
-                    db.collection("activity")
-                        .whereArrayContains("participant", username)
-                        .orderBy("date", Query.Direction.DESCENDING)
-                        .startAt(Timestamp.now())
-                        .limit(15)
-                        .get()
-                        .addOnSuccessListener {
-                            Log.d(TAG, "updated ${it.size()} activities")
-                            val list = it.toObjects(Activity::class.java)
-                            myActivityViewModel.updatePastList(list)
-                        }
-                        .addOnFailureListener {
-                            Log.d(TAG, it.message.toString())
+                            chatListViewModel.updateList(list)
                         }
 
                     db.collection("activity")
@@ -192,11 +163,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
-    }
-
-    private fun showDialog() {
-        val action = MyActivityFragmentDirections.actionNavigationMyActivityToAddActivityFragment()
-        findNavController(R.id.nav_host_fragment_activity_main).navigate(action)
     }
 
 

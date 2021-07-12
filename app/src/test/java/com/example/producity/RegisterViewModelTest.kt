@@ -6,8 +6,6 @@ import com.example.producity.models.source.FakeTestUserRepository
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 

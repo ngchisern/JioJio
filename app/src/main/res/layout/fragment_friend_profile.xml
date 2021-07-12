@@ -1,275 +1,316 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="match_parent">
+
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".ui.friends.friend_profile.FriendProfileFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar_layout"
+    <ImageView
+        android:id="@+id/navigate_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/ic_baseline_arrow_back_24"
+        android:layout_margin="20dp"
+        android:elevation="2dp"/>
+
+    <ImageView
+        android:id="@+id/profile_banner"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="16:9"
+        android:scaleType="fitXY"
+        android:src="@color/light_blue_600"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="130dp"
+        android:src="@color/light_blue_600"
+        app:civ_border_color="@color/black"
+        app:civ_border_width="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/profile_banner"
+        app:layout_constraintTop_toBottomOf="@id/profile_banner"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/action_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        android:backgroundTint="#e3f2fd"
+        app:cardCornerRadius="5dp"
+        app:layout_constraintBottom_toBottomOf="@id/profile_image"
+        app:layout_constraintEnd_toEndOf="@id/more_actions">
+
+        <TextView
+            android:id="@+id/main_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="15dp"
+            android:paddingVertical="10dp"
+            android:text="Send message"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <ImageView
+        android:id="@+id/more_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/action_card"
+        app:layout_constraintBottom_toBottomOf="@id/action_card"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_baseline_more_vert_24"/>
+
+    <TextView
+        android:id="@+id/profile_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:text="Alex Lim Ah Beng"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_image" />
+
+    <TextView
+        android:id="@+id/profile_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:paddingBottom="10dp"
+        android:text="Alex21"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_nickname" />
+
+    <LinearLayout
+        android:id="@+id/rating_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/profile_username"
+        app:layout_constraintStart_toStartOf="@id/profile_username">
+
+        <TextView
+            android:id="@+id/profile_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5.0"
+            android:layout_marginEnd="5dp"/>
+
+        <RatingBar
+            android:id="@+id/profile_stars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/ratingBarStyleSmall"
+            android:numStars="5"
+            android:layout_marginTop="2dp"
+            android:stepSize="0.1"
+            android:isIndicator="true"
+            />
+
+        <TextView
+            android:id="@+id/profile_totalreview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(13)"
+            android:layout_marginStart="5dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#bdbdbd"
+        app:layout_constraintTop_toBottomOf="@id/rating_layout" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:liftOnScroll="false">
+        app:layout_constraintTop_toBottomOf="@id/view"
+        android:background="#fafafa"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/top_app_bar"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BIO"
+            android:textStyle="bold"/>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/holo_purple"
-            app:layout_scrollFlags="noScroll"
-            app:menu="@menu/friend_profile_top_app_bar" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <TextView
+                android:id="@+id/profile_bio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Just Beat The Devil Out of It"
+                android:padding="10dp"/>
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="62dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        </com.google.android.material.card.MaterialCardView>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="USER INFO"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"/>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/friend_profile_pic"
-                android:layout_width="@dimen/profile_pic_height"
-                android:layout_height="@dimen/profile_pic_height"
-                android:layout_margin="@dimen/profile_margin_start"
-                android:scaleType="centerCrop"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearance="@style/ShapeAppearance.App.CircleImageView"
-                app:srcCompat="@drawable/ic_baseline_person_24_2" />
-
-            <TextView
-                android:id="@+id/friend_display_name"
-                android:layout_width="220dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start_pic_text"
-                android:textColor="@color/black"
-                android:textSize="25sp"
-                app:layout_constraintStart_toEndOf="@id/friend_profile_pic"
-                app:layout_constraintTop_toTopOf="@id/friend_profile_pic"
-                tools:text="Lawrence Wong Xiao Ming" />
-
-            <TextView
-                android:id="@+id/username_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start_pic_text"
-                android:layout_marginTop="@dimen/profile_margin_top_username_displayname"
-                android:text="@string/username_title"
-                android:textColor="@color/grey"
-                android:textSize="13sp"
-                app:layout_constraintStart_toEndOf="@id/friend_profile_pic"
-                app:layout_constraintTop_toBottomOf="@id/friend_display_name" />
-
-            <TextView
-                android:id="@+id/friend_username"
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_marginTop="@dimen/profile_margin_top_username_displayname"
-                android:textColor="@color/black"
-                android:textSize="13sp"
-                app:layout_constraintStart_toEndOf="@id/username_title"
-                app:layout_constraintTop_toBottomOf="@id/friend_display_name"
-                tools:text="username12345" />
-
-
-            <TextView
-                android:id="@+id/telegram_handle_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top"
-                android:text="@string/telegram_handle_title"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/profile_title_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/friend_profile_pic" />
-
-            <TextView
-                android:id="@+id/friend_telegram_handle"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top_title_content"
-                android:textColor="@color/black"
-                android:textSize="@dimen/profile_content_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/telegram_handle_title"
-                tools:text="tele_handle" />
-
-            <ImageButton
-                android:id="@+id/telegram_logo_button"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/telegram_logo"
-                app:layout_constraintBottom_toBottomOf="@id/friend_telegram_handle"
-                app:layout_constraintStart_toEndOf="@id/friend_telegram_handle" />
-
-            <View
-                android:id="@+id/telegram_handle_line"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top_content_line"
-                android:layout_marginEnd="@dimen/profile_margin_start"
-                android:background="@color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/friend_telegram_handle" />
+                android:layout_height="wrap_content">
 
+                <ImageView
+                    android:id="@+id/gender_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/ic_baseline_person_24"/>
 
-            <TextView
-                android:id="@+id/gender_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top"
-                android:text="@string/gender_title"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/profile_title_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/telegram_handle_line" />
+                <TextView
+                    android:id="@+id/profile_gender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Male"
+                    android:layout_toEndOf="@id/gender_icon"
+                    android:padding="12dp"/>
 
-            <TextView
-                android:id="@+id/friend_gender"
-                android:layout_width="340dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top_title_content"
-                android:textColor="@color/black"
-                android:textSize="@dimen/profile_content_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gender_title"
-                tools:text="Male" />
+                <ImageView
+                    android:id="@+id/cake_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@id/gender_icon"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/ic_baseline_cake_24"/>
 
-            <View
-                android:id="@+id/gender_line"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top_content_line"
-                android:layout_marginEnd="@dimen/profile_margin_start"
-                android:background="@color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/friend_gender" />
+                <TextView
+                    android:id="@+id/profile_birthday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="21 Jun 2000"
+                    android:layout_below="@id/gender_icon"
+                    android:layout_toEndOf="@id/cake_icon"
+                    android:padding="12dp"/>
 
+                <ImageView
+                    android:id="@+id/location_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@id/cake_icon"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/ic_baseline_location_on_24"/>
 
-            <TextView
-                android:id="@+id/birthday_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top"
-                android:text="@string/birthday_title"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/profile_title_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gender_line" />
+                <TextView
+                    android:id="@+id/profile_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Singapore"
+                    android:layout_below="@id/cake_icon"
+                    android:layout_toEndOf="@id/location_icon"
+                    android:padding="12dp"/>
 
-            <TextView
-                android:id="@+id/friend_birthday"
-                android:layout_width="340dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top_title_content"
-                android:textColor="@color/black"
-                android:textSize="@dimen/profile_content_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/birthday_title"
-                tools:text="2000-01-01" />
+            </RelativeLayout>
 
-            <View
-                android:id="@+id/birthday_line"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top_content_line"
-                android:layout_marginEnd="@dimen/profile_margin_start"
-                android:background="@color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/friend_birthday" />
+        </com.google.android.material.card.MaterialCardView>
 
+        <TextView
+            android:id="@+id/next_event_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NEXT EVENT"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:visibility="gone"/>
 
-            <TextView
-                android:id="@+id/bio_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top"
-                android:text="@string/bio_title"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/profile_title_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/birthday_line" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/next_event_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:cardCornerRadius="10dp"
+            android:visibility="gone">
 
-            <TextView
-                android:id="@+id/friend_bio"
-                android:layout_width="340dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top_title_content"
-                android:textColor="@color/black"
-                android:textSize="@dimen/profile_content_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/bio_title"
-                tools:text="The user's bio..." />
-
-            <View
-                android:id="@+id/bio_line"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top_content_line"
-                android:layout_marginEnd="@dimen/profile_margin_start"
-                android:background="@color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/friend_bio" />
-
-
-            <Button
-                android:id="@+id/all_friends_button"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top"
-                android:layout_marginEnd="@dimen/profile_margin_start"
-                android:backgroundTint="@color/purple_200"
-                android:text="@string/title_friends"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/bio_line" />
+                android:background="@color/white">
 
-            <TextView
-                android:id="@+id/friend_upcoming_activities_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top"
-                android:text="Upcoming activities"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/profile_title_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/all_friends_button" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/profile_activity_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/friend_upcoming_activities_recycler_view"
-                android:layout_width="340dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/profile_margin_start"
-                android:layout_marginTop="@dimen/profile_margin_top_title_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/friend_upcoming_activities_title" />
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintDimensionRatio="16:9"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_launcher_background"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/profile_activity_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/profile_activity_image"
+                    android:text="Group Trekking"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/profile_activity_countdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/profile_activity_name"
+                    android:layout_marginStart="10dp"
+                    android:text="In about 5 days"
+                    android:layout_marginBottom="10dp"/>
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</ScrollView>

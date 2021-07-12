@@ -19,7 +19,7 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ExploreListAdapter(private val context: Fragment, private val exploreViewModel: ExploreViewModel) :
+class ExploreListAdapter(private val context: Fragment) :
     ListAdapter<Activity, ExploreListAdapter.ExploreViewHolder>(TASKS_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExploreViewHolder {
@@ -35,8 +35,8 @@ class ExploreListAdapter(private val context: Fragment, private val exploreViewM
         val dayFormat: DateFormat = SimpleDateFormat("d", Locale.getDefault())
         val monthFormat: DateFormat = SimpleDateFormat("MMM", Locale.getDefault())
 
-        Picasso.get().load(current.imageUrl).into(holder.imageView)
-        Picasso.get().load(current.ownerImageUrl).into(holder.ownerImage)
+        //Picasso.get().load(current.imageUrl).into(holder.imageView)
+        //Picasso.get().load(current.ownerImageUrl).into(holder.ownerImage)
 
         holder.title.text = current.title
         holder.owner.text = current.owner
@@ -50,7 +50,7 @@ class ExploreListAdapter(private val context: Fragment, private val exploreViewM
         }
 
         holder.itemView.findViewById<MaterialCardView>(R.id.my_activity_card).setOnClickListener {
-            val action = ExploreFragmentDirections.actionNavigationExploreToExploreDetailFragment(position)
+            val action = ExploreFragmentDirections.actionNavigationExploreToExploreDetailFragment(current)
             context.findNavController().navigate(action)
         }
 

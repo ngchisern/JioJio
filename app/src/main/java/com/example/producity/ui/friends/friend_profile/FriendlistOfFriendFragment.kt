@@ -27,7 +27,7 @@ class FriendlistOfFriendFragment : Fragment() {
         FriendlistOfFriendViewModelFactory(ServiceLocator.provideUserRepository())
     }
     private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository(), ServiceLocator.provideActivityRepository())
     }
 
     private var _binding: FragmentFriendlistOfFriendBinding? = null

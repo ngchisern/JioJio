@@ -1,10 +1,12 @@
 package com.example.producity.models.source.remote
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.example.producity.MyFirebase
 import com.example.producity.models.Activity
 import com.example.producity.models.User
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -12,7 +14,7 @@ import kotlinx.coroutines.tasks.await
 
 private const val TAG = "ActivityDataSource"
 
-object ActivityRemoteDataSource: IActivityRemoteDataSource {
+class ActivityRemoteDataSource: IActivityRemoteDataSource {
 
     private val db by lazy { MyFirebase.db }
 
@@ -32,31 +34,26 @@ object ActivityRemoteDataSource: IActivityRemoteDataSource {
         }
     }
 
-    override fun fetchPastActivity(username: String): List<Activity> {
-        var list: List<Activity> = listOf()
+    override fun fetchPastActivity(username: String): MutableLiveData<List<Activity>> {
 
-        val promise = db.collection("activity")
+        val list = MutableLiveData<List<Activity>>(listOf())
+
+        db.collection("activity")
             .whereArrayContains("participant", username)
             .orderBy("date", Query.Direction.DESCENDING)
             .startAt(Timestamp.now())
-            .limit(15)
-            .addSnapshotListener { value, error ->
-                if(error != null) {
-                    return@addSnapshotListener
-                }
-                list = value?.toObjects(Activity::class.java) ?: return@addSnapshotListener
+            .get()
+            .addOnSuccessListener {
+                val temp = it.toObjects(Activity::class.java)
+                list.value = temp
             }
 
-        promise.run {
-            return list
-        }
+        return list
 
     }
 
-
-
     override fun manageActivity(activity: Activity) {
-        MyFirebase.db.collection("activity")
+        Firebase.firestore.collection("activity")
             .document(activity.docId)
             .set(activity)
             .addOnSuccessListener {
@@ -65,6 +62,56 @@ object ActivityRemoteDataSource: IActivityRemoteDataSource {
             .addOnFailureListener {
                 Log.d(TAG, it.toString())
             }
+    }
+
+    override fun removeParticipant(username: String, docId: String) {
+        val db = Firebase.firestore
+
+        val delete = hashMapOf<String, Any>(
+            "participant" to FieldValue.arrayRemove(username)
+        )
+
+        db.document("activity/$docId")
+            .update(delete)
+            .addOnSuccessListener {
+                Log.d("Main", "Removed from firestore")
+            }
+            .addOnFailureListener {
+                Log.d("Main", it.message.toString())
+            }
+    }
+
+    override fun addParticipant(username: String, docId: String) {
+        val union = hashMapOf<String, Any>(
+            "participant" to FieldValue.arrayUnion(username)
+        )
+
+        db.document("activity/$docId")
+            .update(union)
+            .addOnSuccessListener {
+                Log.d("Main", "DocumentSnapshot successfully updated!")
+            }
+            .addOnFailureListener {
+                Log.d("Main", it.message.toString())
+            }
+    }
+
+    override suspend fun getNextActivity(username: String): Activity {
+
+        return try {
+            val activity = db.collection("activity")
+                .whereArrayContains("participant", username)
+                .orderBy("date")
+                .startAt(Timestamp.now())
+                .get()
+                .await()
+                .documents
+                .mapNotNull { it.toObject(Activity::class.java) }
+
+            activity[0]
+        } catch (e: Exception) {
+            Activity()
+        }
     }
 
 

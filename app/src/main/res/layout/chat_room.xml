@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_chat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/view"
+        android:layout_marginBottom="7dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e0e0e0"
+        android:layout_above="@id/layout_chat_chatbox" />
+
+    <RelativeLayout
+        android:id="@+id/layout_chat_chatbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp">
+
+
+        <EditText
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/edit_chat_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/button_chat_send"
+            android:paddingVertical="5dp"
+            android:background="@android:color/transparent"
+            android:hint="Message"
+            android:inputType="textMultiLine"
+            tools:ignore="Autofill" />
+
+        <Button
+            android:id="@+id/button_chat_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="?attr/selectableItemBackground"
+            android:text="Send"
+            android:textColor="@android:color/holo_purple" />
+
+    </RelativeLayout>
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        >
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#e3f2fd"
+            app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
+            app:menu="@menu/chatroom_top_app_bar"
+            android:fitsSystemWindows="true">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/group_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_launcher_background"
+                android:layout_marginTop="10dp"
+                app:civ_border_width="1dp"
+                app:civ_border_color="#FF000000"/>
+
+            <TextView
+                android:id="@+id/group_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="Chat Room"
+                android:textAlignment="center"
+                android:layout_weight="4"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="35dp"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textStyle="bold"
+                android:textIsSelectable="false"/>
+
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+</RelativeLayout>

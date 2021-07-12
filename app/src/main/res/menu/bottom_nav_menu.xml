@@ -12,9 +12,14 @@
         android:title="@string/title_explore" />
 
     <item
-        android:id="@+id/navigation_friends"
-        android:icon="@drawable/ic_baseline_people_24"
-        android:title="@string/title_friends" />
+        android:id="@+id/navigation_addEvent"
+        android:icon="@drawable/ic_add"
+        android:title="@string/title_addEvent"/>
+
+    <item
+        android:id="@+id/navigation_chat"
+        android:icon="@drawable/ic_baseline_bubble_chart_24"
+        android:title="@string/title_chat" />
 
     <item
         android:id="@+id/navigation_profile"

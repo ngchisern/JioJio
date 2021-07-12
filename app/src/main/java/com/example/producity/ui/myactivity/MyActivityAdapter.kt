@@ -32,7 +32,7 @@ class MyActivityAdapter(val context: Fragment, val myActivityViewModel: MyActivi
             val timeFormat: DateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
             val dateFormat: DateFormat = SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault())
 
-            Picasso.get().load(current.imageUrl).into(image)
+            //Picasso.get().load(current.imageUrl).into(image)
             title.text = current.title
             time.text = timeFormat.format(current.date)
             date.text = dateFormat.format(current.date)
@@ -57,7 +57,7 @@ class MyActivityAdapter(val context: Fragment, val myActivityViewModel: MyActivi
         holder.bind(current)
 
         holder.itemView.setOnClickListener {
-            val action = MyActivityFragmentDirections.actionNavigationHomeToScheduleDetailFragment(position)
+            val action = MyActivityFragmentDirections.actionNavigationHomeToScheduleDetailFragment(current)
             context.findNavController().navigate(action)
         }
 

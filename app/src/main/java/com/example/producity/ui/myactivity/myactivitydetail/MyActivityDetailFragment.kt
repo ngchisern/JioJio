@@ -11,10 +11,13 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.producity.LoginViewModelFactory
 import com.example.producity.R
+import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.MyActivityDetailBinding
 import com.example.producity.models.Activity
@@ -42,24 +45,25 @@ class MyActivityDetailFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
-    private val myActivityDetailViewModel: MyActivityDetailViewModel by activityViewModels()
+    private val myActivityDetailViewModel: MyActivityDetailViewModel by activityViewModels() {
+        MyActivityDetailViewModelFactory(ServiceLocator.provideParticipantRepository(), ServiceLocator.provideActivityRepository())
+    }
 
     private var isOwner: Boolean = false
 
     private var _binding: MyActivityDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val db = Firebase.firestore
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val arguments = MyActivityDetailFragmentArgs.fromBundle(requireArguments())
-        val temp: Activity? = myActivityViewModel.myActivityList.value?.get(arguments.position)
+        val temp: Activity = myActivityDetailViewModel.currentActivity ?: arguments.event
 
-        isOwner = sharedViewModel.currentUser.value?.username.equals(temp?.owner)
+        isOwner = sharedViewModel.currentUser.value?.username.equals(temp.owner)
 
 
         _binding = MyActivityDetailBinding.inflate(inflater, container, false)
@@ -70,15 +74,10 @@ class MyActivityDetailFragment : Fragment() {
             binding.topAppBar.inflateMenu(R.menu.activity_top_app_bar)
         }
 
-
         val root: View = binding.root
-
 
         val bottomNav: View? = activity?.findViewById(R.id.nav_view)
         bottomNav?.isVisible = false
-
-        val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
-        floatingButton?.isVisible = false
 
         return root
 
@@ -87,34 +86,25 @@ class MyActivityDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val position = MyActivityDetailFragmentArgs.fromBundle(requireArguments()).position
-        val activity: Activity
+        val arguments = MyActivityDetailFragmentArgs.fromBundle(requireArguments())
+        val activity: Activity = myActivityDetailViewModel.currentActivity ?: arguments.event
 
-        if(myActivityViewModel.isUpcoming) {
-            activity = myActivityViewModel.myActivityList.value!!.get(position)
-            myActivityDetailViewModel.updateList(activity.docId)
-        } else {
-            activity = myActivityViewModel.pastActivityList.value!!.get(position)
-            myActivityDetailViewModel.updateList(activity.docId)
-        }
+        myActivityDetailViewModel.updateList(activity.docId)
+        myActivityDetailViewModel.setActivity(activity)
 
         val recycleView = binding.participantRecyclerView
-        //recycleView.layoutManager = object : GridLayoutManager(context, 3) {
-         //   override fun canScrollVertically(): Boolean {
-         //       return false
-          //  }
-        //}
 
         var isOne = true
 
         val manager1 = LinearLayoutManager(context, RecyclerView.HORIZONTAL,  false)
-        val adapter1 = ParticipantlAdapter(this, false, false)
+        val adapter1 = ParticipantlAdapter(this, false, false, myActivityDetailViewModel)
 
         val manager2 = LinearLayoutManager(context, RecyclerView.VERTICAL,  true)
-        val adapter2 = ParticipantlAdapter(this, true, false)
+        val adapter2 = ParticipantlAdapter(this, true, false, myActivityDetailViewModel)
 
         recycleView.layoutManager = manager1
         recycleView.adapter = adapter1
+
 
         binding.participantShow.setOnClickListener {
             if(isOne) {
@@ -136,7 +126,7 @@ class MyActivityDetailFragment : Fragment() {
         }
 
         updateLayout(activity)
-        trackListener(position)
+        trackListener(activity)
     }
 
     override fun onDestroyView() {
@@ -152,8 +142,8 @@ class MyActivityDetailFragment : Fragment() {
         val dateFormat: DateFormat = SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault())
 
         _binding?.apply {
-            Picasso.get().load(activity.imageUrl).into(activityImage)
-            Picasso.get().load(activity.ownerImageUrl).into(activityCreatorIcon)
+            //Picasso.get().load(activity.imageUrl).into(activityImage)
+            //Picasso.get().load(activity.ownerImageUrl).into(activityCreatorIcon)
             activityDetailTitle.text = activity.title
             activityDetailDate.text = dateFormat.format(activity.date)
             activityDetailTime.text = timeFormat.format(activity.date)
@@ -172,56 +162,36 @@ class MyActivityDetailFragment : Fragment() {
         }
     }
 
-    private fun trackListener(position: Int) {
-        val activity: Activity
-
-        if(myActivityViewModel.isUpcoming) {
-            activity = myActivityViewModel.myActivityList.value!!.get(position)
-        } else {
-            activity = myActivityViewModel.pastActivityList.value!!.get(position)
-        }
+    private fun trackListener(event: Activity) {
+        val activity = myActivityDetailViewModel.currentActivity!!
 
         binding.inviteButton.setOnClickListener {
-            Toast.makeText(context, "INVITE", Toast.LENGTH_SHORT).show()
             MyActivityInviteFragment(activity.docId)
                 .show(requireActivity().supportFragmentManager, "Bottom sheet Dialog Fragment")
         }
 
-        binding.logButton.setOnClickListener {
-            Toast.makeText(context, "activity log", Toast.LENGTH_SHORT).show()
-            val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToMyActivityLogFragment(position)
+        binding.chatButton.setOnClickListener {
+            val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToMyActivityLogFragment(event)
             findNavController().navigate(action)
         }
 
         binding.topAppBar.setNavigationOnClickListener {
-            val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToNavigationMyActivity()
-            findNavController().navigate(action)
+           // val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToNavigationMyActivity()
+            //findNavController().navigate(action)
+            Log.d("Main", "navigateup")
+            myActivityDetailViewModel.currentActivity = null
+            findNavController().navigateUp()
         }
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.leave -> {
-
-                    val username = sharedViewModel.currentUser.value?.username ?: return@setOnMenuItemClickListener true
-                    val delete = hashMapOf<String, Any>(
-                        "participant" to FieldValue.arrayRemove(username)
-                    )
-
-                    db.document("activity/${activity.docId}")
-                        .update(delete)
-                        .addOnSuccessListener {
-                            removeFromDatabase(activity.docId, username)
-                            Log.d("Main", "Left")
-                        }
-                        .addOnFailureListener {
-                            Log.d("Main", it.message.toString())
-                        }
-
-
+                    val username = sharedViewModel.currentUser.value!!.username
+                    myActivityDetailViewModel.removeParticipant(username)
                     true
                 }
                 R.id.manage -> {
-                    val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToMyActivityManageFragment(position)
+                    val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToMyActivityManageFragment(event)
                     findNavController().navigate(action)
                     true
                 }
@@ -229,7 +199,7 @@ class MyActivityDetailFragment : Fragment() {
                     val intent = Intent(Intent.ACTION_SEND).apply {
                         data = Uri.parse("smsto:")  // This ensures only SMS apps respond
                         putExtra("sms_body", "come and join ${activity.title}")
-                        putExtra(Intent.EXTRA_STREAM, URL(activity.imageUrl).toURI())
+                        //putExtra(Intent.EXTRA_STREAM, URL(activity.imageUrl).toURI())
                     }
                     startActivity(Intent.createChooser(intent, null))
                     true
@@ -239,27 +209,5 @@ class MyActivityDetailFragment : Fragment() {
         }
 
     }
-
-    private fun removeFromDatabase(docId: String, username: String) {
-        val rtdb = Firebase.database
-
-        rtdb.getReference("participant/$docId")
-            .addListenerForSingleValueEvent(object: ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    for(doc in snapshot.children) {
-                        if(doc.getValue(Participant::class.java)?.username.equals(username)) {
-                            doc.ref.removeValue()
-                        }
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.d("Main", "failed to read value")
-                }
-
-            })
-
-    }
-
 
 }

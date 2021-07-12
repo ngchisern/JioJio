@@ -40,11 +40,9 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class MyActivityManageFragment: Fragment() {
-    private val myActivityViewModel: MyActivityViewModel by activityViewModels()
-    private val friendViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
+    private val myActivityDetailViewModel: MyActivityDetailViewModel by activityViewModels() {
+        MyActivityDetailViewModelFactory(ServiceLocator.provideParticipantRepository(), ServiceLocator.provideActivityRepository())
     }
-    private val myActivityDetailViewModel: MyActivityDetailViewModel by activityViewModels()
 
     private var _binding: ActivityDetailManageBinding? = null
     private val binding get() = _binding!!
@@ -65,9 +63,6 @@ class MyActivityManageFragment: Fragment() {
         val bottomNav: View? = activity?.findViewById(R.id.nav_view)
         bottomNav?.isVisible = false
 
-        val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
-        floatingButton?.isVisible = false
-
         return root
 
     }
@@ -75,19 +70,12 @@ class MyActivityManageFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val position = MyActivityDetailFragmentArgs.fromBundle(requireArguments()).position
-        val activity: Activity
-
-        if(myActivityViewModel.isUpcoming) {
-            activity = myActivityViewModel.myActivityList.value!!.get(position)
-        } else {
-            activity = myActivityViewModel.pastActivityList.value!!.get(position)
-        }
+        val activity = myActivityDetailViewModel.currentActivity!!
 
         val recycleView = binding.participantRecyclerView
 
         val manager = LinearLayoutManager(context, RecyclerView.VERTICAL,  true)
-        val adapter = ParticipantlAdapter(this, true, true)
+        val adapter = ParticipantlAdapter(this, true, true, myActivityDetailViewModel)
 
         recycleView.layoutManager = manager
         recycleView.adapter = adapter
@@ -134,7 +122,7 @@ class MyActivityManageFragment: Fragment() {
         val dateFormat: DateFormat = SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault())
 
         _binding?.apply {
-            Picasso.get().load(activity.imageUrl).into(activityDetailImage)
+            //Picasso.get().load(activity.imageUrl).into(activityDetailImage)
             activityDetailTitle.setText(activity.title)
             activityDetailDate.setText(dateFormat.format(activity.date))
             activityDetailTime.setText(timeFormat.format(activity.date))
@@ -164,15 +152,7 @@ class MyActivityManageFragment: Fragment() {
     private var isPublic = true
 
     private fun listen() {
-        val position = MyActivityDetailFragmentArgs.fromBundle(requireArguments()).position
-
-        val activity: Activity
-        if(myActivityViewModel.isUpcoming) {
-            activity = myActivityViewModel.myActivityList.value!!.get(position)
-        } else {
-            activity = myActivityViewModel.pastActivityList.value!!.get(position)
-        }
-
+        val activity = myActivityDetailViewModel.currentActivity!!
 
         binding.apply {
             activityDetailImage.setOnClickListener {
@@ -180,9 +160,11 @@ class MyActivityManageFragment: Fragment() {
                 intent.type = "image/*"
                 startActivityForResult(intent, 0)
             }
+
             activityEditLock.setOnClickListener {
                  toggle()
             }
+
             activityDetailDate.setOnClickListener {
                 showDateDialog()
                 Toast.makeText(context, "Date", Toast.LENGTH_SHORT).show()
@@ -208,20 +190,6 @@ class MyActivityManageFragment: Fragment() {
             topAppBar.setOnMenuItemClickListener { menuItem ->
                 when(menuItem.itemId) {
                     R.id.done -> {
-                        val arguments = MyActivityDetailFragmentArgs.fromBundle(requireArguments())
-
-                        /*
-                        db.document("activity/${myActivityViewModel.documentIdInCharge[arguments.position]}")
-                            .update(update())
-                            .addOnSuccessListener {
-                                Log.d("Main", "Successfully Editted")
-                            }
-                            .addOnFailureListener {
-                                Log.d("Main", it.message.toString())
-                            }
-
-                         */
-
                         update()
                         Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show()
                         true
@@ -247,17 +215,14 @@ class MyActivityManageFragment: Fragment() {
     }
 
     private fun navigateBack() {
-        val arguments = MyActivityDetailFragmentArgs.fromBundle(requireArguments())
-        val action = MyActivityManageFragmentDirections.actionMyActivityManageFragmentToScheduleDetailFragment(arguments.position)
-        findNavController().navigate(action)
+        findNavController().navigateUp()
     }
 
-    private var isDateChanged = false
-    private var pyear: Int = -1
-    private var pmonth: Int = -1
-    private var pday: Int = -1
-    private var phour: Int = -1
-    private var pminute: Int = -1
+    private var pyear = -1
+    private var pmonth = -1
+    private var pday = -1
+    private var phour = -1
+    private var pminute = -1
 
     private fun showTimeDialog() {
         val mTimePicker: TimePickerDialog
@@ -282,7 +247,6 @@ class MyActivityManageFragment: Fragment() {
                     val text = "${hourOfDay % 12}:$min $stage"
 
                     binding.activityDetailTime.setText(text)
-                    isDateChanged = true
                 }
             }, hour, minute, false
         )
@@ -307,7 +271,6 @@ class MyActivityManageFragment: Fragment() {
                     val text = "$dayOfMonth/${month+1}/$year"
 
                     binding.activityDetailDate.setText(text)
-                    isDateChanged = true
                 }
             }, year, month, day
         )
@@ -315,87 +278,66 @@ class MyActivityManageFragment: Fragment() {
         datePicker.show()
     }
 
-    private fun update(): HashMap<String, Any> {
-        val map = hashMapOf<String, Any>()
-
-        val position = MyActivityDetailFragmentArgs.fromBundle(requireArguments()).position
-        val activity: Activity
-        if(myActivityViewModel.isUpcoming) {
-            activity = myActivityViewModel.myActivityList.value!!.get(position)
-        } else {
-            activity = myActivityViewModel.pastActivityList.value!!.get(position)
-        }
-
-
+    private fun update(){
+        val activity = myActivityDetailViewModel.currentActivity!!
 
         if(selectedPhoto != null) {
-            Log.d("Main", "imageUrl change")
-            //map.put("imageUrl", putToStorage())
+            val storage = Firebase.storage
+            val filename = UUID.randomUUID().toString()
+            val ref = storage.getReference("/activity_images/$filename")
+
+            ref.putFile(selectedPhoto!!)
+                .addOnSuccessListener {
+                    ref.downloadUrl.addOnSuccessListener {
+                            Log.d(MainActivity.TAG, "FileLocation: $it")
+                        }
+                        .addOnFailureListener {
+                            Log.d(MainActivity.TAG, it.message.toString())
+                        }
+                }
+
+            return
         }
 
         binding.apply {
             val title = activityDetailTitle.text.toString()
-            if(!title.equals(activity.title)) {
-                Log.d("Main", "title change")
-                map.put("title", title)
-            }
-
             val location = activityDetailLocation.text.toString()
-            if(!location.equals(activity.location) && !isVirtual) {
-                Log.d("Main", "location change")
-                map.put("location", location)
-            }
-
             val pax = activityDetailPax.text.toString().toInt()
-            if(!pax.equals(activity.pax)) {
-                Log.d("Main", "pax change $pax ${activity.pax}")
-                map.put("pax", pax)
-            }
-
             val description = activityDetailDescription.text.toString()
-            if(!description.equals(activity.description)) {
-                Log.d("Main", "dascription change")
-                map.put("description", description)
-            }
+            val date = getDate()
 
-            if(!isVirtual.equals(activity.isVirtual)) {
-                Log.d("Main", "isVirtual change")
-                map.put("isVirtual", isVirtual)
-            }
+            val updatedActivity = Activity(activity.docId, title, activity.owner,
+                isPublic, isVirtual, date, location, pax, description, activity.participant, activity.viewers)
 
-        }
-        if(!isPublic.equals(activity.isPublic)) {
-            Log.d("Main", "isPublic change")
-            map.put("isPublic", isPublic)
+            myActivityDetailViewModel.updateActivity(updatedActivity)
+            myActivityDetailViewModel.setActivity(updatedActivity)
         }
 
 
-        if(isDateChanged) {
-            Log.d("Main", "date change")
-            map.put("date", Date(pyear-1900, pmonth, pday, phour, pminute))
-        }
-
-
-        return map
     }
 
-    private fun putToStorage(): String {
-        val storage = Firebase.storage
-        val filename = UUID.randomUUID().toString()
-        val ref = storage.getReference("/activity_images/$filename")
-        var url: String = ""
+    fun getDate(): Date {
+        val date = myActivityDetailViewModel.currentActivity!!.date
+        if (pyear == -1 ) {
+            pyear = date.year
+        }
 
-        ref.putFile(selectedPhoto!!)
-            .addOnSuccessListener {
-                Log.d(MainActivity.TAG, "Successfully uploaded image: ${it.metadata?.path}")
+        if(pmonth == -1) {
+            pmonth = date.month
+        }
 
-                ref.downloadUrl.addOnSuccessListener {
-                    Log.d(MainActivity.TAG, "FileLocation: $it")
-                    url = it.toString()
-                }
-            }
+        if(pday == -1) {
+            pday = date.day
+        }
 
-        return url
+        if(phour == -1) {
+            phour = date.hours
+        }
+
+        if(pminute == -1) {
+            pminute = date.minutes
+        }
+        return Date(pyear - 1900, pmonth, pday, phour, pminute)
     }
 
 

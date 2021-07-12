@@ -1,14 +1,15 @@
 package com.example.producity.ui.profile
 
+import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,34 +19,47 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.producity.R
 import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentEditProfileBinding
 import com.example.producity.models.User
+import com.giphy.sdk.core.models.Media
+import com.giphy.sdk.core.models.enums.RatingType
+import com.giphy.sdk.ui.GPHContentType
+import com.giphy.sdk.ui.GPHSettings
+import com.giphy.sdk.ui.Giphy
+import com.giphy.sdk.ui.themes.GPHTheme
+import com.giphy.sdk.ui.themes.GridType
+import com.giphy.sdk.ui.views.GiphyDialogFragment
+import com.google.android.gms.common.api.Status
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.TypeFilter
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.AutocompleteActivity
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.coroutines.*
-import java.time.LocalDate
+import java.text.SimpleDateFormat
 import java.util.*
 
 private const val SELECT_PROFILE_PIC_REQUEST = 1
+private const val AUTOCOMPLETE_REQUEST_CODE = 2
 
-/**
- * A simple [Fragment] subclass.
- * Use the [EditProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class EditProfileFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels {
-        ProfileViewModelFactory(ServiceLocator.provideUserRepository())
+        ProfileViewModelFactory(ServiceLocator.provideUserRepository(), ServiceLocator.provideAuthRepository())
     }
 
     private lateinit var userProfile: User // current user profile
@@ -54,6 +68,7 @@ class EditProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var profilePicUri: Uri? = null // used to upload new profile picture to database
+    private var bannerUrl: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,22 +78,8 @@ class EditProfileFragment : Fragment() {
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
         val root = binding.root
 
-        // back button
-        val toolbar = binding.topAppBar
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-        toolbar.setNavigationOnClickListener {
-            activity?.onBackPressed()
-        }
-
-        binding.topAppBar.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.save_button -> {
-                    uploadImageToFirebaseStorageAndEditProfile()
-                    true
-                }
-                else -> false
-            }
-        }
+        val bottomNav: View? = activity?.findViewById(R.id.nav_view)
+        bottomNav?.isVisible = false
 
         return root
     }
@@ -94,9 +95,52 @@ class EditProfileFragment : Fragment() {
         userProfile = sharedViewModel.currentUser.value!!
 
         loadProfile()
+        listen()
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == SELECT_PROFILE_PIC_REQUEST && resultCode == RESULT_OK && data != null) {
+
+            val profilePic = data.data
+            val bitmap = MediaStore.Images.Media.getBitmap(activity?.contentResolver, profilePic)
+
+            val profilePicImageView: ImageView = binding.editProfilePic
+            profilePicImageView.setImageBitmap(bitmap)
+
+            profilePicUri = profilePic
+        }
+
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            when (resultCode) {
+                RESULT_OK -> {
+                    data?.let {
+                        val place = Autocomplete.getPlaceFromIntent(data)
+                    }
+                }
+                AutocompleteActivity.RESULT_ERROR -> {
+                    // TODO: Handle the error.
+                    data?.let {
+                        val status = Autocomplete.getStatusFromIntent(data)
+                    }
+                }
+                RESULT_CANCELED -> {
+                    // The user canceled the operation.
+                }
+            }
+            return
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun listen() {
         binding.datePicker.setOnClickListener {
-            showDatePickerDialog(view)
+            showDatePickerDialog(requireView())
         }
 
         binding.editProfilePic.setOnClickListener {
@@ -111,54 +155,84 @@ class EditProfileFragment : Fragment() {
                 SELECT_PROFILE_PIC_REQUEST
             ) // handle result in onActivityResult()
         }
-    }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == SELECT_PROFILE_PIC_REQUEST && resultCode == RESULT_OK && data != null) {
-            Log.d("EditProfileFragment", "Selected profile picture")
-
-            val profilePic = data.data
-            val bitmap = MediaStore.Images.Media.getBitmap(activity?.contentResolver, profilePic)
-
-            val profilePicImageView: ImageView = binding.editProfilePic
-            profilePicImageView.setImageBitmap(bitmap)
-
-            profilePicUri = profilePic
+        // back button
+        val toolbar = binding.topAppBar
+        toolbar.setNavigationOnClickListener {
+            activity?.onBackPressed()
         }
+
+        binding.topAppBar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.save_button -> {
+                    uploadImageToFirebaseStorageAndEditProfile()
+                    true
+                }
+                else -> false
+            }
+        }
+
+        binding.editProfileBanner.setOnClickListener {
+            showGif()
+        }
+
+
     }
 
     private fun loadProfile() {
-        binding.editDisplayName.setText(userProfile.displayName)
-        binding.username.text = userProfile.username
+        val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+
+        Picasso.get().load(sharedViewModel.userImage.value!!).into(binding.editProfilePic)
+
+        binding.editDisplayName.setText(userProfile.nickname)
         binding.editTelegramHandle.setText(userProfile.telegramHandle)
-        binding.birthday.text = userProfile.birthday
+        binding.birthday.text = dateFormat.format(userProfile.birthday)
         binding.editBio.setText(userProfile.bio)
 
-        val imageView = binding.editProfilePic
-        val imageUrl = userProfile.imageUrl
-        Picasso.get().load(imageUrl).transform(CropCircleTransformation()).into(imageView)
+        if(userProfile.latitude == -1.0 && userProfile.longitude == -1.0) {
+            binding.editLocation.setText("Not selected yet")
+        } else {
+            val geocoder = Geocoder(context, Locale.getDefault())
+            val address = geocoder.getFromLocation(userProfile.latitude, userProfile.longitude, 1)
+
+            binding.editLocation.setText("${address[0].locality}, ${address[0].countryName}")
+        }
+
+
+        Glide.with(requireContext()).load(userProfile.banner).into(binding.editProfileBanner)
     }
 
     private fun uploadImageToFirebaseStorageAndEditProfile() {
-        var profilePicUri = profilePicUri
+        val profilePicUri = profilePicUri
 
         val uid = sharedViewModel.currentUser.value!!.uid
         val displayName = binding.editDisplayName.text.toString()
-        val username = binding.username.text.toString()
         val telegramHandle = binding.editTelegramHandle.text.toString()
-        val gender = if (binding.maleButton.isChecked) "Male" else "Female"
-        val birthday = binding.birthday.text.toString()
         val bio = binding.editBio.text.toString()
+        val banner = if(bannerUrl == null) userProfile.banner else bannerUrl!!
+
+        val birthdate = if(datePickerFragment == null || datePickerFragment!!.birthdate == null)
+            sharedViewModel.currentUser.value!!.birthday else datePickerFragment!!.birthdate
+
+        val rating = sharedViewModel.currentUser.value!!.rating
+        val review = sharedViewModel.currentUser.value!!.review
+
+        val gender = when(binding.genderOptions.checkedRadioButtonId) {
+            R.id.male_button -> 0
+            R.id.female_button -> 1
+            R.id.other_button -> 2
+            else -> -1
+        }
+
+
+        val geocoder = Geocoder(context, Locale.getDefault())
+        val address = geocoder.getFromLocationName(binding.editLocation.text.toString(),1)
+        val lat = if (address.size == 0) -1.0 else address[0].latitude
+        val long = if (address.size == 0) -1.0 else address[0].longitude
 
         val editedUserProfile = User(
-            username, uid, displayName, telegramHandle, gender, birthday, bio, userProfile.imageUrl
+            userProfile.username, uid, displayName, telegramHandle, gender, birthdate!!,
+            bio, banner, rating, review, lat, long
         )
 
         if (profilePicUri == null) { // no new image selected
@@ -171,11 +245,10 @@ class EditProfileFragment : Fragment() {
                 val returnedUser = profileViewModel.uploadImageToFirebaseStorageAndEditProfile(
                     profilePicUri, editedUserProfile
                 )
-                Log.d(
-                    "EditProfileFragment",
-                    "returnedUser: $returnedUser username: ${returnedUser.username}"
-                )
+
                 sharedViewModel.currentUser.postValue(returnedUser)
+                sharedViewModel.userImage.postValue(profilePicUri.toString())
+                sharedViewModel.loadUserImage()
                 ContextCompat.getMainExecutor(context).execute {
                     showEditSuccessfulDialog()
                 }
@@ -194,14 +267,14 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun navigateToProfile() {
-        val action = EditProfileFragmentDirections.actionEditProfileFragmentToNavigationProfile()
-        findNavController().navigate(action)
+        findNavController().navigateUp()
     }
-
 
     class DatePickerFragment(private val prevView: View) :
         DialogFragment(),
         DatePickerDialog.OnDateSetListener {
+
+        var birthdate: Date? = null
 
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             // Use the current date as the default date in the picker
@@ -214,17 +287,59 @@ class EditProfileFragment : Fragment() {
             return DatePickerDialog(this.requireContext(), this, year, month, day)
         }
 
-        @RequiresApi(Build.VERSION_CODES.O)
         override fun onDateSet(view: DatePicker, year: Int, month: Int, day: Int) {
             // set the text beside the datePickerButton to show the date
-            val date = LocalDate.of(year, month + 1, day)
+            val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+            birthdate  = Date(year - 1900, month, day)
             val birthdayText = prevView.findViewById<TextView>(R.id.birthday)
-            birthdayText.text = date.toString()
+            birthdayText.text = dateFormat.format(birthdate!!)
         }
     }
 
+    private var datePickerFragment: DatePickerFragment? = null
+
     private fun showDatePickerDialog(view: View) {
-        val datePickerFragment = DatePickerFragment(view)
-        datePickerFragment.show(requireFragmentManager(), "datePicker")
+        datePickerFragment = DatePickerFragment(view)
+        datePickerFragment!!.show(requireFragmentManager(), "datePicker")
     }
+
+
+    private fun showGif() {
+        Giphy.configure(requireContext(), "SI2smNr9Iy26zs2LkuDYFbDrUbsS1qo8")
+
+        val settings = GPHSettings(GridType.waterfall, GPHTheme.Light)
+
+        settings.rating = RatingType.r
+        val gifsDialog = GiphyDialogFragment.newInstance(settings)
+        settings.showSuggestionsBar = false
+
+        gifsDialog.show(requireActivity().supportFragmentManager, "giphy_dialog")
+
+        gifsDialog.gifSelectionListener = object : GiphyDialogFragment.GifSelectionListener {
+
+            override fun didSearchTerm(term: String) {
+
+            }
+
+            override fun onDismissed(selectedContentType: GPHContentType) {
+            }
+
+            override fun onGifSelected(
+                media: Media,
+                searchTerm: String?,
+                selectedContentType: GPHContentType
+            ) {
+                val url = media.images.original!!.gifUrl
+
+                Glide.with(requireContext()).load(url).into(binding.editProfileBanner)
+                bannerUrl = url.toString()
+
+            }
+
+        }
+    }
+
+
+
+
 }

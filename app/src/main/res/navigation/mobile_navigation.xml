@@ -15,24 +15,43 @@
             android:id="@+id/action_navigation_home_to_scheduleDetailFragment"
             app:destination="@id/scheduleDetailFragment" />
         <action
-            android:id="@+id/action_navigation_myActivity_to_addActivityFragment"
-            app:destination="@id/addActivityFragment" />
+            android:id="@+id/action_navigation_myActivity_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
 
     </fragment>
 
     <fragment
         android:id="@+id/navigation_explore"
         android:name="com.example.producity.ui.explore.ExploreFragment"
-        android:label="@string/title_explore">
+        android:label="@string/title_explore"
+        tools:layout="@layout/fragment_explore">
         <action
             android:id="@+id/action_navigation_explore_to_exploreDetailFragment"
             app:destination="@id/exploreDetailFragment" />
     </fragment>
 
     <fragment
+        android:id="@+id/navigation_addEvent"
+        android:name="com.example.producity.ui.addactivity.AddActivityFragment"
+        android:label="@string/title_addEvent"
+        tools:layout="@layout/add_activity">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_chat"
+        android:name="com.example.producity.ui.chatlist.ChatListFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/chat_list" >
+        <action
+            android:id="@+id/action_navigation_chat_to_myActivityLogFragment"
+            app:destination="@id/myActivityLogFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/navigation_friends"
         android:name="com.example.producity.ui.friends.my_friends.FriendListFragment"
-        android:label="fragment_notifications"
+        android:label="fragment_friends"
         tools:layout="@layout/fragment_friend_list" >
         <action
             android:id="@+id/action_friendListFragment_to_friendProfileFragment"
@@ -42,10 +61,11 @@
     <fragment
         android:id="@+id/friendProfileFragment"
         android:name="com.example.producity.ui.friends.friend_profile.FriendProfileFragment"
-        android:label="FriendProfileFragment" >
+        android:label="FriendProfileFragment"
+        tools:layout="@layout/fragment_friend_profile">
         <argument
             android:name="friendProfile"
-            app:argType="com.example.producity.ui.friends.ParcelableUser" />
+            app:argType="com.example.producity.models.User" />
         <action
             android:id="@+id/action_friendProfileFragment_to_friendlistOfFriendFragment"
             app:destination="@id/friendlistOfFriendFragment" />
@@ -57,6 +77,15 @@
         <action
             android:id="@+id/action_friendProfileFragment_to_scheduleDetailFragment"
             app:destination="@id/scheduleDetailFragment" />
+        <action
+            android:id="@+id/action_friendProfileFragment_to_reportUserFragment"
+            app:destination="@id/reportUserFragment" />
+        <action
+            android:id="@+id/action_friendProfileFragment_to_reviewUserFragment"
+            app:destination="@id/reviewUserFragment" />
+        <action
+            android:id="@+id/action_friendProfileFragment_to_reviewListFragment"
+            app:destination="@id/reviewListFragment" />
     </fragment>
 
     <fragment
@@ -82,26 +111,23 @@
         tools:layout="@layout/fragment_stranger_profile" >
         <argument
             android:name="strangerProfile"
-            app:argType="com.example.producity.ui.friends.ParcelableUser" />
+            app:argType="com.example.producity.models.User" />
     </fragment>
 
     <fragment
         android:id="@+id/scheduleDetailFragment"
         android:name="com.example.producity.ui.myactivity.myactivitydetail.MyActivityDetailFragment"
-        android:label="fragment_schedule_detail_list">
-        <argument
-            android:name="position"
-            app:argType="integer"
-            android:defaultValue="-1" />
-        <action
-            android:id="@+id/action_scheduleDetailFragment_to_navigation_myActivity"
-            app:destination="@id/navigation_myActivity" />
+        android:label="fragment_schedule_detail_list"
+        tools:layout="@layout/my_activity_detail">
         <action
             android:id="@+id/action_scheduleDetailFragment_to_myActivityManageFragment"
             app:destination="@id/myActivityManageFragment" />
         <action
             android:id="@+id/action_scheduleDetailFragment_to_myActivityLogFragment"
             app:destination="@id/myActivityLogFragment" />
+        <argument
+            android:name="event"
+            app:argType="com.example.producity.models.Activity" />
     </fragment>
 
     <fragment
@@ -113,78 +139,117 @@
             android:id="@+id/action_navigation_profile_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
         <action
-            android:id="@+id/action_navigation_profile_to_notificationFragment"
-            app:destination="@id/notificationFragment" />
+            android:id="@+id/action_navigation_profile_to_navigation_friends"
+            app:destination="@id/navigation_friends" />
+        <action
+            android:id="@+id/action_navigation_profile_to_editAccountFragment"
+            app:destination="@id/editAccountFragment" />
+        <action
+            android:id="@+id/action_navigation_profile_to_memoryFragment"
+            app:destination="@id/memoryFragment" />
+        <action
+            android:id="@+id/action_navigation_profile_to_reviewListFragment"
+            app:destination="@id/reviewListFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="com.example.producity.ui.profile.EditProfileFragment"
         android:label="fragment_edit_profile"
-        tools:layout="@layout/fragment_edit_profile" >
-        <action
-            android:id="@+id/action_editProfileFragment_to_navigation_profile"
-            app:destination="@id/navigation_profile"
-            app:popUpTo="@id/navigation_profile"
-            app:popUpToInclusive="true" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/addActivityFragment"
-        android:name="com.example.producity.ui.addactivity.AddActivityFragment"
-        android:label="AddActivityFragment" >
-        <action
-            android:id="@+id/action_addActivityFragment_to_navigation_myActivity"
-            app:destination="@id/navigation_myActivity" />
-    </fragment>
+        tools:layout="@layout/fragment_edit_profile" />
 
     <fragment
         android:id="@+id/exploreDetailFragment"
         android:name="com.example.producity.ui.explore.exploredetail.ExploreDetailFragment"
-        android:label="ExploreDetailFragment" >
+        android:label="ExploreDetailFragment"
+        tools:layout="@layout/explore_detail">
         <argument
-            android:name="position"
-            app:argType="integer"
-            android:defaultValue="-1" />
-        <action
-            android:id="@+id/action_exploreDetailFragment_to_navigation_explore"
-            app:destination="@id/navigation_explore" />
+            android:name="event"
+            app:argType="com.example.producity.models.Activity" />
     </fragment>
     <fragment
         android:id="@+id/myActivityManageFragment"
         android:name="com.example.producity.ui.myactivity.myactivitydetail.MyActivityManageFragment"
-        android:label="MyActivityManageFragment" >
-        <action
-            android:id="@+id/action_myActivityManageFragment_to_scheduleDetailFragment"
-            app:destination="@id/scheduleDetailFragment" />
+        android:label="MyActivityManageFragment"
+        tools:layout="@layout/activity_detail_manage">
         <argument
-            android:name="position"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            android:name="event"
+            app:argType="com.example.producity.models.Activity" />
     </fragment>
     <fragment
         android:id="@+id/myActivityLogFragment"
-        android:name="com.example.producity.ui.myactivity.myactivitydetail.log.MyActivityLogFragment"
-        android:label="MyActivityLogFragment" >
+        android:name="com.example.producity.ui.myactivity.myactivitydetail.chat.ChatFragment"
+        android:label="MyActivityLogFragment"
+        tools:layout="@layout/chat_room">
+        <argument
+            android:name="event"
+            app:argType="com.example.producity.models.Activity" />
         <action
             android:id="@+id/action_myActivityLogFragment_to_scheduleDetailFragment"
             app:destination="@id/scheduleDetailFragment" />
-        <argument
-            android:name="position"
-            app:argType="integer"
-            android:defaultValue="-1" />
     </fragment>
     <fragment
         android:id="@+id/notificationFragment"
-        android:name="com.example.producity.ui.profile.notification.NotificationFragment"
-        android:label="NotificationFragment" >
-        <action
-            android:id="@+id/action_notificationFragment_to_navigation_profile"
-            app:destination="@id/navigation_profile" />
+        android:name="com.example.producity.ui.notification.NotificationFragment"
+        android:label="NotificationFragment"
+        tools:layout="@layout/notification">
         <action
             android:id="@+id/action_notificationFragment_to_scheduleDetailFragment"
             app:destination="@id/scheduleDetailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/editAccountFragment"
+        android:name="com.example.producity.ui.profile.EditAccountFragment"
+        android:label="EditAccountFragment"
+        tools:layout="@layout/edit_account">
+        <argument
+            android:name="code"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_editAccountFragment_self"
+            app:destination="@id/editAccountFragment" />
+        <argument
+            android:name="input"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="isVerify"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/memoryFragment"
+        android:name="com.example.producity.ui.profile.memory.MemoryFragment"
+        android:label="MemoryFragment"
+        tools:layout="@layout/memories"/>
+
+    <fragment
+        android:id="@+id/reportUserFragment"
+        android:name="com.example.producity.ui.friends.friend_profile.ReportUserFragment"
+        android:label="ReportUserFragment"
+        tools:layout="@layout/report_user">
+        <argument
+            android:name="user"
+            app:argType="com.example.producity.models.User" />
+    </fragment>
+    <fragment
+        android:id="@+id/reviewUserFragment"
+        android:name="com.example.producity.ui.friends.friend_profile.ReviewUserFragment"
+        android:label="ReviewUserFragment"
+        tools:layout="@layout/review_user">
+        <argument
+            android:name="user"
+            app:argType="com.example.producity.models.User" />
+    </fragment>
+    <fragment
+        android:id="@+id/reviewListFragment"
+        android:name="com.example.producity.ui.reviewlist.ReviewListFragment"
+        android:label="ReviewListFragment"
+        tools:layout="@layout/review_list">
+        <argument
+            android:name="user"
+            app:argType="com.example.producity.models.User" />
+    </fragment>
 
 </navigation>

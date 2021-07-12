@@ -25,11 +25,14 @@ import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.AddActivityBinding
 import com.example.producity.models.Activity
+import com.example.producity.models.ChatRoom
 import com.example.producity.models.User
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.example.producity.ui.friends.my_friends.FriendListViewModelFactory
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.firebase.Timestamp
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -43,8 +46,9 @@ class AddActivityFragment: Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository(), ServiceLocator.provideActivityRepository())
     }
+
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
     private lateinit var db: FirebaseFirestore
 
@@ -58,12 +62,11 @@ class AddActivityFragment: Fragment() {
         _binding = AddActivityBinding.inflate(inflater,container,false)
         val root: View = binding.root
 
+        choosePhoto()
+
         val bottomNav: View? = activity?.findViewById(R.id.nav_view)
         bottomNav?.isVisible = false
         db = Firebase.firestore
-
-        val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
-        floatingButton?.isVisible = false
 
         return root
     }
@@ -75,16 +78,13 @@ class AddActivityFragment: Fragment() {
         val topNav: MaterialToolbar = requireView().findViewById(R.id.topAppBar)
 
         topNav.setNavigationOnClickListener {
-            val action = AddActivityFragmentDirections.actionAddActivityFragmentToNavigationMyActivity()
-            findNavController().navigate(action)
+            findNavController().navigateUp()
         }
 
         val imageButton: ImageButton = requireView().findViewById(R.id.add_photo_image_button)
 
         imageButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, 0)
+            choosePhoto()
         }
 
         val pickTime: ImageButton = requireView().findViewById(R.id.choose_time)
@@ -145,14 +145,15 @@ class AddActivityFragment: Fragment() {
 
             val bitmapDrawable = BitmapDrawable(bitmap)
 
-            val imageView: ImageView =
-                requireView().findViewById(R.id.add_activity_image_view) ?: return
-
-            Log.d(MainActivity.TAG, "${imageView.background}")
+            val imageView: ImageView = requireView().findViewById(R.id.add_activity_image_view) ?: return
             imageView.setBackgroundDrawable(bitmapDrawable)
-
-            Log.d(MainActivity.TAG, "${imageView.background}")
         }
+    }
+
+    private fun choosePhoto() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "image/*"
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 0)
     }
 
 
@@ -163,24 +164,22 @@ class AddActivityFragment: Fragment() {
         val minute = mcurrentTime.get(Calendar.MINUTE)
 
         mTimePicker = TimePickerDialog(context, android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
-            object : TimePickerDialog.OnTimeSetListener {
-                override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-                    phour = hourOfDay
-                    pminute = minute
+            { _, hourOfDay, minute ->
+                phour = hourOfDay
+                pminute = minute
 
-                    var stage = "am"
-                    if (hourOfDay >= 12) stage = "pm"
+                var stage = "am"
+                if (hourOfDay >= 12) stage = "pm"
 
-                    var min = minute.toString()
-                    if(minute < 10) {
-                        min = "0$minute"
-                    }
-
-                    val text = "${hourOfDay % 12}:$min $stage"
-
-                    requireView().findViewById<EditText>(R.id.timeInput)
-                        .setText(text)
+                var min = minute.toString()
+                if(minute < 10) {
+                    min = "0$minute"
                 }
+
+                val text = "${hourOfDay % 12}:$min $stage"
+
+                requireView().findViewById<EditText>(R.id.timeInput)
+                    .setText(text)
             }, hour, minute, false
         )
 
@@ -195,7 +194,6 @@ class AddActivityFragment: Fragment() {
     private var pminute: Int = -1
 
 
-    @RequiresApi(Build.VERSION_CODES.N)
     private fun showDateDialog() {
         val datePicker: DatePickerDialog
         val currentDate = Calendar.getInstance()
@@ -204,17 +202,15 @@ class AddActivityFragment: Fragment() {
         val year = currentDate.get(Calendar.YEAR)
 
         datePicker = DatePickerDialog(requireContext(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
-            object: DatePickerDialog.OnDateSetListener {
-                override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-                    pyear = year
-                    pmonth = month
-                    pday = dayOfMonth
+            { _, year, month, dayOfMonth ->
+                pyear = year
+                pmonth = month
+                pday = dayOfMonth
 
-                    val text = "$dayOfMonth/${month+1}/$year"
+                val text = "$dayOfMonth/${month+1}/$year"
 
-                    requireView().findViewById<EditText>(R.id.dateInput)
-                        .setText(text)
-                }
+                requireView().findViewById<EditText>(R.id.dateInput)
+                    .setText(text)
             }, year, month, day
         )
 
@@ -234,12 +230,12 @@ class AddActivityFragment: Fragment() {
 
         if(title.text.isEmpty()) {
             isCorrect = false
-            title.setError("Title is compulsory")
+            title.error = "Title is compulsory"
         }
 
         if(pax.text.toString().isEmpty() || pax.text.toString().toInt() < 1) {
             isCorrect = false
-            pax.setError("Invalid pax")
+            pax.error = "Invalid pax"
 
         }
 
@@ -254,7 +250,6 @@ class AddActivityFragment: Fragment() {
         }
 
         return isCorrect
-
     }
 
     private fun uploadImageForFirebaseStorage() {
@@ -303,10 +298,8 @@ class AddActivityFragment: Fragment() {
         val ref = db.collection("activity").document()
 
         val newActivity = Activity(ref.id,
-            imageUrl,
             title.text.toString(),
             user.value?.username.toString(),
-            user.value?.imageUrl.toString(),
             isPublic.isChecked,
             isVirtual.isChecked,
             Date(pyear-1900, pmonth, pday, phour, pminute),
@@ -320,12 +313,21 @@ class AddActivityFragment: Fragment() {
         ref.set(newActivity)
             .addOnSuccessListener {
                 Log.d(MainActivity.TAG, "added a new activity")
-
-                val action = AddActivityFragmentDirections.actionAddActivityFragmentToNavigationMyActivity()
-                findNavController().navigate(action)
+                findNavController().popBackStack()
             }
             .addOnFailureListener {
                 Log.d(MainActivity.TAG, it.toString())
+            }
+
+        val rtdb = Firebase.database
+
+        val chatRoom = ChatRoom(Timestamp.now().toDate().time, title.text.toString(), ref.id, "",
+            "Group chat is created", mapOf(user.value?.username.toString() to 0))
+
+        rtdb.getReference("chatroom/${ref.id}")
+            .setValue(chatRoom)
+            .addOnSuccessListener {
+                Log.d("AddActivity", "created chatroom")
             }
     }
 }

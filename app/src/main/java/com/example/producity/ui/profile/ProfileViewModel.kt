@@ -5,12 +5,14 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.producity.RegisterActivity
 import com.example.producity.models.User
+import com.example.producity.models.source.IAuthRepository
 import com.example.producity.models.source.IUserRepository
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class ProfileViewModel(private val userRepository: IUserRepository) : ViewModel() {
+class ProfileViewModel(private val userRepository: IUserRepository,
+                        private val authRepository: IAuthRepository) : ViewModel() {
 
     fun getUserProfile(username: String): User {
         var user = User()
@@ -65,13 +67,26 @@ class ProfileViewModel(private val userRepository: IUserRepository) : ViewModel(
         return result
     }
 
+    fun verifyPassword(pass: String): Boolean {
+        return authRepository.verifyPassword(pass)
+    }
+
+    fun changeEmail(email: String) {
+        authRepository.changeEmail(email)
+    }
+
+    fun changePassword(pass: String) {
+        authRepository.changePassword(pass)
+    }
+
+
 }
 
 
 @Suppress("UNCHECKED_CAST")
-class ProfileViewModelFactory(private val userRepository: IUserRepository) :
+class ProfileViewModelFactory(private val userRepository: IUserRepository, private val authRepository: IAuthRepository) :
     ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return (ProfileViewModel(userRepository) as T)
+        return (ProfileViewModel(userRepository, authRepository) as T)
     }
 }

@@ -12,11 +12,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
 import com.example.producity.SharedViewModel
-import com.example.producity.ui.friends.ParcelableUser
 import com.example.producity.models.User
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 class FriendlistOfFriendAdapter(
     private val context: Fragment,
@@ -28,9 +25,9 @@ class FriendlistOfFriendAdapter(
         val username: TextView = view.findViewById(R.id.friend_username)
         val pic: ImageView = view.findViewById(R.id.friend_image)
 
-        fun bind(text: String?, imageUrl: String) {
+        fun bind(text: String?) {
             username.text = text
-            Picasso.get().load(imageUrl).transform(CropCircleTransformation()).into(pic)
+            //Picasso.get().load(imageUrl).transform(CropCircleTransformation()).into(pic)
         }
 
         companion object {
@@ -48,13 +45,13 @@ class FriendlistOfFriendAdapter(
 
     override fun onBindViewHolder(holder: FriendsViewHolder, position: Int) {
         val current = getItem(position)
-        holder.bind(current.username, current.imageUrl)
+        holder.bind(current.username)
 
         holder.itemView.setOnClickListener {
-            val nextUser = ParcelableUser(
-                current.username, current.uid, current.displayName,
+            val nextUser = User(
+                current.username, current.uid, current.nickname,
                 current.telegramHandle, current.gender, current.birthday,
-                current.bio, current.imageUrl
+                current.bio, current.banner
             )
 
             if (nextUser.username == sharedViewModel.currentUser.value!!.username) { // go to own profile
@@ -63,9 +60,7 @@ class FriendlistOfFriendAdapter(
                 context.findNavController().navigate(action)
             } else if (isFriend(nextUser.username)) { // go to FriendProfileFragment
                 val action =
-                    FriendlistOfFriendFragmentDirections.actionFriendlistOfFriendFragmentToFriendProfileFragment(
-                        nextUser
-                    )
+                    FriendlistOfFriendFragmentDirections.actionFriendlistOfFriendFragmentToFriendProfileFragment(nextUser)
                 context.findNavController().navigate(action)
             } else { // go to StrangerProfileFragment
                 val action =

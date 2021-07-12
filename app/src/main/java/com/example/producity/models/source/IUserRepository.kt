@@ -6,7 +6,7 @@ import com.example.producity.models.User
 interface IUserRepository {
     fun createUser(username: String, uid: String)
     fun isUsernameTaken(username: String): Boolean
-    suspend fun checkUserExists(username: String): Boolean
+    suspend fun checkUserExists(username: String): User?
     suspend fun loadUserProfile(username: String): User
     suspend fun editUserProfile(editedUserProfile: User)
     suspend fun loadFriends(username: String): List<User>

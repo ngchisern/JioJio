@@ -1,17 +1,22 @@
 package com.example.producity.ui.friends.my_friends
 
 import android.app.AlertDialog
+import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
 import com.example.producity.ServiceLocator
@@ -19,12 +24,13 @@ import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendListBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.*
+import org.w3c.dom.Text
 
 class FriendListFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideUserRepository())
+        FriendListViewModelFactory(ServiceLocator.provideUserRepository(), ServiceLocator.provideActivityRepository())
     }
 
     private var _binding: FragmentFriendListBinding? = null
@@ -38,25 +44,11 @@ class FriendListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentFriendListBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.add_friend -> {
-                    popSendFriendRequestDialog()
-                    true
-                }
-                else -> false
-            }
-        }
-
-        val floatingButton: View? = activity?.findViewById(R.id.floating_action_button)
-        floatingButton?.isVisible = false
-
         val bottomNav: View? = activity?.findViewById(R.id.nav_view)
-        bottomNav?.isVisible = true
+        bottomNav?.isVisible = false
 
         return root
     }
@@ -65,7 +57,7 @@ class FriendListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val recyclerView = binding.friendRecycleView
-        val adapter = FriendListAdapter(this)
+        val adapter = FriendListAdapter(this, friendListViewModel, sharedViewModel)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
             DividerItemDecoration(
@@ -78,6 +70,8 @@ class FriendListFragment : Fragment() {
         friendListViewModel.getAllFriends(currentUsername).observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
+
+        listen()
     }
 
     override fun onDestroyView() {
@@ -85,51 +79,67 @@ class FriendListFragment : Fragment() {
         _binding = null
     }
 
-    private fun popSendFriendRequestDialog() {
-        val builder = context?.let { MaterialAlertDialogBuilder(it) }
-
-        if (builder == null) return
-
-        val input = EditText(context)
-        input.setHint("username")
-        input.inputType = InputType.TYPE_CLASS_TEXT
-
-        builder.setTitle("Send friend request")
-            .setView(input)
-            .setPositiveButton("Send", null)
-            .setNeutralButton("Cancel") { dialog, which ->
-                dialog.cancel()
-            }
-
-        val dialog = builder.create()
-
-        dialog.setOnShowListener {
-            val okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            okButton.setOnClickListener {
-                if(input.text.toString().isEmpty()) {
-                    return@setOnClickListener
+    private fun listen() {
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.add_friend -> {
+                    searchUser()
+                    true
                 }
-
-                checkUser(input)
+                else -> false
             }
         }
 
+        binding.topAppBar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+    }
+
+
+    private fun searchUser() {
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        val view = LayoutInflater.from(context).inflate(R.layout.searchfriend_dialog, null)
+
+        builder.setView(view)
+
+        val editText: EditText = view.findViewById(R.id.searchfriend_input)
+
+        val dialog = builder.create()
+        val error: TextView = view.findViewById(R.id.searchfriend_errormessage)
+
         dialog.show()
+
+        editText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                checkUser(editText.text.toString(), dialog, error)
+            }
+            true
+        }
+
+        editText.doOnTextChanged { _, _, _, _ ->
+            error.textSize = 0F
+        }
+
+        editText.isFocusableInTouchMode = true
+        editText.requestFocus()
+
+        dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
 
     }
 
-    private fun checkUser(input: EditText) {
+
+    private fun checkUser(username: String, dialog: Dialog, textView: TextView) {
         CoroutineScope(Dispatchers.Main).launch {
-            val checkUsername = input.text.toString()
-            val exists = friendListViewModel.checkUserExists(checkUsername)
-            if (exists) {
-                friendListViewModel.sendFriendRequest(sharedViewModel.currentUser.value!!, checkUsername)
-                Toast.makeText(context, resources.getText(R.string.friend_request_sent), Toast.LENGTH_LONG)
-                    .show()
-                Log.d("FriendListFragment", "Send friend request to: $checkUsername")
+            val user = friendListViewModel.checkUserExists(username)
+            if (user != null) {
+                //friendListViewModel.sendFriendRequest(sharedViewModel.currentUser.value!!, checkUsername)
+                val action = FriendListFragmentDirections.actionFriendListFragmentToFriendProfileFragment(user)
+                findNavController().navigate(action)
+                dialog.cancel()
             } else {
-                input.error = "User does not exist"
-                Log.d("FriendListFragment", "checkUser: does not exist")
+                textView.textSize = 12F
             }
         }
     }

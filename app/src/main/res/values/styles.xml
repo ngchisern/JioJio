@@ -4,22 +4,14 @@
     <style name="Theme.ProduCity.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:statusBarColor">#f5f7ff</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="Widget.Theme.ProduCity.NoActionBar.ButtonBar.Fullscreen" parent="">
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
-    </style>
-
-    <!-- Style for header text in the order form -->
-    <style name="HeaderTextStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">45sp</item>
     </style>
 
     <!-- Style for circle profile picture -->
@@ -39,6 +31,20 @@
         <item name="android:shadowDy">1</item>
         <item name="android:shadowRadius">1</item>
     </style>
+
+    <!-- bottom sheet -->
+    <style name="SheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <!--<item name="android:windowCloseOnTouchOutside">false</item>-->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorBackground">     @android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.3</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+
 
 
 </resources>
