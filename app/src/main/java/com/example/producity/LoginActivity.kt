@@ -15,7 +15,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
 private const val TAG = "LoginActivity"
@@ -28,6 +27,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private val auth = MyFirebase.auth
+    private val db = MyFirebase.db
     private lateinit var googleSignInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,9 +119,25 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
+
+                    if (task.result!!.additionalUserInfo!!.isNewUser) {
+                        Log.d(TAG, "New Google account")
+                        navigateToGoogleLoginRegisterUsernameActivity()
+                    } else {
+                        val currentUid = auth.currentUser!!.uid
+                        db.collection("users")
+                            .whereEqualTo("uid", currentUid)
+                            .limit(1)
+                            .get()
+                            .addOnSuccessListener {
+                                if (it == null || it.isEmpty) {
+                                    Log.d(TAG, "Google account not yet registered")
+                                    navigateToGoogleLoginRegisterUsernameActivity()
+                                } else {
+                                    navigateToMainActivity()
+                                }
+                            }
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.d(TAG, "signInWithCredential:failure", task.exception)
@@ -130,5 +146,16 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
+    private fun navigateToGoogleLoginRegisterUsernameActivity() {
+        val intent = Intent(this, GoogleLoginRegisterUsernameActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
+
+    private fun navigateToMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
 
 }

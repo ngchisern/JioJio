@@ -94,6 +94,11 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        // Delete
+        Log.d(TAG, "displayName: ${currentUser.displayName}")
+        Log.d(TAG, "email: ${currentUser.email}")
+        Log.d(TAG, "uid: ${currentUser.uid}")
+
         db.collection("users")
             .whereEqualTo("uid", currentUser.uid)
             .limit(1)

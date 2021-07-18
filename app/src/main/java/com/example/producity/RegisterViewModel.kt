@@ -18,6 +18,10 @@ class RegisterViewModel(private val authRepo: IAuthRepository,
         userRepo.createUser(username, uid)
     }
 
+    fun createUserInFirestore(username: String, uid: String) {
+        userRepo.createUser(username, uid)
+    }
+
 }
 
 @Suppress("UNCHECKED_CAST")
