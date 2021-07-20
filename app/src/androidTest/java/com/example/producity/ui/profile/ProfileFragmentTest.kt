@@ -1,6 +1,12 @@
 package com.example.producity.ui.profile
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.example.producity.ServiceLocator
@@ -8,28 +14,32 @@ import org.junit.After
 import org.junit.Before
 import org.junit.runner.RunWith
 import com.example.producity.AndroidTestMainCoroutineRule
+import com.example.producity.R
 import com.example.producity.models.source.FakeAndroidTestUserRepository
 import com.example.producity.models.source.IUserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Rule
+import org.junit.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 
 @MediumTest
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class ProfileFragmentTest {
-    @get: Rule
-    var instantExecutorRule = InstantTaskExecutorRule()
+//    @get: Rule
+//    var instantExecutorRule = InstantTaskExecutorRule()
+//
+//    @get: Rule
+//    var mainCoroutineRule = AndroidTestMainCoroutineRule()
+//
+//    private lateinit var fakeRepo: IUserRepository
 
-    @get: Rule
-    var mainCoroutineRule = AndroidTestMainCoroutineRule()
-
-    private lateinit var fakeRepo: IUserRepository
-
-    @Before
-    fun initRepository() = runBlockingTest {
-        fakeRepo = FakeAndroidTestUserRepository()
-        ServiceLocator.userRepository = fakeRepo // TODO use shared repo
+//    @Before
+//    fun initRepository() = runBlockingTest {
+//        fakeRepo = FakeAndroidTestUserRepository()
+//        ServiceLocator.userRepository = fakeRepo // TODO use shared repo
 
 //        // Set up a sample user profile // TODO Now not working, shared repo not done
 //        val user = User(
@@ -38,12 +48,12 @@ class ProfileFragmentTest {
 //            "testBio", RegisterActivity.BLANK_PROFILE_IMG_URL
 //        )
 //        fakeRepo.editUserProfile(user)
-    }
+//    }
 
-    @After
-    fun cleanupRepo() {
-        ServiceLocator.resetAllRepositories()
-    }
+//    @After
+//    fun cleanupRepo() {
+//        ServiceLocator.resetAllRepositories()
+//    }
 
 //    @Test
 //    fun profileDetails_displayedInUI() {
@@ -81,7 +91,7 @@ class ProfileFragmentTest {
 //        }
 //
 //        // When - Click on the Edit icon
-//        onView(withId(R.id.edit_profile)).perform(click())
+//        onView(withId(R.id.edit_profile_card)).perform(click())
 //
 //        // Then - Verify that we navigate to EditProfileFragment
 //        verify(navController).navigate(
