@@ -38,7 +38,6 @@ class FakeTestUserRepository: IUserRepository {
 
     override suspend fun loadUserProfile(username: String): User {
         return User(username = username)
-
     }
 
     override suspend fun editUserProfile(editedUserProfile: User) {

@@ -30,6 +30,7 @@ class ProfileViewModelTest {
     @Before
     fun setupViewModel() {
         fakeUserRepo = FakeTestUserRepository()
+        fakeUserRepo.buildUserData(linkedMapOf("username0" to "uid0", "username1" to "uid1"))
         fakeAuthRepo = FakeTestAuthRepository()
         profileViewModel = ProfileViewModel(fakeUserRepo, fakeAuthRepo)
     }
@@ -37,31 +38,16 @@ class ProfileViewModelTest {
     @Test
     fun getUserProfile_returnTestUser() {
         // When - Get the user profile
-        val user = profileViewModel.getUserProfile("testUsername")
+        val user = profileViewModel.getUserProfile("username0")
 
         // Then - Verify that the fake user (created in fake data source) is returned
-        assertThat(user.username, `is`("testUsername"))
-    }
-
-    @Test
-    fun updateUserProfile_editDisplayName() {
-        // Given - A sample user with edited display name
-        val editedUser = User("testUsername", "testUid", "updatedDisplayName",
-            "", "", "", "", "")
-
-        // When - Update the user in ViewModel
-        profileViewModel.updateUserProfile(editedUser)
-
-        // Then - Verify that the current user profile is updated
-        val value = profileViewModel.getUserProfile("testUsername")
-        assertThat(value.username, `is`("testUsername"))
-        assertThat(value.displayName, `is`("updatedDisplayName"))
+        assertThat(user.username, `is`("username0"))
     }
 
     @Test
     fun loadFriends_returnTestFriends() {
         // When - Get friend list (created in fake data source)
-        val friends = profileViewModel.loadFriends("testUsername")
+        val friends = profileViewModel.loadFriends("username0")
 
         // Then - Verify that the fake friend list containing two friends is returned
         assertThat(friends[0].username, `is`("friend0"))

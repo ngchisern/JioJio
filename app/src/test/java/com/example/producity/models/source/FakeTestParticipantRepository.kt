@@ -5,10 +5,14 @@ import com.example.producity.models.User
 
 class FakeTestParticipantRepository : IParticipantRepository {
 
-    private val participants = mutableMapOf(
+    var participants = mutableMapOf(
         "username0" to Participant(username = "username0", recommendation = mutableMapOf("rec0" to 0)),
         "username1" to Participant(username = "username1", recommendation = mutableMapOf("rec1" to 1))
     )
+
+    fun setUp(map: MutableMap<String, Participant>) {
+        participants = map
+    }
 
     override fun addToDataBase(user: User, docId: String) {
         val participant = Participant(username = user.username)

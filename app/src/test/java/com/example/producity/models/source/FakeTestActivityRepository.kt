@@ -5,10 +5,11 @@ import com.example.producity.models.Activity
 import java.sql.Timestamp
 import java.time.Instant
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class FakeTestActivityRepository : IActivityRepository {
     // doc id to activity
-    val activities = linkedMapOf<String, Activity>(
+    var activities = linkedMapOf<String, Activity>(
         "doc1" to Activity("doc1", "Activity 1", "activity 1", "ben", 0, true, Date(),
             0.0,0.0, 5, "no", listOf("ben"), listOf()),
         "doc2" to Activity("doc2", "Activity 2", "activity 2", "alex", 0, true, Date(),
@@ -16,6 +17,10 @@ class FakeTestActivityRepository : IActivityRepository {
     )
 
     val time: Long = 1626769233 // now
+
+    fun setUp(map: LinkedHashMap<String, Activity>) {
+        activities = map
+    }
 
     override fun manageActivity(activity: Activity) {
         activities[activity.docId] = activity
