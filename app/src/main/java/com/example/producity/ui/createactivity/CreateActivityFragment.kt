@@ -1,37 +1,34 @@
 package com.example.producity.ui.createactivity
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.annotation.RequiresApi
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.producity.R
 import com.example.producity.SharedViewModel
-import com.example.producity.databinding.AddActivityBinding
 import com.example.producity.databinding.CreateActivityBinding
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
-class CreateActivityFragment: Fragment() {
+class CreateActivityFragment : Fragment() {
 
-    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val createActivityViewModel: CreateActivityViewModel by activityViewModels()
 
     private var _binding: CreateActivityBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
-    : View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    )
+            : View {
 
-        _binding = CreateActivityBinding.inflate(inflater,container,false)
+        _binding = CreateActivityBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val bottomNav: View? = activity?.findViewById(R.id.nav_view)
@@ -71,12 +68,14 @@ class CreateActivityFragment: Fragment() {
     }
 
     private fun navigateToLocation() {
-        val action = CreateActivityFragmentDirections.actionNavigationAddEventToCreateLocationFragment()
+        val action =
+            CreateActivityFragmentDirections.actionNavigationAddEventToCreateLocationFragment()
         findNavController().navigate(action)
     }
 
     private fun navigateToPrivacy() {
-        val action = CreateActivityFragmentDirections.actionNavigationAddEventToCreatePrivacyFragment()
+        val action =
+            CreateActivityFragmentDirections.actionNavigationAddEventToCreatePrivacyFragment()
         findNavController().navigate(action)
     }
 
@@ -109,7 +108,6 @@ class CreateActivityFragment: Fragment() {
         findNavController().popBackStack(R.id.navigation_createActivity, false)
         findNavController().navigate(R.id.navigation_myActivity)
     }
-
 
 
 }

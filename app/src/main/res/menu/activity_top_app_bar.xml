@@ -6,17 +6,16 @@
     <item
         android:id="@+id/share"
         android:title="Share"
-        app:showAsAction="collapseActionView"/>
+        app:showAsAction="collapseActionView" />
 
     <item
         android:id="@+id/report"
         android:title="Report"
-        app:showAsAction="collapseActionView"/>
+        app:showAsAction="collapseActionView" />
 
     <item
         android:id="@+id/leave"
         android:title="Leave"
-        app:showAsAction="collapseActionView"
-        />
+        app:showAsAction="collapseActionView" />
 
 </menu>

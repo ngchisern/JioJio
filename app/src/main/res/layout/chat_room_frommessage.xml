@@ -8,9 +8,9 @@
         android:id="@+id/chat_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginVertical="6dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:layout_marginVertical="6dp"
         android:textColor="#C0C0C0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,12 +38,12 @@
         android:id="@+id/card_chat_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         app:cardBackgroundColor="#eef1f6"
         app:cardCornerRadius="12dp"
         app:cardElevation="0dp"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="true"
-        android:layout_marginStart="8dp"
         app:layout_constraintStart_toEndOf="@id/chat_image"
         app:layout_constraintTop_toBottomOf="@id/chat_user">
 
@@ -68,9 +68,6 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

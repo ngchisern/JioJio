@@ -1,6 +1,5 @@
 package com.example.producity.ui.myactivity.myactivitydetail
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,29 +11,36 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
 import com.example.producity.models.Participant
+import timber.log.Timber
 
-class ParticipantlAdapter(val context: Fragment, val showName: Boolean, val manage: Boolean, val viewModel: MyActivityDetailViewModel)
-    : ListAdapter<Participant, ParticipantlAdapter.ParticipantViewHolder>(ParticipantComparator()){
+class ParticipantlAdapter(
+    val context: Fragment,
+    val showName: Boolean,
+    val manage: Boolean,
+    val viewModel: MyActivityDetailViewModel
+) : ListAdapter<Participant, ParticipantlAdapter.ParticipantViewHolder>(ParticipantComparator()) {
 
 
-    class ParticipantViewHolder(private val view: View, private val viewModel: MyActivityDetailViewModel)
-        : RecyclerView.ViewHolder(view) {
+    class ParticipantViewHolder(
+        private val view: View,
+        private val viewModel: MyActivityDetailViewModel
+    ) : RecyclerView.ViewHolder(view) {
 
-        val image : ImageView = view.findViewById(R.id.participant_image)
+        val image: ImageView = view.findViewById(R.id.participant_image)
         val name: TextView = view.findViewById(R.id.participant_name)
         val remove: ImageView = view.findViewById(R.id.remove_icon)
 
         fun bind(current: Participant, showName: Boolean, manage: Boolean) {
-            if(showName) {
+            if (showName) {
                 name.text = current.nickname
             } else {
                 name.text = ""
             }
 
-            if(manage) {
+            if (manage) {
                 remove.setBackgroundResource(R.drawable.ic_cancel_24)
                 remove.setOnClickListener {
-                    Log.d("Main", "remove")
+                    Timber.d("remove")
                     viewModel.removeParticipant(current.username)
                 }
             }
@@ -42,7 +48,10 @@ class ParticipantlAdapter(val context: Fragment, val showName: Boolean, val mana
         }
 
         companion object {
-            fun create(parent: ViewGroup, viewModel: MyActivityDetailViewModel): ParticipantViewHolder {
+            fun create(
+                parent: ViewGroup,
+                viewModel: MyActivityDetailViewModel
+            ): ParticipantViewHolder {
                 val itemView: View = LayoutInflater.from(parent.context)
                     .inflate(R.layout.activity_participant_item_view, parent, false)
                 return ParticipantViewHolder(itemView, viewModel)

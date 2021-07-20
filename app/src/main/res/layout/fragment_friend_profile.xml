@@ -7,311 +7,309 @@
     android:layout_height="match_parent">
 
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context=".ui.friends.friend_profile.FriendProfileFragment">
-
-    <ImageView
-        android:id="@+id/navigate_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:src="@drawable/ic_baseline_arrow_back_24"
-        android:layout_margin="20dp"
-        android:elevation="2dp"/>
-
-    <ImageView
-        android:id="@+id/profile_banner"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="16:9"
-        android:scaleType="fitXY"
-        android:src="@color/light_blue_600"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profile_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="130dp"
-        android:src="@color/light_blue_600"
-        app:civ_border_color="@color/black"
-        app:civ_border_width="1dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/profile_banner"
-        app:layout_constraintTop_toBottomOf="@id/profile_banner"/>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/action_card"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="30dp"
-        android:backgroundTint="#e3f2fd"
-        app:cardCornerRadius="5dp"
-        app:layout_constraintBottom_toBottomOf="@id/profile_image"
-        app:layout_constraintEnd_toEndOf="@id/more_actions">
-
-        <TextView
-            android:id="@+id/main_action"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="15dp"
-            android:paddingVertical="10dp"
-            android:text="Send message"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <ImageView
-        android:id="@+id/more_actions"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/action_card"
-        app:layout_constraintBottom_toBottomOf="@id/action_card"
-        android:layout_marginEnd="10dp"
-        android:src="@drawable/ic_baseline_more_vert_24"/>
-
-    <TextView
-        android:id="@+id/profile_nickname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:text="Alex Lim Ah Beng"
-        android:textColor="@color/black"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_image" />
-
-    <TextView
-        android:id="@+id/profile_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:paddingBottom="10dp"
-        android:text="Alex21"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_nickname" />
-
-    <LinearLayout
-        android:id="@+id/rating_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/profile_username"
-        app:layout_constraintStart_toStartOf="@id/profile_username">
-
-        <TextView
-            android:id="@+id/profile_rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="5.0"
-            android:layout_marginEnd="5dp"/>
-
-        <RatingBar
-            android:id="@+id/profile_stars"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?android:attr/ratingBarStyleSmall"
-            android:numStars="5"
-            android:layout_marginTop="2dp"
-            android:stepSize="0.1"
-            android:isIndicator="true"
-            />
-
-        <TextView
-            android:id="@+id/profile_totalreview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="(13)"
-            android:layout_marginStart="5dp"/>
-
-    </LinearLayout>
-
-    <View
-        android:id="@+id/view"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:background="#bdbdbd"
-        app:layout_constraintTop_toBottomOf="@id/rating_layout" />
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/view"
-        android:background="#fafafa"
-        android:orientation="vertical"
-        android:padding="20dp">
+        tools:context=".ui.friends.friend_profile.FriendProfileFragment">
 
-        <TextView
+        <ImageView
+            android:id="@+id/navigate_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BIO"
-            android:textStyle="bold"/>
+            android:layout_margin="20dp"
+            android:elevation="2dp"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/profile_banner"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            android:src="@color/light_blue_600"
+            app:layout_constraintDimensionRatio="16:9"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="130dp"
+            android:src="@color/light_blue_600"
+            app:civ_border_color="@color/black"
+            app:civ_border_width="1dp"
+            app:layout_constraintBottom_toBottomOf="@id/profile_banner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profile_banner" />
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
+            android:id="@+id/action_card"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
+            android:layout_marginEnd="30dp"
+            android:backgroundTint="#e3f2fd"
+            app:cardCornerRadius="5dp"
+            app:layout_constraintBottom_toBottomOf="@id/profile_image"
+            app:layout_constraintEnd_toEndOf="@id/more_actions">
 
             <TextView
-                android:id="@+id/profile_bio"
+                android:id="@+id/main_action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Just Beat The Devil Out of It"
-                android:padding="10dp"/>
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="10dp"
+                android:text="Send message"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
 
         </com.google.android.material.card.MaterialCardView>
 
-        <TextView
+        <ImageView
+            android:id="@+id/more_actions"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="USER INFO"
-            android:textStyle="bold"
-            android:layout_marginTop="20dp"/>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/gender_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="10dp"
-                    android:src="@drawable/ic_baseline_person_24"/>
-
-                <TextView
-                    android:id="@+id/profile_gender"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Male"
-                    android:layout_toEndOf="@id/gender_icon"
-                    android:padding="12dp"/>
-
-                <ImageView
-                    android:id="@+id/cake_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@id/gender_icon"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="10dp"
-                    android:src="@drawable/ic_baseline_cake_24"/>
-
-                <TextView
-                    android:id="@+id/profile_birthday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="21 Jun 2000"
-                    android:layout_below="@id/gender_icon"
-                    android:layout_toEndOf="@id/cake_icon"
-                    android:padding="12dp"/>
-
-                <ImageView
-                    android:id="@+id/location_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@id/cake_icon"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="10dp"
-                    android:src="@drawable/ic_baseline_location_on_24"/>
-
-                <TextView
-                    android:id="@+id/profile_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Singapore"
-                    android:layout_below="@id/cake_icon"
-                    android:layout_toEndOf="@id/location_icon"
-                    android:padding="12dp"/>
-
-            </RelativeLayout>
-
-        </com.google.android.material.card.MaterialCardView>
+            android:layout_height="50dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_baseline_more_vert_24"
+            app:layout_constraintBottom_toBottomOf="@id/action_card"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/action_card" />
 
         <TextView
-            android:id="@+id/next_event_text"
+            android:id="@+id/profile_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NEXT EVENT"
-            android:textStyle="bold"
-            android:layout_marginTop="20dp"
-            android:visibility="gone"/>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/next_event_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            app:cardCornerRadius="10dp"
-            android:visibility="gone">
+            android:text="Alex Lim Ah Beng"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profile_image" />
 
-            <RelativeLayout
+        <TextView
+            android:id="@+id/profile_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:paddingBottom="10dp"
+            android:text="Alex21"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profile_nickname" />
+
+        <LinearLayout
+            android:id="@+id/rating_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/profile_username"
+            app:layout_constraintTop_toBottomOf="@id/profile_username">
+
+            <TextView
+                android:id="@+id/profile_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:text="5.0" />
+
+            <RatingBar
+                android:id="@+id/profile_stars"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:stepSize="0.1" />
+
+            <TextView
+                android:id="@+id/profile_totalreview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="(13)" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="#bdbdbd"
+            app:layout_constraintTop_toBottomOf="@id/rating_layout" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fafafa"
+            android:orientation="vertical"
+            android:padding="20dp"
+            app:layout_constraintTop_toBottomOf="@id/view">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BIO"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white">
+                android:layout_marginTop="10dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/activity_image_layout"
+                <TextView
+                    android:id="@+id/profile_bio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="Just Beat The Devil Out of It" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="USER INFO"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <ImageView
-                        android:id="@+id/profile_activity_image"
+                        android:id="@+id/gender_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:src="@drawable/ic_baseline_person_24" />
+
+                    <TextView
+                        android:id="@+id/profile_gender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/gender_icon"
+                        android:padding="12dp"
+                        android:text="Male" />
+
+                    <ImageView
+                        android:id="@+id/cake_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/gender_icon"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:src="@drawable/ic_baseline_cake_24" />
+
+                    <TextView
+                        android:id="@+id/profile_birthday"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/gender_icon"
+                        android:layout_toEndOf="@id/cake_icon"
+                        android:padding="12dp"
+                        android:text="21 Jun 2000" />
+
+                    <ImageView
+                        android:id="@+id/location_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/cake_icon"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:src="@drawable/ic_baseline_location_on_24" />
+
+                    <TextView
+                        android:id="@+id/profile_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/cake_icon"
+                        android:layout_toEndOf="@id/location_icon"
+                        android:padding="12dp"
+                        android:text="Singapore" />
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/next_event_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="NEXT EVENT"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/next_event_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"
+                app:cardCornerRadius="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/activity_image_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintDimensionRatio="16:9"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/ic_launcher_background"/>
+                        android:layout_height="wrap_content">
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        <ImageView
+                            android:id="@+id/profile_activity_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/ic_launcher_background"
+                            app:layout_constraintDimensionRatio="16:9"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/profile_activity_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/activity_image_layout"
-                    android:text="Group Trekking"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="10dp"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
-                    android:id="@+id/profile_activity_countdown"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/profile_activity_name"
-                    android:layout_marginStart="10dp"
-                    android:text="In about 5 days"
-                    android:layout_marginBottom="10dp"/>
+                    <TextView
+                        android:id="@+id/profile_activity_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/activity_image_layout"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:text="Group Trekking"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
-            </RelativeLayout>
+                    <TextView
+                        android:id="@+id/profile_activity_countdown"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/profile_activity_name"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="In about 5 days" />
 
-        </com.google.android.material.card.MaterialCardView>
+                </RelativeLayout>
 
-
-    </LinearLayout>
-
+            </com.google.android.material.card.MaterialCardView>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </ScrollView>

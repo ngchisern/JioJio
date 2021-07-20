@@ -13,8 +13,8 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="10dp"
         android:src="@drawable/ic_baseline_person_24"
-        app:civ_border_width="1dp"
-        app:civ_border_color="#eeeeee"/>
+        app:civ_border_color="#eeeeee"
+        app:civ_border_width="1dp" />
 
     <TextView
         android:id="@+id/group_name"
@@ -22,50 +22,50 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="5dp"
-        android:textAppearance="?attr/textAppearanceHeadline6"
-        android:textSize="20sp"
-        android:layout_toEndOf="@id/group_icon"
         android:layout_toStartOf="@id/group_time"
+        android:layout_toEndOf="@id/group_icon"
         android:ellipsize="end"
         android:maxLines="1"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textSize="20sp"
         tools:text="Basketball" />
 
     <TextView
         android:id="@+id/group_lastmessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:textAppearance="?attr/textAppearanceHeadline6"
-        android:layout_marginTop="2dp"
-        android:textSize="12sp"
-        android:layout_toEndOf="@id/group_icon"
         android:layout_below="@id/group_name"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="2dp"
+        android:layout_toEndOf="@id/group_icon"
         android:ellipsize="end"
         android:maxLines="1"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textSize="12sp"
         tools:text="Whare are you doing" />
 
     <TextView
         android:id="@+id/group_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="15dp"
-        android:textSize="12sp"
-        android:layout_alignParentEnd="true"
         android:ellipsize="end"
+        android:textSize="12sp"
         tools:text="10:01pm" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/group_unread"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        app:cardCornerRadius="100dp"
-        android:backgroundTint="@android:color/holo_green_light"
         android:layout_below="@id/group_time"
         android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="15dp"
-        android:layout_marginTop="10dp"/>
+        android:backgroundTint="@android:color/holo_green_light"
+        app:cardCornerRadius="100dp" />
 
 </RelativeLayout>
 

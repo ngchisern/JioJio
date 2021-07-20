@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -25,9 +23,9 @@ import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
 
 
-class ReviewUserFragment:Fragment() {
+class ReviewUserFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val reviewViewModel: ReviewUserViewModel by viewModels() {
+    private val reviewViewModel: ReviewUserViewModel by viewModels {
         ReviewViewModelFactory(ServiceLocator.provideUserRepository())
     }
 
@@ -39,7 +37,7 @@ class ReviewUserFragment:Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = ReviewUserBinding.inflate(inflater, container, false)
         val root = binding.root
@@ -67,24 +65,26 @@ class ReviewUserFragment:Fragment() {
     private fun updateLayout() {
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val exist = reviewViewModel.exist(sharedViewModel.getUser().username, userProfile.username)
+            val exist =
+                reviewViewModel.exist(sharedViewModel.getUser().username, userProfile.username)
 
-            val subtitle = "Leave an honest review and let other users know what you think about ${userProfile.nickname}."
+            val subtitle =
+                "Leave an honest review and let other users know what you think about ${userProfile.nickname}."
             binding.reviewSubtitle.text = subtitle
 
             val title = "Review ${userProfile.nickname}"
             binding.reviewTitle.text = title
 
-            if(exist != null ) {
+            if (exist != null) {
                 binding.reviewStar.rating = exist.rating
                 binding.reviewDescription.setText(exist.description)
-                binding.submitText.text = "Update"
+                val update = "Update"
+                binding.submitText.text = update
 
             }
         }
 
     }
-
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -96,11 +96,11 @@ class ReviewUserFragment:Fragment() {
         binding.reviewStar.setOnTouchListener { v, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 val touchPositionX = event.x
-                val width: Int = binding.reviewStar.getWidth()
+                val width: Int = binding.reviewStar.width
                 val starsf = touchPositionX / width * 5.0f
                 val stars = starsf.toInt() + 1
 
-                binding.reviewStar.setRating(stars.toFloat())
+                binding.reviewStar.rating = stars.toFloat()
                 v.isPressed = false
             }
             if (event.action == MotionEvent.ACTION_DOWN) {
@@ -122,28 +122,58 @@ class ReviewUserFragment:Fragment() {
 
             val editedUserProfile: User
 
-            if(last == null) {
+            if (last == null) {
                 editedUserProfile = User(
-                    userProfile.username, userProfile.uid, userProfile.nickname, userProfile.telegramHandle, userProfile.gender,
-                    userProfile.birthday, userProfile.bio, userProfile.banner, userProfile.rating + rating, userProfile.review + 1
-                    , userProfile.latitude, userProfile.longitude
+                    userProfile.username,
+                    userProfile.uid,
+                    userProfile.nickname,
+                    userProfile.telegramHandle,
+                    userProfile.gender,
+                    userProfile.birthday,
+                    userProfile.bio,
+                    userProfile.banner,
+                    userProfile.rating + rating,
+                    userProfile.review + 1,
+                    userProfile.latitude,
+                    userProfile.longitude
                 )
                 userProfile.rating += rating
-                userProfile.review ++
+                userProfile.review++
 
             } else {
                 editedUserProfile = User(
-                    userProfile.username, userProfile.uid, userProfile.nickname, userProfile.telegramHandle, userProfile.gender,
-                    userProfile.birthday, userProfile.bio, userProfile.banner, userProfile.rating + (rating - last.rating),
-                    userProfile.review, userProfile.latitude, userProfile.longitude)
+                    userProfile.username,
+                    userProfile.uid,
+                    userProfile.nickname,
+                    userProfile.telegramHandle,
+                    userProfile.gender,
+                    userProfile.birthday,
+                    userProfile.bio,
+                    userProfile.banner,
+                    userProfile.rating + (rating - last.rating),
+                    userProfile.review,
+                    userProfile.latitude,
+                    userProfile.longitude
+                )
                 userProfile.rating = userProfile.rating + (rating - last.rating)
             }
 
 
-            reviewViewModel.submitReview(Review(reviewer,reviewee,rating,description, Timestamp.now().toDate().time), editedUserProfile)
+            reviewViewModel.submitReview(
+                Review(
+                    reviewer,
+                    reviewee,
+                    rating,
+                    description,
+                    Timestamp.now().toDate().time
+                ), editedUserProfile
+            )
             val id = R.id.friendProfileFragment
             findNavController().popBackStack(id, true)
-            val action = FriendListFragmentDirections.actionFriendListFragmentToFriendProfileFragment(editedUserProfile)
+            val action =
+                FriendListFragmentDirections.actionFriendListFragmentToFriendProfileFragment(
+                    editedUserProfile
+                )
             findNavController().navigate(action)
         }
 

@@ -1,6 +1,5 @@
 package com.example.producity.models.source
 
-import android.widget.Adapter
 import androidx.lifecycle.MutableLiveData
 import com.example.producity.models.Activity
 

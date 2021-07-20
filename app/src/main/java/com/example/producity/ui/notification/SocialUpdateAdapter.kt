@@ -1,33 +1,26 @@
 package com.example.producity.ui.notification
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
 import com.example.producity.SharedViewModel
-import com.example.producity.models.Activity
 import com.example.producity.models.Notification
-import com.example.producity.models.User
 import com.example.producity.ui.myactivity.MyActivityViewModel
-import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SocialUpdateAdapter(val context: Fragment, val myActivityViewModel: MyActivityViewModel,
-                          val sharedViewModel: SharedViewModel, val notificationViewModel: NotificationViewModel)
-    : ListAdapter<Notification, SocialUpdateAdapter.SocialUpdateViewHolder>(SocialUpdateComparator()){
+class SocialUpdateAdapter(
+    val context: Fragment, val myActivityViewModel: MyActivityViewModel,
+    val sharedViewModel: SharedViewModel, val notificationViewModel: NotificationViewModel
+) : ListAdapter<Notification, SocialUpdateAdapter.SocialUpdateViewHolder>(SocialUpdateComparator()) {
 
     class SocialUpdateViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val image: ImageView = view.findViewById(R.id.sender_image)
@@ -45,7 +38,7 @@ class SocialUpdateAdapter(val context: Fragment, val myActivityViewModel: MyActi
         companion object {
             fun create(parent: ViewGroup): SocialUpdateViewHolder {
                 val itemView = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.notification_update_item, parent, false)
+                    .inflate(R.layout.notification_update_item, parent, false)
 
                 return SocialUpdateViewHolder(itemView)
             }

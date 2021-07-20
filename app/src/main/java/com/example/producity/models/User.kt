@@ -1,15 +1,12 @@
 package com.example.producity.models
 
-import android.location.Location
 import android.os.Parcelable
-import com.google.firebase.firestore.GeoPoint
-import com.google.type.LatLng
 import kotlinx.parcelize.Parcelize
-import kotlinx.parcelize.RawValue
 import java.util.*
 
 object EMPTY {
-    val banner = "https://media4.giphy.com/media/lJWqs22mZzMyv7UUa2/giphy.gif?cid=76400f11w49tz7kdqmd0vgm9uaoboy4nbcisd9s4mum11z3k&rid=giphy.gif&ct=g"
+    val banner =
+        "https://media4.giphy.com/media/lJWqs22mZzMyv7UUa2/giphy.gif?cid=76400f11w49tz7kdqmd0vgm9uaoboy4nbcisd9s4mum11z3k&rid=giphy.gif&ct=g"
 }
 
 @Parcelize

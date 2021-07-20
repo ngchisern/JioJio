@@ -8,7 +8,6 @@ import com.example.producity.models.Participant
 import com.example.producity.models.User
 import com.example.producity.models.source.IActivityRepository
 import com.example.producity.models.source.IParticipantRepository
-import com.google.firebase.Timestamp
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -16,8 +15,10 @@ import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
 import java.util.*
 
-class ExploreViewModel(private val participantRepository: IParticipantRepository,
-                       private val activityRepository: IActivityRepository) : ViewModel() {
+class ExploreViewModel(
+    private val participantRepository: IParticipantRepository,
+    private val activityRepository: IActivityRepository
+) : ViewModel() {
 
     val exploreActivities: MutableLiveData<MutableList<Activity>> = MutableLiveData(mutableListOf())
     var allActivities: MutableList<Activity> = mutableListOf()
@@ -43,8 +44,8 @@ class ExploreViewModel(private val participantRepository: IParticipantRepository
 
         db.collection("activity")
             .orderBy("lowerCaseTitle")
-            .startAt(query.toLowerCase())
-            .endAt(query.toLowerCase() + "\uf8ff")
+            .startAt(query.toLowerCase(Locale.ROOT))
+            .endAt(query.toLowerCase(Locale.ROOT) + "\uf8ff")
             .limit(20)
             .get()
             .addOnSuccessListener {
@@ -62,7 +63,7 @@ class ExploreViewModel(private val participantRepository: IParticipantRepository
 
         storage.getReference("profile_pictures/${username}")
             .downloadUrl
-            .addOnSuccessListener {  uri ->
+            .addOnSuccessListener { uri ->
 
                 Picasso.get().load(uri).into(view)
             }
@@ -73,7 +74,7 @@ class ExploreViewModel(private val participantRepository: IParticipantRepository
 
         storage.getReference("activity_images/${docId}")
             .downloadUrl
-            .addOnSuccessListener {  uri ->
+            .addOnSuccessListener { uri ->
                 Picasso.get().load(uri).into(view)
             }
     }
@@ -84,7 +85,7 @@ class ExploreViewModel(private val participantRepository: IParticipantRepository
         rtdb.getReference("participant/$username")
             .get()
             .addOnSuccessListener {
-                if(!it.exists()) return@addOnSuccessListener
+                if (!it.exists()) return@addOnSuccessListener
 
                 view.text = it.getValue(Participant::class.java)!!.nickname
             }
@@ -96,7 +97,7 @@ class ExploreViewModel(private val participantRepository: IParticipantRepository
 class ExploreViewModelFactory(
     private val participantRepo: IParticipantRepository,
     private val activityRepo: IActivityRepository
-): ViewModelProvider.NewInstanceFactory() {
+) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>) =
         (ExploreViewModel(participantRepo, activityRepo) as T)
 }

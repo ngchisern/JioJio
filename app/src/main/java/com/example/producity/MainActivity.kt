@@ -3,7 +3,6 @@ package com.example.producity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -24,13 +23,10 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import timber.log.Timber
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        val TAG = "Main"
-    }
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
@@ -40,8 +36,11 @@ class MainActivity : AppCompatActivity() {
 
     private val chatListViewModel: ChatListViewModel by viewModels()
 
-    private val exploreViewModel: ExploreViewModel by viewModels() {
-        ExploreViewModelFactory(ServiceLocator.provideParticipantRepository(), ServiceLocator.provideActivityRepository())
+    private val exploreViewModel: ExploreViewModel by viewModels {
+        ExploreViewModelFactory(
+            ServiceLocator.provideParticipantRepository(),
+            ServiceLocator.provideActivityRepository()
+        )
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -72,18 +71,13 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        // Delete
-        Log.d(TAG, "displayName: ${currentUser.displayName}")
-        Log.d(TAG, "email: ${currentUser.email}")
-        Log.d(TAG, "uid: ${currentUser.uid}")
-
         db.collection("users")
             .whereEqualTo("uid", currentUser.uid)
             .limit(1)
             .get()
             .addOnSuccessListener { it ->
-                if (it == null || it.isEmpty) {
-                    Log.d("Main", "cant set up user info")
+                if (it.isEmpty) {
+                    Timber.d("cant set up user info")
                     quit()
                     return@addOnSuccessListener
                 }
@@ -116,10 +110,11 @@ class MainActivity : AppCompatActivity() {
                         .startAt(Timestamp.now())
                         .limit(10)
                         .addSnapshotListener { value, error ->
-                            if(error != null) {
+                            if (error != null) {
                                 return@addSnapshotListener
                             }
-                            val list = value?.toObjects(Activity::class.java) ?: return@addSnapshotListener
+                            val list =
+                                value?.toObjects(Activity::class.java) ?: return@addSnapshotListener
                             myActivityViewModel.updateList(list)
                             chatListViewModel.updateList(list)
                         }
@@ -132,17 +127,18 @@ class MainActivity : AppCompatActivity() {
                         .addOnSuccessListener { x ->
                             val list = x.toObjects(Activity::class.java)
 
-                            if(list.isEmpty()) {
+                            if (list.isEmpty()) {
                                 return@addOnSuccessListener
                             }
 
                             exploreViewModel.latest = list.last().date
 
-                            val result = list.filter { y -> !y.participant.contains(username) }.toMutableList()
+                            val result = list.filter { y -> !y.participant.contains(username) }
+                                .toMutableList()
                             exploreViewModel.updateList(result)
                         }
                         .addOnFailureListener {
-                            Log.d(TAG, it.message.toString())
+                            Timber.d(it.message.toString())
                         }
 
 

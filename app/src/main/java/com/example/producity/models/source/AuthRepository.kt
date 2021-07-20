@@ -1,20 +1,11 @@
 package com.example.producity.models.source
 
-import android.net.Uri
-import android.util.Log
-import com.example.producity.MyFirebase
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.EmailAuthCredential
 import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.auth.CredentialsProvider
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 
-object AuthRepository: IAuthRepository {
+object AuthRepository : IAuthRepository {
 
     private val auth = Firebase.auth
 
@@ -23,7 +14,7 @@ object AuthRepository: IAuthRepository {
         val task = auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
-                    Log.d("Main", "${task.exception}")
+                    Timber.d("${task.exception}")
                 }
                 /* TODO Uncomment to send email verification when creating new account
                 else {
@@ -39,31 +30,31 @@ object AuthRepository: IAuthRepository {
                 */
             }
 
-        Log.d("Main", task.isComplete.toString())
+        Timber.d(task.isComplete.toString())
 
         return ""
 
     }
 
     override fun signInWithEmailAndPassword(email: String, password: String): Boolean {
-        if(email.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty()) {
             return false
         }
 
         val task = auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("Main", "signInWithEmail:success")
+                    Timber.d("signInWithEmail:success")
                 } else {
-                    Log.d("Main", "signInWithEmail:failure")
+                    Timber.d("signInWithEmail:failure")
                 }
             }
             .addOnFailureListener {
 
             }
 
-        while(!task.isComplete) {
-            // can add animation
+        while (!task.isComplete) {
+
         }
 
         return task.isSuccessful
@@ -75,7 +66,7 @@ object AuthRepository: IAuthRepository {
 
         val task = user.reauthenticate(credential)
 
-        while(!task.isComplete) {
+        while (!task.isComplete) {
 
         }
 
@@ -89,8 +80,6 @@ object AuthRepository: IAuthRepository {
     override fun changePassword(pass: String) {
         Firebase.auth.currentUser!!.updatePassword(pass)
     }
-
-
 
 
 }

@@ -1,8 +1,9 @@
 package com.example.producity.ui.profile
 
 import android.net.Uri
-import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.example.producity.RegisterActivity
 import com.example.producity.models.User
 import com.example.producity.models.source.IAuthRepository
@@ -12,9 +13,12 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
-class ProfileViewModel(private val userRepository: IUserRepository,
-                        private val authRepository: IAuthRepository) : ViewModel() {
+class ProfileViewModel(
+    private val userRepository: IUserRepository,
+    private val authRepository: IAuthRepository
+) : ViewModel() {
 
     fun getUserProfile(username: String): User {
         var user = User()
@@ -65,7 +69,7 @@ class ProfileViewModel(private val userRepository: IUserRepository,
             )
         }
         val result: User = returnedUser.await()
-        Log.d("ProfileViewModel", "RESULT: $result, username: ${result.username}")
+        Timber.d("RESULT: $result, username: ${result.username}")
         return result
     }
 
@@ -93,7 +97,10 @@ class ProfileViewModel(private val userRepository: IUserRepository,
 
 
 @Suppress("UNCHECKED_CAST")
-class ProfileViewModelFactory(private val userRepository: IUserRepository, private val authRepository: IAuthRepository) :
+class ProfileViewModelFactory(
+    private val userRepository: IUserRepository,
+    private val authRepository: IAuthRepository
+) :
     ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return (ProfileViewModel(userRepository, authRepository) as T)

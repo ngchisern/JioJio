@@ -5,8 +5,8 @@ import com.example.producity.models.User
 import com.example.producity.models.source.remote.IParticipantDataSource
 
 class ParticipantRepository(
-   private val participantDataSource: IParticipantDataSource
-): IParticipantRepository {
+    private val participantDataSource: IParticipantDataSource
+) : IParticipantRepository {
 
     override fun addToDataBase(user: User, docId: String) {
         participantDataSource.addToDataBase(user, docId)

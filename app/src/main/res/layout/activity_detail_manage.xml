@@ -8,13 +8,13 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:cardCornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_percent="0.95"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent=".95"
-        app:cardCornerRadius="12dp">
+        app:layout_constraintWidth_percent=".95">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -111,8 +111,8 @@
                     android:layout_below="@id/activity_detail_time"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="15dp"
-                    android:layout_toEndOf="@id/activity_location_text"
                     android:layout_toStartOf="@id/toggle_button"
+                    android:layout_toEndOf="@id/activity_location_text"
                     android:text="National University of Singapore"
                     android:textSize="14sp" />
 
@@ -123,9 +123,8 @@
                     android:layout_below="@id/activity_detail_time"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="15dp"
-                    android:textOn="In Person"
-                    android:textOff="Virtual"/>
-
+                    android:textOff="Virtual"
+                    android:textOn="In Person" />
 
 
                 <TextView
@@ -194,7 +193,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginTop="9dp"
-                        android:padding="6dp"/>
+                        android:padding="6dp" />
 
                 </LinearLayout>
 

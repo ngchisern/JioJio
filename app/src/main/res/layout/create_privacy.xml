@@ -72,8 +72,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/private_text"
-                    android:layout_toStartOf="@id/forward_arrow"
                     android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@id/forward_arrow"
                     android:text="Only people who are invited can join the event.
                                     Participants cannot invite their friends." />
 
@@ -112,8 +112,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/protected_text"
-                    android:layout_toStartOf="@id/forward_arrow2"
                     android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@id/forward_arrow2"
                     android:text="Only people who are invited can join the activity.
                                     Participants can invite their friends to the activity." />
 
@@ -152,8 +152,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/public_text"
-                    android:layout_toStartOf="@id/forward_arrow3"
                     android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@id/forward_arrow3"
                     android:text="Every user on JioJio can join the activity." />
 
                 <ImageView

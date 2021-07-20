@@ -11,18 +11,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
 import com.example.producity.SharedViewModel
 import com.example.producity.ui.myactivity.MyActivityViewModel
-import java.util.*
 
-class NotificationAdapter(val context: Fragment, val myActivityViewModel: MyActivityViewModel,
-                          val sharedViewModel: SharedViewModel, val notificationViewModel: NotificationViewModel)
-    : ListAdapter<Any, NotificationAdapter.NotificationViewHolder>(NotificationComparator()){
+class NotificationAdapter(
+    val context: Fragment, val myActivityViewModel: MyActivityViewModel,
+    val sharedViewModel: SharedViewModel, val notificationViewModel: NotificationViewModel
+) : ListAdapter<Any, NotificationAdapter.NotificationViewHolder>(NotificationComparator()) {
 
     class NotificationViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
         companion object {
             fun create(parent: ViewGroup): NotificationViewHolder {
                 val itemView = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.notification_viewpager, parent, false)
+                    .inflate(R.layout.notification_viewpager, parent, false)
 
 
                 return NotificationViewHolder(itemView)
@@ -45,9 +45,14 @@ class NotificationAdapter(val context: Fragment, val myActivityViewModel: MyActi
         val view = holder.itemView
         val username = sharedViewModel.getUser().username
 
-        if(position == 0 ) {
+        if (position == 0) {
             val recyclerView: RecyclerView = view.findViewById(R.id.notification_recycle_view)
-            val adapter = SocialUpdateAdapter(context, myActivityViewModel, sharedViewModel, notificationViewModel)
+            val adapter = SocialUpdateAdapter(
+                context,
+                myActivityViewModel,
+                sharedViewModel,
+                notificationViewModel
+            )
             recyclerView.adapter = adapter
 
             recyclerView.addItemDecoration(
@@ -63,7 +68,12 @@ class NotificationAdapter(val context: Fragment, val myActivityViewModel: MyActi
 
         } else {
             val recyclerView: RecyclerView = view.findViewById(R.id.notification_recycle_view)
-            val adapter = NotiRequestAdapter(context, myActivityViewModel, sharedViewModel, notificationViewModel)
+            val adapter = NotiRequestAdapter(
+                context,
+                myActivityViewModel,
+                sharedViewModel,
+                notificationViewModel
+            )
             recyclerView.adapter = adapter
 
             notificationViewModel.getRequest(username).observe(context.viewLifecycleOwner) {
@@ -80,13 +90,12 @@ class NotificationAdapter(val context: Fragment, val myActivityViewModel: MyActi
     private val second: List<Any>? = null
 
     fun getListSize(position: Int): Int {
-        return if(position == 0) {
+        return if (position == 0) {
             first?.size ?: 0
         } else {
             second?.size ?: 0
         }
     }
-
 
 
 }

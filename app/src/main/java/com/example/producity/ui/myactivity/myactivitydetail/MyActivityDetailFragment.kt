@@ -4,37 +4,23 @@ import android.content.Intent
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.producity.LoginViewModelFactory
 import com.example.producity.R
 import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.MyActivityDetailBinding
 import com.example.producity.models.Activity
-import com.example.producity.models.Participant
-import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.example.producity.ui.myactivity.myactivitydetail.invite.MyActivityInviteFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
-import java.net.URL
+import timber.log.Timber
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -46,9 +32,12 @@ import java.util.*
 class MyActivityDetailFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val myActivityViewModel: MyActivityViewModel by activityViewModels()
-    private val myActivityDetailViewModel: MyActivityDetailViewModel by activityViewModels() {
-        MyActivityDetailViewModelFactory(ServiceLocator.provideParticipantRepository(), ServiceLocator.provideActivityRepository())
+
+    private val myActivityDetailViewModel: MyActivityDetailViewModel by activityViewModels {
+        MyActivityDetailViewModelFactory(
+            ServiceLocator.provideParticipantRepository(),
+            ServiceLocator.provideActivityRepository()
+        )
     }
 
     private var isOwner: Boolean = false
@@ -98,10 +87,10 @@ class MyActivityDetailFragment : Fragment() {
 
         var isOne = true
 
-        val manager1 = LinearLayoutManager(context, RecyclerView.HORIZONTAL,  false)
+        val manager1 = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         val adapter1 = ParticipantlAdapter(this, false, false, myActivityDetailViewModel)
 
-        val manager2 = LinearLayoutManager(context, RecyclerView.VERTICAL,  true)
+        val manager2 = LinearLayoutManager(context, RecyclerView.VERTICAL, true)
         val adapter2 = ParticipantlAdapter(this, true, false, myActivityDetailViewModel)
 
         recycleView.layoutManager = manager1
@@ -109,7 +98,7 @@ class MyActivityDetailFragment : Fragment() {
 
 
         binding.participantShow.setOnClickListener {
-            if(isOne) {
+            if (isOne) {
                 it.setBackgroundResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 isOne = false
                 recycleView.layoutManager = manager2
@@ -153,16 +142,16 @@ class MyActivityDetailFragment : Fragment() {
             activityDetailDescription.text = activity.description
             activityDetailCreator.text = activity.owner
             participantShow.setBackgroundResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
-            activityDetailParticipant.setText("${activity.participant.size}/${activity.pax}")
+            activityDetailParticipant.text = "${activity.participant.size}/${activity.pax}"
 
-            if(activity.isVirtual) {
+            if (activity.isVirtual) {
                 activityDetailLocation.text = "Online"
             } else {
                 val geocoder = Geocoder(context, Locale.getDefault())
 
                 val address = geocoder.getFromLocation(activity.latitude, activity.longitude, 1)
 
-                if(address.isEmpty()) {
+                if (address.isEmpty()) {
                     activityDetailLocation.text = "Unknown"
                 } else {
                     activityDetailLocation.text = address[0].getAddressLine(0)
@@ -182,14 +171,17 @@ class MyActivityDetailFragment : Fragment() {
         }
 
         binding.chatButton.setOnClickListener {
-            val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToMyActivityLogFragment(event)
+            val action =
+                MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToMyActivityLogFragment(
+                    event
+                )
             findNavController().navigate(action)
         }
 
         binding.topAppBar.setNavigationOnClickListener {
-           // val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToNavigationMyActivity()
+            // val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToNavigationMyActivity()
             //findNavController().navigate(action)
-            Log.d("Main", "navigateup")
+            Timber.d("navigateup")
             myActivityDetailViewModel.currentActivity = null
             findNavController().navigateUp()
         }
@@ -201,7 +193,10 @@ class MyActivityDetailFragment : Fragment() {
                     true
                 }
                 R.id.manage -> {
-                    val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToMyActivityManageFragment(event)
+                    val action =
+                        MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToMyActivityManageFragment(
+                            event
+                        )
                     findNavController().navigate(action)
                     true
                 }
@@ -221,7 +216,7 @@ class MyActivityDetailFragment : Fragment() {
     }
 
     private fun popLeaveDialog() {
-        if(isOwner) {
+        if (isOwner) {
             val builder = MaterialAlertDialogBuilder(requireContext())
 
             builder.setMessage("You are the creator of this activity. Leave the activity?")

@@ -1,35 +1,27 @@
 package com.example.producity.ui.reviewlist
 
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.producity.models.ChatRoom
 import com.example.producity.models.Participant
 import com.example.producity.models.Review
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
 
-class ReviewListViewModel: ViewModel() {
+class ReviewListViewModel : ViewModel() {
     val reviews: MutableLiveData<List<Review>> = MutableLiveData(listOf())
 
     fun updateList(username: String) {
-
-        var updated: MutableList<ChatRoom> = mutableListOf()
         val rtdb = Firebase.database
-
 
         rtdb.getReference("review/$username")
             .get()
             .addOnSuccessListener {
-                val list = it.children.map {
-                    x -> x.getValue(Review::class.java)!!
+                val list = it.children.map { x ->
+                    x.getValue(Review::class.java)!!
                 }
 
                 reviews.value = list
@@ -42,9 +34,7 @@ class ReviewListViewModel: ViewModel() {
 
         storage.getReference("profile_pictures/${username}")
             .downloadUrl
-            .addOnSuccessListener {  uri ->
-                if(uri == null) return@addOnSuccessListener
-
+            .addOnSuccessListener { uri ->
                 Picasso.get().load(uri).into(view)
             }
     }
@@ -55,7 +45,7 @@ class ReviewListViewModel: ViewModel() {
         rtdb.getReference("participant/$username")
             .get()
             .addOnSuccessListener {
-                if(!it.exists()) return@addOnSuccessListener
+                if (!it.exists()) return@addOnSuccessListener
 
                 view.text = it.getValue(Participant::class.java)!!.nickname
             }

@@ -21,9 +21,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:textSize="16sp"
-        android:layout_toEndOf="@id/sender_image"
         android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/sender_image"
+        android:textSize="16sp"
         tools:text="friend_username" />
 
     <TextView
@@ -31,10 +31,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/noti_message"
-        android:layout_toEndOf="@id/sender_image"
         android:layout_marginStart="10dp"
-        android:textSize="10dp"/>
-
+        android:layout_toEndOf="@id/sender_image"
+        android:textSize="10dp" />
 
 
 </RelativeLayout>

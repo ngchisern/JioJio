@@ -1,17 +1,16 @@
 package com.example.producity.ui.friends.my_friends
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.text.InputType
-import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -24,14 +23,18 @@ import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendListBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.*
-import org.w3c.dom.Text
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class FriendListFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideUserRepository(), ServiceLocator.provideActivityRepository())
+        FriendListViewModelFactory(
+            ServiceLocator.provideUserRepository(),
+            ServiceLocator.provideActivityRepository()
+        )
     }
 
     private var _binding: FragmentFriendListBinding? = null
@@ -69,10 +72,13 @@ class FriendListFragment : Fragment() {
 
         val currentUsername = sharedViewModel.currentUser.value!!.username
         friendListViewModel.getAllFriends(currentUsername).observe(viewLifecycleOwner) {
-            if(it.isEmpty()) {
-                Picasso.get().load("https://thumbs.dreamstime.com/b/happy-cat-dog-friendship-cartoon-illustration-best-friends-memes-68796146.jpg")
+            if (it.isEmpty()) {
+                Picasso.get()
+                    .load("https://thumbs.dreamstime.com/b/happy-cat-dog-friendship-cartoon-illustration-best-friends-memes-68796146.jpg")
                     .into(binding.emptyFriendlistImage)
-                binding.emptyFriendlistText.text = "Get started by adding a friend"
+
+                val addFriend = "Get started by adding a friend"
+                binding.emptyFriendlistText.text = addFriend
             }
 
             adapter.submitList(it)
@@ -131,7 +137,8 @@ class FriendListFragment : Fragment() {
         editText.requestFocus()
 
         dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
 
     }
@@ -142,7 +149,10 @@ class FriendListFragment : Fragment() {
             val user = friendListViewModel.checkUserExists(username)
             if (user != null) {
                 //friendListViewModel.sendFriendRequest(sharedViewModel.currentUser.value!!, checkUsername)
-                val action = FriendListFragmentDirections.actionFriendListFragmentToFriendProfileFragment(user)
+                val action =
+                    FriendListFragmentDirections.actionFriendListFragmentToFriendProfileFragment(
+                        user
+                    )
                 findNavController().navigate(action)
                 dialog.cancel()
             } else {

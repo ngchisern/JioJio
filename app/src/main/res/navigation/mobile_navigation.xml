@@ -37,7 +37,7 @@
         android:id="@+id/navigation_createActivity"
         android:name="com.example.producity.ui.createactivity.CreateActivityFragment"
         android:label="@string/title_addEvent"
-        tools:layout="@layout/add_activity">
+        tools:layout="@layout/create_activity">
 
         <action
             android:id="@+id/action_navigation_addEvent_to_createLocationFragment"

@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
-import com.example.producity.SharedViewModel
 import com.example.producity.models.Activity
 import com.example.producity.models.ChatRoom
 import com.google.firebase.firestore.ktx.firestore
@@ -23,15 +22,15 @@ import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatListAdapter(private val context: Fragment, val username: String):
+class ChatListAdapter(private val context: Fragment, val username: String) :
     ListAdapter<ChatRoom, ChatListAdapter.ChatListViewHolder>(ChatListComparator()) {
 
-    class ChatListViewHolder(val view: View, val username: String): RecyclerView.ViewHolder(view) {
+    class ChatListViewHolder(val view: View, val username: String) : RecyclerView.ViewHolder(view) {
         val image: CircleImageView = view.findViewById(R.id.group_icon)
-        val groupname: TextView = view.findViewById(R.id.group_name)
+        private val groupname: TextView = view.findViewById(R.id.group_name)
         val message: TextView = view.findViewById(R.id.group_lastmessage)
         val time: TextView = view.findViewById(R.id.group_time)
-        val unread: CardView = view.findViewById(R.id.group_unread)
+        private val unread: CardView = view.findViewById(R.id.group_unread)
 
         fun bind(current: ChatRoom) {
             groupname.text = current.group
@@ -40,7 +39,7 @@ class ChatListAdapter(private val context: Fragment, val username: String):
             val format = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
             time.text = format.format(current.timestamp)
 
-            if(current.unread[username]!! <= 0) {
+            if (current.unread[username]!! <= 0) {
                 unread.isVisible = false
             }
 
@@ -48,7 +47,7 @@ class ChatListAdapter(private val context: Fragment, val username: String):
 
             storage.getReference("activity_images/${current.docId}")
                 .downloadUrl
-                .addOnSuccessListener {  uri ->
+                .addOnSuccessListener { uri ->
                     Picasso.get().load(uri).into(image)
                 }
 
@@ -64,7 +63,7 @@ class ChatListAdapter(private val context: Fragment, val username: String):
     }
 
 
-    class ChatListComparator: DiffUtil.ItemCallback<ChatRoom>() {
+    class ChatListComparator : DiffUtil.ItemCallback<ChatRoom>() {
         override fun areItemsTheSame(oldItem: ChatRoom, newItem: ChatRoom): Boolean {
             return oldItem == newItem
         }
@@ -88,10 +87,11 @@ class ChatListAdapter(private val context: Fragment, val username: String):
             Firebase.firestore.document("activity/${current.docId}")
                 .get()
                 .addOnSuccessListener {
-                    if(!it.exists()) return@addOnSuccessListener
+                    if (!it.exists()) return@addOnSuccessListener
 
                     val event = it.toObject(Activity::class.java)!!
-                    val action = ChatListFragmentDirections.actionNavigationChatToMyActivityLogFragment(event)
+                    val action =
+                        ChatListFragmentDirections.actionNavigationChatToMyActivityLogFragment(event)
                     context.findNavController().navigate(action)
                 }
 

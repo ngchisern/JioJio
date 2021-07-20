@@ -1,6 +1,5 @@
 package com.example.producity.ui.myactivity.myactivitydetail.invite
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,21 +11,20 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
-import com.example.producity.SharedViewModel
 import com.example.producity.models.Notification
-import com.example.producity.models.Participant
 import com.example.producity.models.User
 import com.example.producity.ui.myactivity.myactivitydetail.MyActivityDetailViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Timestamp
 import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
+import timber.log.Timber
 
-class MyActivityInviteAdapter(val context: Fragment, val currentUser: User, val activityDetailViewModel: MyActivityDetailViewModel):
+class MyActivityInviteAdapter(
+    val context: Fragment,
+    val currentUser: User,
+    val activityDetailViewModel: MyActivityDetailViewModel
+) :
     ListAdapter<User, MyActivityInviteAdapter.InviteViewHolder>(InviteComparator()) {
 
     class InviteViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -58,13 +56,14 @@ class MyActivityInviteAdapter(val context: Fragment, val currentUser: User, val 
         activityDetailViewModel.loadUserImage(current.username, holder.pic)
 
         holder.inviteButton.setOnClickListener {
-            val builder = context.context?.let { MaterialAlertDialogBuilder(it) } ?: return@setOnClickListener
+            val builder =
+                context.context?.let { MaterialAlertDialogBuilder(it) } ?: return@setOnClickListener
 
             builder.setMessage("Invite ${current.nickname} to the activity?")
-                .setPositiveButton("Confirm") { dialog, which ->
+                .setPositiveButton("Confirm") { _, _ ->
                     addToNotification(current)
                 }
-                .setNegativeButton("Cancel") { dialog, which ->
+                .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.cancel()
                 }
 
@@ -87,20 +86,22 @@ class MyActivityInviteAdapter(val context: Fragment, val currentUser: User, val 
 
         val docId = activityDetailViewModel.currentActivity!!.docId
 
-        val noti = Notification(user.username,
-                                "${currentUser.nickname} invited you to join an activity.",
-                                Timestamp.now().toDate().time,
-                                docId)
+        val noti = Notification(
+            user.username,
+            "${currentUser.nickname} invited you to join an activity.",
+            Timestamp.now().toDate().time,
+            docId
+        )
 
         val rtdb = Firebase.database
 
         rtdb.reference.child("notification/${user.username}").push()
             .setValue(noti)
             .addOnSuccessListener {
-                Log.d("Main", "added noti to database")
+                Timber.d("added noti to database")
             }
             .addOnFailureListener {
-                Log.d("Main", it.message.toString())
+                Timber.d(it.message.toString())
             }
 
 
@@ -110,8 +111,6 @@ class MyActivityInviteAdapter(val context: Fragment, val currentUser: User, val 
 
 
     }
-
-
 
 
 }

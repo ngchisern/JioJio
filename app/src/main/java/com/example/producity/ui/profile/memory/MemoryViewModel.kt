@@ -8,7 +8,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
 
-class MemoryViewModel(val activityRepository: IActivityRepository): ViewModel() {
+class MemoryViewModel(val activityRepository: IActivityRepository) : ViewModel() {
 
     fun getList(username: String): LiveData<List<Activity>> {
         return Transformations.map(activityRepository.getPastActivities(username)) { x -> x }
@@ -19,9 +19,7 @@ class MemoryViewModel(val activityRepository: IActivityRepository): ViewModel() 
 
         storage.getReference("activity_images/${docId}")
             .downloadUrl
-            .addOnSuccessListener {  uri ->
-                if(uri == null) return@addOnSuccessListener
-
+            .addOnSuccessListener { uri ->
                 Picasso.get().load(uri).into(view)
             }
     }

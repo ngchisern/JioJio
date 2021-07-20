@@ -3,23 +3,21 @@ package com.example.producity.ui.profile
 import android.content.Intent
 import android.location.Geocoder
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.producity.LoginActivity
 import com.example.producity.R
-import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentProfileBinding
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -39,7 +37,7 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -85,7 +83,7 @@ class ProfileFragment : Fragment() {
         binding.profileBirthday.text = dateFormat.format(userProfile.birthday)
         binding.profileBio.text = userProfile.bio
 
-        if(userProfile.latitude == -1.0 && userProfile.longitude == -1.0) {
+        if (userProfile.latitude == -1.0 && userProfile.longitude == -1.0) {
             binding.profileLocation.text = "Not selected yet"
         } else {
             val geocoder = Geocoder(context, Locale.getDefault())
@@ -94,13 +92,12 @@ class ProfileFragment : Fragment() {
             binding.profileLocation.text = "${address[0].locality}, ${address[0].countryName}"
         }
 
-        binding.profileGender.text = when(userProfile.gender) {
+        binding.profileGender.text = when (userProfile.gender) {
             0 -> "Male"
             1 -> "Female"
             2 -> "Other"
             else -> "Not yet selected"
         }
-
 
 
         val auth = Firebase.auth
@@ -109,12 +106,12 @@ class ProfileFragment : Fragment() {
 
         Glide.with(requireContext()).load(userProfile.banner).into(binding.profileBanner)
 
-        if(userProfile.review == 0) {
+        if (userProfile.review == 0) {
             binding.profileStars.rating = 0F
             binding.profileRating.text = "0.0"
             binding.profileTotalreview.text = "no review yet"
         } else {
-            val rating = "%.${1}f".format(userProfile.rating/userProfile.review).toFloat()
+            val rating = "%.${1}f".format(userProfile.rating / userProfile.review).toFloat()
 
             binding.profileStars.rating = rating
             binding.profileRating.text = rating.toString()
@@ -142,17 +139,22 @@ class ProfileFragment : Fragment() {
         }
 
         binding.emailLayout.setOnClickListener {
-            val action = ProfileFragmentDirections.actionNavigationProfileToEditAccountFragment(CHANGE_EMAIL)
+            val action =
+                ProfileFragmentDirections.actionNavigationProfileToEditAccountFragment(CHANGE_EMAIL)
             findNavController().navigate(action)
         }
 
         binding.telehandleLayout.setOnClickListener {
-            val action = ProfileFragmentDirections.actionNavigationProfileToEditAccountFragment(CHANGE_TELEGRAM)
+            val action = ProfileFragmentDirections.actionNavigationProfileToEditAccountFragment(
+                CHANGE_TELEGRAM
+            )
             findNavController().navigate(action)
         }
 
         binding.passwordLayout.setOnClickListener {
-            val action = ProfileFragmentDirections.actionNavigationProfileToEditAccountFragment(CHANGE_PASSWORD)
+            val action = ProfileFragmentDirections.actionNavigationProfileToEditAccountFragment(
+                CHANGE_PASSWORD
+            )
             findNavController().navigate(action)
         }
 
@@ -163,7 +165,8 @@ class ProfileFragment : Fragment() {
 
         binding.ratingLayout.setOnClickListener {
             val userProfile = sharedViewModel.currentUser.value!!
-            val action = ProfileFragmentDirections.actionNavigationProfileToReviewListFragment(userProfile)
+            val action =
+                ProfileFragmentDirections.actionNavigationProfileToReviewListFragment(userProfile)
             findNavController().navigate(action)
         }
 

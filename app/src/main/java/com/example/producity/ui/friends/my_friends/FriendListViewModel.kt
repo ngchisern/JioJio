@@ -1,12 +1,13 @@
 package com.example.producity.ui.friends.my_friends
 
-import android.util.Log
 import android.widget.ImageView
 import androidx.lifecycle.*
-import com.example.producity.models.*
+import com.example.producity.models.Activity
+import com.example.producity.models.Request
+import com.example.producity.models.Review
+import com.example.producity.models.User
 import com.example.producity.models.source.IActivityRepository
 import com.example.producity.models.source.IUserRepository
-import com.google.firebase.Timestamp
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -16,8 +17,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class FriendListViewModel(private val userRepository: IUserRepository,
-                          private val activityRepository: IActivityRepository) : ViewModel() {
+class FriendListViewModel(
+    private val userRepository: IUserRepository,
+    private val activityRepository: IActivityRepository
+) : ViewModel() {
 
     // stores the friend list returned by Firestore instead of calling database code again when needed
     // call getAllFriends(username) to set the friend list
@@ -40,10 +43,6 @@ class FriendListViewModel(private val userRepository: IUserRepository,
         return deferredBoolean.await()
     }
 
-    fun sendFriendRequest(sender: User, receiverUsername: String) {
-        viewModelScope.launch { userRepository.sendFriendRequest(sender, receiverUsername) }
-    }
-
     fun addFriend(currUser: User, friend: User) {
         viewModelScope.launch { userRepository.addFriend(currUser, friend) }
     }
@@ -61,9 +60,7 @@ class FriendListViewModel(private val userRepository: IUserRepository,
 
         storage.getReference("profile_pictures/${username}")
             .downloadUrl
-            .addOnSuccessListener {  uri ->
-                if(uri == null) return@addOnSuccessListener
-
+            .addOnSuccessListener { uri ->
                 Picasso.get().load(uri).into(view)
             }
     }
@@ -73,9 +70,7 @@ class FriendListViewModel(private val userRepository: IUserRepository,
 
         storage.getReference("activity_images/${docId}")
             .downloadUrl
-            .addOnSuccessListener {  uri ->
-                if(uri == null) return@addOnSuccessListener
-
+            .addOnSuccessListener { uri ->
                 Picasso.get().load(uri).into(view)
             }
     }
@@ -113,13 +108,14 @@ class FriendListViewModel(private val userRepository: IUserRepository,
     }
 
 
-
-
 }
 
 
 @Suppress("UNCHECKED_CAST")
-class FriendListViewModelFactory(private val userRepository: IUserRepository, private val activityRepository: IActivityRepository) :
+class FriendListViewModelFactory(
+    private val userRepository: IUserRepository,
+    private val activityRepository: IActivityRepository
+) :
     ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return (FriendListViewModel(userRepository, activityRepository) as T)

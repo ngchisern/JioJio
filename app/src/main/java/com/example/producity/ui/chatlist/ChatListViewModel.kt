@@ -1,18 +1,17 @@
 package com.example.producity.ui.chatlist
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.producity.models.Activity
 import com.example.producity.models.ChatRoom
-import com.example.producity.models.Message
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import timber.log.Timber
 
-class ChatListViewModel: ViewModel() {
+class ChatListViewModel : ViewModel() {
 
     private val rtdb = Firebase.database
     val chatRooms: MutableLiveData<List<ChatRoom>> = MutableLiveData(listOf())
@@ -33,7 +32,7 @@ class ChatListViewModel: ViewModel() {
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        Log.d("Main", "failed to update log")
+                        Timber.d("failed to update log")
                     }
                 })
         }

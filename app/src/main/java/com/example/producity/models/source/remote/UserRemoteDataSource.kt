@@ -1,23 +1,15 @@
 package com.example.producity.models.source.remote
 
 import android.net.Uri
-import android.util.Log
-import com.example.producity.MyFirebase
-import com.example.producity.RegisterActivity
-import com.example.producity.models.Notification
 import com.example.producity.models.User
 import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.Timestamp
-import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import java.util.*
-
-private const val TAG = "UserRemoteDataSource"
 
 class UserRemoteDataSource : IUserRemoteDataSource {
 
@@ -33,10 +25,10 @@ class UserRemoteDataSource : IUserRemoteDataSource {
         db.document("users/$username")
             .set(user)
             .addOnCompleteListener {
-                Log.d("Main", "Done")
+                Timber.d("Done")
             }
             .addOnSuccessListener {
-                Log.d("Main", "Successfully sign up!")
+                Timber.d("Successfully sign up!")
             }
 
     }
@@ -46,7 +38,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
         return db.document("users/$username")
             .get()
             .addOnSuccessListener {
-                Log.d("Main", it.exists().toString())
+                Timber.d(it.exists().toString())
             }
 
     }
@@ -71,15 +63,15 @@ class UserRemoteDataSource : IUserRemoteDataSource {
             .limit(1)
             .get()
             .addOnSuccessListener {
-                if (it == null || it.isEmpty) {
-                    Log.d(TAG, "cant set up user info")
+                if (it.isEmpty) {
+                    Timber.d("cant set up user info")
                     return@addOnSuccessListener
                 }
 
                 it.forEach { doc ->
                     val temp = doc.toObject(User::class.java)
                     userProfile = temp
-                    Log.d(TAG, "updated user")
+                    Timber.d("updated user")
                 }
             }
 
@@ -91,7 +83,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
             .document(editedUserProfile.username)
             .set(editedUserProfile)
             .addOnSuccessListener { // get friends and update the profile details in friends
-                Log.d(TAG, "edited user profile")
+                Timber.d("edited user profile")
 
                 // get list of friends
                 val friendList: MutableList<User> = mutableListOf()
@@ -107,22 +99,22 @@ class UserRemoteDataSource : IUserRemoteDataSource {
 
                         // update the current user profile details in each of the friends
                         val friendUsernames: List<String> =
-                            friendList.map { it.username }
+                            friendList.map { x -> x.username }
                         friendUsernames.forEach { friendUsername ->
                             db.collection("users/$friendUsername/friends")
                                 .document(currUsername)
                                 .set(editedUserProfile)
                                 .addOnSuccessListener {
-                                    Log.d(TAG, "updated profile in friend: $friendUsername")
+                                    Timber.d("updated profile in friend: $friendUsername")
                                 }
-                                .addOnFailureListener {
-                                    Log.d(TAG, it.toString())
+                                .addOnFailureListener { e ->
+                                    Timber.d(e.toString())
                                 }
                         }
                     }
             }
             .addOnFailureListener {
-                Log.d(TAG, it.toString())
+                Timber.d(it.toString())
             }
     }
 
@@ -135,7 +127,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
                 .documents
                 .mapNotNull { it.toObject(User::class.java) }
         } catch (e: Exception) {
-            Log.d(TAG, "Error getting friends: $e")
+            Timber.d("Error getting friends: $e")
             listOf()
         }
     }
@@ -164,8 +156,8 @@ class UserRemoteDataSource : IUserRemoteDataSource {
         db.document("users/${friend.username}")
             .get()
             .addOnSuccessListener {
-                if (it == null || !it.exists()) {
-                    Log.d(TAG, "No doc")
+                if (!it.exists()) {
+                    Timber.d("No doc")
                     return@addOnSuccessListener
                 }
 
@@ -177,7 +169,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
 
             }
             .addOnFailureListener {
-                Log.d(TAG, it.toString())
+                Timber.d(it.toString())
             }
     }
 
@@ -185,19 +177,19 @@ class UserRemoteDataSource : IUserRemoteDataSource {
         db.document("users/${currUser.username}/friends/${friend.username}")
             .delete()
             .addOnSuccessListener {
-                Log.d(TAG, "Deleted ${currUser.username}'s friend: ${friend.username}")
+                Timber.d("Deleted ${currUser.username}'s friend: ${friend.username}")
             }
             .addOnFailureListener {
-                Log.d(TAG, it.toString())
+                Timber.d(it.toString())
             }
 
         db.document("users/${friend.username}/friends/${currUser.username}")
             .delete()
             .addOnSuccessListener {
-                Log.d(TAG, "Deleted ${friend.username}'s friend: ${currUser.username}")
+                Timber.d("Deleted ${friend.username}'s friend: ${currUser.username}")
             }
             .addOnFailureListener {
-                Log.d(TAG, it.toString())
+                Timber.d(it.toString())
             }
     }
 
@@ -208,10 +200,10 @@ class UserRemoteDataSource : IUserRemoteDataSource {
 
         ref.putFile(imageUri)
             .addOnSuccessListener {
-                Log.d(TAG, "Successfully uploaded image: ${it.metadata?.path}")
+                Timber.d("Successfully uploaded image: ${it.metadata?.path}")
 
-                ref.downloadUrl.addOnSuccessListener {
-                    url = it.toString()
+                ref.downloadUrl.addOnSuccessListener { uri ->
+                    url = uri.toString()
                 }
             }
 
@@ -236,10 +228,10 @@ class UserRemoteDataSource : IUserRemoteDataSource {
             .document(editedUserProfile.username)
             .set(editedUserProfile)
             .addOnSuccessListener {
-                Log.d(TAG, "updated profile in friend: $friendUsername")
+                Timber.d("updated profile in friend: $friendUsername")
             }
             .addOnFailureListener {
-                Log.d(TAG, it.toString())
+                Timber.d(it.toString())
             }
     }
 
@@ -262,7 +254,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
 
         val task = ref.putFile(imageUri) // upload image to Firebase Storage
             .addOnSuccessListener {
-                Log.d(TAG, "Successfully uploaded image at: ${it.metadata?.path}")
+                Timber.d("Successfully uploaded image at: ${it.metadata?.path}")
                 ref.downloadUrl.addOnSuccessListener {
                     val currUsername = editedUserProfile.username
                     // Update the user profile details
@@ -270,34 +262,33 @@ class UserRemoteDataSource : IUserRemoteDataSource {
                         .document(currUsername)
                         .set(editedUserProfile)
                         .addOnSuccessListener { // get friends and update the profile details in friends
-                            Log.d(TAG, "Edited user profile")
+                            Timber.d("Edited user profile")
 
                             // get list of friends
                             val friendList: MutableList<User> = mutableListOf()
                             db.collection("users/$currUsername/friends")
                                 .orderBy("username")
                                 .get()
-                                .addOnSuccessListener {
-                                    it.forEach { doc ->
+                                .addOnSuccessListener { x ->
+                                    x.forEach { doc ->
                                         val friend = doc.toObject(User::class.java)
                                         friendList.add(friend)
                                     }
 
                                     // update the current user profile details in each of the friends
                                     val friendUsernames: List<String> =
-                                        friendList.map { it.username }
+                                        friendList.map { y -> y.username }
                                     friendUsernames.forEach { friendUsername ->
                                         db.collection("users/$friendUsername/friends")
                                             .document(currUsername)
                                             .set(editedUserProfile)
                                             .addOnSuccessListener {
-                                                Log.d(
-                                                    TAG,
+                                                Timber.d(
                                                     "updated profile in friend: $friendUsername"
                                                 )
                                             }
-                                            .addOnFailureListener {
-                                                Log.d(TAG, it.toString())
+                                            .addOnFailureListener { e ->
+                                                Timber.d(e.toString())
                                             }
                                     }
                                 }
@@ -307,7 +298,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
                 }
             }
             .addOnFailureListener {
-                Log.d(TAG, it.toString())
+                Timber.d(it.toString())
             }
 
         while (!task.isComplete) {

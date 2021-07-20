@@ -16,7 +16,7 @@ import com.example.producity.models.Message
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.google.firebase.Timestamp
 
-class ChatFragment: Fragment() {
+class ChatFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val chatViewModel: ChatViewModel by viewModels()
@@ -30,7 +30,7 @@ class ChatFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = ChatRoomBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -103,11 +103,12 @@ class ChatFragment: Fragment() {
         }
 
         binding.topAppBar.setOnMenuItemClickListener { item ->
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.more -> {
                     navigateToEvent()
                     true
-                } else -> true
+                }
+                else -> true
             }
         }
 
@@ -115,7 +116,8 @@ class ChatFragment: Fragment() {
 
     private fun navigateToEvent() {
         val event = ChatFragmentArgs.fromBundle(requireArguments()).event
-        val action = ChatFragmentDirections.actionMyActivityLogFragmentToScheduleDetailFragment(event)
+        val action =
+            ChatFragmentDirections.actionMyActivityLogFragmentToScheduleDetailFragment(event)
         findNavController().navigate(action)
     }
 

@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
 import com.example.producity.SharedViewModel
@@ -54,11 +53,12 @@ class ChatListFragment : Fragment() {
         )
 
         chatListViewModel.chatRooms.observe(viewLifecycleOwner) {
-            if(it.isEmpty()) {
-                binding.emptyChatlistTitle.text = "You don't have any \nchat room yet"
-                binding.emptyChatlistSubtitle.text = "Chat room is automatically created when you created/joined an activity."
+            if (it.isEmpty()) {
+                val title = "You don't have any \nchat room yet"
+                binding.emptyChatlistTitle.text = title
+                val subtitle = "Chat room is automatically created when you created/joined an activity."
+                binding.emptyChatlistSubtitle.text = subtitle
             }
-
             adapter.submitList(it)
         }
 
