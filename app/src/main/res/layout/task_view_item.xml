@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_marginVertical="10dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/my_activity_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
+        app:cardCornerRadius="8dp"
         android:clickable="true"
         android:focusable="true"
         android:checkable="true">
@@ -89,7 +89,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingVertical="16dp"
+                android:paddingHorizontal="8dp">
 
                 <ImageView
                     android:id="@+id/location_icon"
@@ -109,6 +110,7 @@
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary"
                     android:layout_toEndOf="@id/location_icon"
+                    android:layout_toStartOf="@id/explore_view_item_owner"
                     />
 
                 <TextView
@@ -117,6 +119,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:layout_toLeftOf="@id/explore_view_item_owner_image"
+                    android:textColor="@color/black"
                     />
 
                 <ImageView

@@ -27,6 +27,9 @@ class SharedViewModel: ViewModel() {
 
                 userImage.value = uri.toString()
             }
+            .addOnFailureListener{
+                userImage.value = "https://images.unsplash.com/photo-1600172454520-134a542a2255?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjB8fHdoaXRlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80"
+            }
     }
 
 

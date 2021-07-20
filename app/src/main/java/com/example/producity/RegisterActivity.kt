@@ -2,18 +2,14 @@ package com.example.producity
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputFilter
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModel
 import com.example.producity.models.User
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -26,7 +22,10 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private val registerViewModel: RegisterViewModel by viewModels() {
-        RegisterViewModelFactory(ServiceLocator.provideAuthRepository(), ServiceLocator.provideUserRepository())
+        RegisterViewModelFactory(
+            ServiceLocator.provideAuthRepository(),
+            ServiceLocator.provideUserRepository()
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +34,9 @@ class RegisterActivity : AppCompatActivity() {
 
         val signUpButton: Button = findViewById(R.id.sign_up_button)
         val goToSignIn: TextView = findViewById(R.id.sign_in_text)
+
+        val removeFilter = InputFilter { s, _, _, _, _, _ -> s.toString().removeSpace() }
+        findViewById<EditText>(R.id.signup_username).apply { filters = filters.plus(removeFilter) }
 
         signUpButton.setOnClickListener {
             signUp()
@@ -45,6 +47,8 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    fun String.removeSpace() = trim().replace("\\s+".toRegex(), replacement = "")
+
     private fun signUp() {
         val username = findViewById<EditText>(R.id.signup_username)
         val email = findViewById<EditText>(R.id.sign_up_email)
@@ -53,17 +57,17 @@ class RegisterActivity : AppCompatActivity() {
 
         var isValid = true
 
-        if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email.text.toString()).matches()) {
-            if(email.text.toString().isEmpty()) {
-                email.setError("Please enter your email.")
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email.text.toString()).matches()) {
+            if (email.text.toString().isEmpty()) {
+                email.error = "Please enter your email."
             } else {
-                email.setError("Wrong email format.")
+                email.error = "Wrong email format."
             }
             isValid = false
         }
 
-        if(password.text.toString().length < 6) {
-            password.setError("Password must contain at least 6 characters.")
+        if (password.text.toString().length < 6) {
+            password.error = "Password must contain at least 6 characters."
             isValid = false
         }
 
@@ -76,10 +80,14 @@ class RegisterActivity : AppCompatActivity() {
         if (username.text.toString().isEmpty()) {
             username.error = "Please enter your username."
             isValid = false
+        } else if (username.text.length < 6 ) {
+            username.error = "Username must contain at least 6 characters."
         }
 
 
-        if(isValid) {
+
+
+        if (isValid) {
             val checkTask = registerViewModel.isUsernameTaken(username.text.toString())
 
             if (checkTask) {
@@ -87,25 +95,61 @@ class RegisterActivity : AppCompatActivity() {
                 return
             }
 
+            /*
             registerViewModel.createUser(
                 username.text.toString(),
                 email.text.toString(),
                 password.text.toString()
             )
 
+             */
 
-            val intent = Intent(this, MainActivity::class.java)
-            /* TODO Uncomment to display sent email verification page
-            val intent = Intent(this, SentEmailVerificationActivity::class.java)
-            */
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
+
+            Firebase.auth.createUserWithEmailAndPassword(
+                email.text.toString(),
+                password.text.toString()
+            )
+                .addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Log.d("Main", "${task.exception}")
+                    }
+
+                    val name = username.text.toString()
+
+                    val user = User(
+                        name,
+                        Firebase.auth.currentUser!!.uid,
+                        name,
+                        bio = "Hello there.",
+                        banner = "https://media.giphy.com/media/bcKmIWkUMCjVm/giphy.gif"
+                    )
+
+                    val db = Firebase.firestore
+
+                    db.document("users/${name}")
+                        .set(user)
+                        .addOnCompleteListener {
+                            Log.d("Main", "Done")
+                            val intent = Intent(this, MainActivity::class.java)
+
+                            /* TODO Uncomment to display sent email verification page
+                            val intent = Intent(this, SentEmailVerificationActivity::class.java)
+                            */
+
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            startActivity(intent)
+                        }
+                        .addOnSuccessListener {
+                            Log.d("Main", "Successfully sign up!")
+                        }
+                }
+
 
         }
 
 
     }
-
 
 
 }

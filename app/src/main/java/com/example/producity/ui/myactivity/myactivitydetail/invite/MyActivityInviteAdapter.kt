@@ -36,7 +36,6 @@ class MyActivityInviteAdapter(val context: Fragment, val currentUser: User, val 
 
         fun bind(text: String?) {
             username.text = text
-            //Picasso.get().load(imageUrl).transform(CropCircleTransformation()).into(pic)
         }
 
         companion object {
@@ -54,16 +53,18 @@ class MyActivityInviteAdapter(val context: Fragment, val currentUser: User, val 
 
     override fun onBindViewHolder(holder: InviteViewHolder, position: Int) {
         val current = getItem(position)
-        holder.bind(current.username)
+        holder.bind(current.nickname)
+
+        activityDetailViewModel.loadUserImage(current.username, holder.pic)
 
         holder.inviteButton.setOnClickListener {
             val builder = context.context?.let { MaterialAlertDialogBuilder(it) } ?: return@setOnClickListener
 
-            builder.setMessage("Invite ${current.username} to the activity?")
-                .setPositiveButton("Yes") { dialog, which ->
+            builder.setMessage("Invite ${current.nickname} to the activity?")
+                .setPositiveButton("Confirm") { dialog, which ->
                     addToNotification(current)
                 }
-                .setNegativeButton("No") { dialog, which ->
+                .setNegativeButton("Cancel") { dialog, which ->
                     dialog.cancel()
                 }
 
@@ -86,15 +87,14 @@ class MyActivityInviteAdapter(val context: Fragment, val currentUser: User, val 
 
         val docId = activityDetailViewModel.currentActivity!!.docId
 
-        val noti = Notification(currentUser.username,
-                                Notification.INVITE,
-                                null,
+        val noti = Notification(user.username,
+                                "${currentUser.nickname} invited you to join an activity.",
                                 Timestamp.now().toDate().time,
                                 docId)
 
         val rtdb = Firebase.database
 
-        rtdb.getReference().child("notification/${user.username}").push()
+        rtdb.reference.child("notification/${user.username}").push()
             .setValue(noti)
             .addOnSuccessListener {
                 Log.d("Main", "added noti to database")
@@ -104,10 +104,14 @@ class MyActivityInviteAdapter(val context: Fragment, val currentUser: User, val 
             }
 
 
-        val participant = Participant(user.nickname, user.username)
+        val participant = User(user.username, nickname = user.nickname)
 
-        activityDetailViewModel.addActivity(participant, docId)
+        activityDetailViewModel.addParticipant(participant, docId)
+
+
     }
+
+
 
 
 }

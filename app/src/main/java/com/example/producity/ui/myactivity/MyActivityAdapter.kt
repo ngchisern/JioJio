@@ -61,6 +61,8 @@ class MyActivityAdapter(val context: Fragment, val myActivityViewModel: MyActivi
             context.findNavController().navigate(action)
         }
 
+        myActivityViewModel.loadImage(current.docId, holder.image)
+
     }
 
     class ScheduleComparator : DiffUtil.ItemCallback<Activity>() {

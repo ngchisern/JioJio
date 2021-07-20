@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -33,7 +34,14 @@ import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.squareup.okhttp.Dispatcher
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -46,8 +54,6 @@ class MyActivityManageFragment: Fragment() {
 
     private var _binding: ActivityDetailManageBinding? = null
     private val binding get() = _binding!!
-
-    private val db = Firebase.firestore
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -90,8 +96,6 @@ class MyActivityManageFragment: Fragment() {
     }
 
     override fun onDestroyView() {
-        val bottomNav: View? = activity?.findViewById(R.id.nav_view)
-        bottomNav?.isVisible = true
         super.onDestroyView()
         _binding = null
     }
@@ -122,7 +126,7 @@ class MyActivityManageFragment: Fragment() {
         val dateFormat: DateFormat = SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault())
 
         _binding?.apply {
-            //Picasso.get().load(activity.imageUrl).into(activityDetailImage)
+            myActivityDetailViewModel.loadActivityImage(activity.docId, activityDetailImage)
             activityDetailTitle.setText(activity.title)
             activityDetailDate.setText(dateFormat.format(activity.date))
             activityDetailTime.setText(timeFormat.format(activity.date))
@@ -135,15 +139,18 @@ class MyActivityManageFragment: Fragment() {
                 activityDetailLocation.setText("Online")
             } else {
                 toggleButton.isChecked = true
-                activityDetailLocation.setText(activity.location)
+                activityDetailLocation.setText("")
             }
 
+            /*
             if(!activity.isPublic) {
                 activityEditLock.setBackgroundResource(R.drawable.ic_baseline_lock_24)
                 isPublic = false
             } else {
                 activityEditLock.setBackgroundResource(R.drawable.ic_baseline_lock_open_24)
             }
+
+             */
         }
 
     }
@@ -152,8 +159,6 @@ class MyActivityManageFragment: Fragment() {
     private var isPublic = true
 
     private fun listen() {
-        val activity = myActivityDetailViewModel.currentActivity!!
-
         binding.apply {
             activityDetailImage.setOnClickListener {
                 val intent = Intent(Intent.ACTION_PICK)
@@ -179,10 +184,10 @@ class MyActivityManageFragment: Fragment() {
                 if(isChecked) {
                     isVirtual = false
                     activityLocationText.text = "Location"
-                    activityDetailLocation.setText(activity.location)
+                    activityDetailLocation.setText("")
                 } else {
                     isVirtual = true
-                    activityLocationText.text = "Mode"
+                    activityLocationText.text = "Location"
                     activityDetailLocation.setText("Online")
                 }
             }
@@ -231,23 +236,21 @@ class MyActivityManageFragment: Fragment() {
         val minute = mcurrentTime.get(Calendar.MINUTE)
 
         mTimePicker = TimePickerDialog(context, android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
-            object : TimePickerDialog.OnTimeSetListener {
-                override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-                    phour = hourOfDay
-                    pminute = minute
+            { view, hourOfDay, minute ->
+                phour = hourOfDay
+                pminute = minute
 
-                    var stage = "am"
-                    if (hourOfDay >= 12) stage = "pm"
+                var stage = "am"
+                if (hourOfDay >= 12) stage = "pm"
 
-                    var min = minute.toString()
-                    if(minute < 10) {
-                        min = "0$minute"
-                    }
-
-                    val text = "${hourOfDay % 12}:$min $stage"
-
-                    binding.activityDetailTime.setText(text)
+                var min = minute.toString()
+                if(minute < 10) {
+                    min = "0$minute"
                 }
+
+                val text = "${hourOfDay % 12}:$min $stage"
+
+                binding.activityDetailTime.setText(text)
             }, hour, minute, false
         )
 
@@ -279,8 +282,6 @@ class MyActivityManageFragment: Fragment() {
     }
 
     private fun update(){
-        val activity = myActivityDetailViewModel.currentActivity!!
-
         if(selectedPhoto != null) {
             val storage = Firebase.storage
             val filename = UUID.randomUUID().toString()
@@ -295,9 +296,9 @@ class MyActivityManageFragment: Fragment() {
                             Log.d(MainActivity.TAG, it.message.toString())
                         }
                 }
-
-            return
         }
+
+        val activity = myActivityDetailViewModel.currentActivity!!
 
         binding.apply {
             val title = activityDetailTitle.text.toString()
@@ -306,17 +307,24 @@ class MyActivityManageFragment: Fragment() {
             val description = activityDetailDescription.text.toString()
             val date = getDate()
 
-            val updatedActivity = Activity(activity.docId, title, activity.owner,
-                isPublic, isVirtual, date, location, pax, description, activity.participant, activity.viewers)
+            CoroutineScope(IO).launch {
+                val geocoder = Geocoder(context, Locale.getDefault())
+                val address = geocoder.getFromLocationName(location, 1)
+                val lat = if(address.isEmpty()) -1.0 else address[0].latitude
+                val long = if(address.isEmpty()) -1.0 else address[0].longitude
 
-            myActivityDetailViewModel.updateActivity(updatedActivity)
-            myActivityDetailViewModel.setActivity(updatedActivity)
+                val updatedActivity = Activity(activity.docId, title, title.toLowerCase(), activity.owner,
+                    2, isVirtual, date, lat, long, pax, description, activity.participant, activity.label)
+
+                myActivityDetailViewModel.updateActivity(updatedActivity)
+                myActivityDetailViewModel.setActivity(updatedActivity)
+            }
         }
 
 
     }
 
-    fun getDate(): Date {
+    private fun getDate(): Date {
         val date = myActivityDetailViewModel.currentActivity!!.date
         if (pyear == -1 ) {
             pyear = date.year

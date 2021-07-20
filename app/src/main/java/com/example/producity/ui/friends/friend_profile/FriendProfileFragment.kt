@@ -1,31 +1,27 @@
 package com.example.producity.ui.friends.friend_profile
 
 import android.content.Intent
+import android.graphics.Color
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
-import android.os.CountDownTimer
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.android.volley.Request
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
 import com.example.producity.R
 import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendProfileBinding
+import com.example.producity.models.Request
 import com.example.producity.models.User
 import com.example.producity.ui.friends.my_friends.FriendListFragmentDirections
 import com.example.producity.ui.friends.my_friends.FriendListViewModel
@@ -34,10 +30,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Timestamp
+import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashMap
 
 private const val FRIEND_PROFILE = "friendProfile"
 
@@ -56,6 +52,7 @@ class FriendProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var isFriend: Boolean? = null
+    private var doesRequestExist: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,8 +88,13 @@ class FriendProfileFragment : Fragment() {
         binding.actionCard.setOnClickListener {
             if(isFriend!!) {
                 message()
-            } else {
+            } else if(!doesRequestExist!!){
                 sendFriendRequest()
+                it.isClickable = false
+                binding.mainAction.text = "Friend Request Sent"
+                binding.mainAction.setTextColor(Color.GRAY)
+            }  else {
+                it.isClickable = false
             }
         }
 
@@ -128,7 +130,12 @@ class FriendProfileFragment : Fragment() {
         binding.profileBirthday.text = dateFormat.format(friend.birthday)
         binding.profileBio.text = friend.bio
 
-        binding.mainAction.text = if(isFriend!!) "Send Message" else "Send Friend Request"
+        viewLifecycleOwner.lifecycleScope.launch {
+            doesRequestExist = exist()
+            binding.mainAction.text = if(isFriend!!) "Send Message"
+                            else if(doesRequestExist!!) "Friend Request Sent"
+                            else "Send Friend Request"
+        }
 
         if(friend.latitude == -1.0 && friend.longitude == -1.0) {
             binding.profileLocation.text = "Not selected yet"
@@ -144,7 +151,7 @@ class FriendProfileFragment : Fragment() {
             binding.nextEventCard.isVisible = true
 
             friendListViewModel.getNextEvent(friend.username).observe(viewLifecycleOwner) {
-                // image
+                friendListViewModel.loadImage(it.docId, binding.profileActivityImage)
                 binding.profileActivityName.text = it.title
                 binding.profileActivityCountdown.text
 
@@ -155,28 +162,14 @@ class FriendProfileFragment : Fragment() {
 
                 if (difference < 86400000) {
                     timeFrame = 3600000
+                    val hour = difference/ timeFrame % 24
+                    countdown.text = "In about $hour hours"
                 } else {
                     timeFrame = 86400000
+                    val day = difference / timeFrame
+                    countdown.text = "In about $day days"
                 }
 
-                val countDownTimer = object : CountDownTimer(difference, timeFrame) {
-                    override fun onTick(millisUntilFinished: Long) {
-                        if (timeFrame == 3600000L) {
-                            val hour = millisUntilFinished / timeFrame % 24
-                            countdown.text = "In about $hour hours"
-                        } else {
-                            val day = millisUntilFinished / timeFrame
-                            countdown.text = "In about $day days"
-                        }
-                    }
-
-                    override fun onFinish() {
-                        countdown.text = "happening now"
-                    }
-
-                }
-
-                countDownTimer.start()
 
             }
         }
@@ -191,11 +184,8 @@ class FriendProfileFragment : Fragment() {
             binding.profileRating.text = rating.toString()
             binding.profileTotalreview.text = "(${friend.review})"
             binding.profileStars.rating = rating
-
-            Log.d("Friend profile", rating.toString())
-            Log.d("Friend profile", binding.profileStars.rating.toString())
-
         }
+
 
 
     }
@@ -298,6 +288,10 @@ class FriendProfileFragment : Fragment() {
         return friendUsernames.contains(username)
     }
 
+    private suspend fun exist(): Boolean {
+        return friendListViewModel.doesRequestExist(sharedViewModel.getUser().username, friend.username)
+    }
+
     private fun message() {
         if (friend.telegramHandle == "") {
             Toast.makeText(context, "The user has not set a Telegram handle", Toast.LENGTH_LONG).show()
@@ -307,7 +301,8 @@ class FriendProfileFragment : Fragment() {
     }
 
     private fun sendFriendRequest() {
-        TODO()
+        val request = Request(Request.FRIENDREQUEST, sharedViewModel.getUser().username, friend.username, Timestamp.now().toDate().time)
+        friendListViewModel.sendFriendRequest(request)
     }
 
     private fun goToReportUser() {
@@ -319,6 +314,8 @@ class FriendProfileFragment : Fragment() {
         val action = FriendProfileFragmentDirections.actionFriendProfileFragmentToReviewUserFragment(friend)
         findNavController().navigate(action)
     }
+
+
 }
 
 

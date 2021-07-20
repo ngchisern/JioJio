@@ -17,7 +17,8 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class PagerAdapter(private val context: Fragment): ListAdapter<Activity, PagerAdapter.PagerViewHolder>(
+class PagerAdapter(private val context: Fragment, val myActivityViewModel: MyActivityViewModel)
+    : ListAdapter<Activity, PagerAdapter.PagerViewHolder>(
    PagerComparator()
 ) {
 
@@ -56,6 +57,8 @@ class PagerAdapter(private val context: Fragment): ListAdapter<Activity, PagerAd
             val action = MyActivityFragmentDirections.actionNavigationHomeToScheduleDetailFragment(current)
             context.findNavController().navigate(action)
         }
+
+        myActivityViewModel.loadImage(current.docId, holder.image)
 
     }
 

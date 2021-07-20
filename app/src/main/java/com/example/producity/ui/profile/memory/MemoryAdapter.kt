@@ -15,7 +15,8 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MemoryAdapter(val context: Fragment): ListAdapter<Activity, MemoryAdapter.MemoryViewHolder>(MemoryComparator()) {
+class MemoryAdapter(val context: Fragment, val memoryViewModel: MemoryViewModel)
+    : ListAdapter<Activity, MemoryAdapter.MemoryViewHolder>(MemoryComparator()) {
 
     class MemoryViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
@@ -61,6 +62,8 @@ class MemoryAdapter(val context: Fragment): ListAdapter<Activity, MemoryAdapter.
     override fun onBindViewHolder(holder: MemoryViewHolder, position: Int) {
         val current = getItem(position)
         holder.bind(current)
+
+        memoryViewModel.loadActivityImage(current.docId, holder.image)
     }
 
 }

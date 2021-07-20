@@ -7,7 +7,11 @@
         <item name="android:windowFullscreen">false</item>
         <item name="android:statusBarColor">#f5f7ff</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="bottomNavigationStyle">@style/Widget.MaterialComponents.BottomNavigationView.Colored</item>
+        <item name="colorPrimary">#283593</item>
+        <item name="colorOnPrimary">#283593</item>
     </style>
+
 
     <style name="Widget.Theme.ProduCity.NoActionBar.ButtonBar.Fullscreen" parent="">
         <item name="android:background">@color/black_overlay</item>

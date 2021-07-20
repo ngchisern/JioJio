@@ -1,7 +1,10 @@
 package com.example.producity.ui.myactivity
 
+import android.graphics.Color
+import android.location.Geocoder
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +19,7 @@ import com.example.producity.R
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentHomeBinding
 import com.example.producity.models.Activity
+import com.google.android.material.shape.CornerFamily
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -64,19 +68,57 @@ class MyActivityFragment : Fragment() {
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         myActivityViewModel.myActivityList.observe(viewLifecycleOwner) {
-            if(it.isEmpty()) return@observe
+            if(it.isEmpty()) {
+                binding.primaryCountdownText.text = "Happening now"
+                binding.primaryTitle.text = "Living ..."
+                binding.primaryLocation.text = "Everywhere and anywhere"
+                binding.primaryDescription.text = "Find joy in what we do!"
+                binding.primaryTime.text = "Forever"
+                binding.homePrimaryEvent.isClickable = false
 
+                Picasso.get().load("https://media.tenor.com/images/0cc5aae09f18a8ad8400f6a1a03a2dc0/tenor.png")
+                    .into(binding.emptyComingnextImage)
+                binding.emptyComingnext.text = "Wow, such empty :("
+                return@observe
+            }
+
+            binding.homePrimaryEvent.isClickable = true
+
+            if(it.size == 1) {
+                Picasso.get().load("https://media.tenor.com/images/0cc5aae09f18a8ad8400f6a1a03a2dc0/tenor.png")
+                    .into(binding.emptyComingnextImage)
+                binding.emptyComingnext.text = "Wow, such empty :("
+            }
+
+
+            val subject = it[0]
+            updatePrimaryActivity(subject)
             upcomingAdapter.submitList(it.subList(1, it.size))
         }
 
 
         val viewPager = binding.homePager
-        val pagerAdapter = PagerAdapter(this)
+        val pagerAdapter = PagerAdapter(this, myActivityViewModel)
         viewPager.adapter = pagerAdapter
 
         val tabLayout = binding.tabLayout
 
-        myActivityViewModel.myActivityList.observe(viewLifecycleOwner) {
+        myActivityViewModel.recommended.observe(viewLifecycleOwner) {
+            if(it.isEmpty()) {
+                val image = binding.emptyRecommendationImage
+                image.shapeAppearanceModel = image.shapeAppearanceModel
+                    .toBuilder()
+                    .setAllCorners(CornerFamily.ROUNDED, 20F)
+                    .build()
+
+                Picasso.get().load("https://massets.appsflyer.com/wp-content/uploads/2021/02/machine-learning-in-digital-marketing-featured-min.png")
+                    .into(image)
+
+                val str = String(Character.toChars(0x1F916)) + " " + getString(R.string.learning)
+                binding.emptyRecommendationText.text = str
+                return@observe
+            }
+
             pagerAdapter.submitList(it)
         }
 
@@ -89,7 +131,7 @@ class MyActivityFragment : Fragment() {
                 if(pagerAdapter.itemCount == 0) return
 
                 requireActivity().runOnUiThread {
-                    viewPager.setCurrentItem(count%pagerAdapter.itemCount)
+                    viewPager.currentItem = count%pagerAdapter.itemCount
                 }
 
                 count ++
@@ -100,8 +142,6 @@ class MyActivityFragment : Fragment() {
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
 
         }.attach()
-
-
 
 
         val bottomNav: View? = activity?.findViewById(R.id.nav_view)
@@ -128,20 +168,14 @@ class MyActivityFragment : Fragment() {
     }
 
     private fun updateLayout() {
-
         sharedViewModel.userImage.observe(viewLifecycleOwner) { url ->
             if(url == "") return@observe
 
             Picasso.get().load(url).into(binding.profileImage)
-
         }
 
-        myActivityViewModel.myActivityList.observe(viewLifecycleOwner) {
-            if(it.isEmpty()) return@observe
-
-            val subject = it[0]
-            updatePrimaryActivity(subject)
-
+        sharedViewModel.currentUser.observe(viewLifecycleOwner) {
+            binding.welcomeText.text = "Hello, ${it.nickname.toUpperCase()}"
         }
 
     }
@@ -160,10 +194,10 @@ class MyActivityFragment : Fragment() {
 
     private fun updatePrimaryActivity(subject: Activity) {
         binding.apply {
-            //primaryCountdownText.setText()
+
             primaryTitle.text = subject.title
             primaryDescription.text = subject.description
-            primaryLocation.text = subject.location
+            primaryLocation.text = ""
 
             val format = SimpleDateFormat("d MMM yyyy hh:mm aaa", Locale.getDefault())
             primaryTime.text = format.format(subject.date)
@@ -192,6 +226,18 @@ class MyActivityFragment : Fragment() {
                     primaryCountdownText.text = "happening now"
                 }
 
+            }
+
+            val geocoder = Geocoder(requireContext(), Locale.getDefault())
+
+            primaryLocation.text = if(subject.isVirtual) "Online" else {
+                val address = geocoder.getFromLocation(subject.latitude, subject.longitude, 1)
+
+                if(address.isEmpty()) {
+                    "Unknown"
+                } else {
+                    address[0].getAddressLine(0)
+                }
             }
 
             countDownTimer.start()

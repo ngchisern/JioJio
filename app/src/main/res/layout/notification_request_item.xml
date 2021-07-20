@@ -4,58 +4,85 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@null"
+    android:layout_marginVertical="10dp">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/sender_image"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_person_24" />
+        android:src="@drawable/ic_baseline_person_24"
+        app:civ_border_width="1dp"
+        app:civ_border_color="#FF000000"/>
+
+    <TextView
+        android:id="@+id/sender_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/sender_image"
+        tools:text="friend_username" />
 
     <TextView
         android:id="@+id/noti_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:textAppearance="?attr/textAppearanceHeadline6"
-        android:textColor="@color/design_default_color_primary_dark"
-        android:textSize="16sp"
+        android:layout_marginStart="20dp"
+        android:textSize="12sp"
         android:layout_toEndOf="@id/sender_image"
-        android:layout_marginTop="10dp"
+        android:layout_below="@id/sender_name"
         tools:text="friend_username" />
 
     <TextView
         android:id="@+id/noti_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/noti_message"
-        android:layout_toEndOf="@id/sender_image"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
         android:textSize="10dp"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Responded"
+        android:textSize="14dp"
+        android:textColor="@color/quantum_grey700"
+        android:layout_below="@id/noti_message"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/sender_image"
+        />
+
     <LinearLayout
+        android:id="@+id/request_option"
         android:layout_width="300dp"
         android:layout_height="40dp"
-        android:layout_below="@id/noti_date"
+        android:layout_below="@id/noti_message"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@id/sender_image"
         android:gravity="center|start"
-        android:weightSum="10">
+        android:weightSum="10"
+        android:layout_marginTop="2dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:backgroundTint="@android:color/holo_green_dark"
-            android:elevation="10dp"
+            android:backgroundTint="@color/white"
             android:text="Cancel"
-            app:cornerRadius="20dp" />
+            android:textColor="@color/quantum_grey700"
+            app:cornerRadius="1dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/quantum_grey50"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -67,20 +94,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="5"
-            android:backgroundTint="@android:color/holo_green_dark"
-            android:elevation="10dp"
+            android:backgroundTint="#66bb6a"
+            android:textColor="@color/white"
             android:text="Accept"
-            app:cornerRadius="20dp" />
+            app:cornerRadius="1dp"/>
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/tick_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/ic_baseline_check_24"/>
 
 </RelativeLayout>

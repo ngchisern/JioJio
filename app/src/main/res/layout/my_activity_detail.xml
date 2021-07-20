@@ -3,26 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:contentScrim="@android:color/transparent"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
             app:statusBarScrim="@android:color/transparent"
             android:background="@color/white">
 
-            <ImageView
-                android:id="@+id/activity_image"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax"/>
+                android:layout_height="wrap_content"
+                app:layout_collapseMode="parallax">
+
+                <ImageView
+                    android:id="@+id/activity_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:src="@drawable/ic_launcher_background"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintDimensionRatio="16:9"
+                    android:scaleType="centerCrop" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/topAppBar"
@@ -41,17 +52,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="-20dp"
+        android:fillViewport="true"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:cardCornerRadius="20dp"
-            app:contentPaddingBottom="100dp">
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="20dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginHorizontal="20dp">
 
                 <TextView
@@ -60,7 +71,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="Basketball"
-                    android:textSize="20sp"
+                    android:textSize="22sp"
+                    android:textColor="#424242"
                     android:textStyle="bold"/>
 
                 <ImageView
@@ -78,6 +90,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="30dp"
                     android:text="Sunday, June 19, 2021"
+                    android:textColor="#757575"
                     android:textSize="14sp"
                     android:layout_below="@id/activity_detail_title"
                     android:layout_toEndOf="@id/activity_calendar_icon"/>
@@ -95,8 +108,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="01:00 PM"
+                    android:textColor="#757575"
                     android:textSize="14sp"
+                    android:text="01:00 PM"
                     android:layout_marginTop="22dp"
                     android:layout_below="@id/activity_detail_date"
                     android:layout_toEndOf="@id/activity_time_icon"/>
@@ -116,6 +130,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="20dp"
                     android:text="National University of Singapore"
+                    android:textColor="#757575"
                     android:textSize="14sp"
                     android:layout_below="@id/activity_detail_time"
                     android:layout_toEndOf="@id/activity_calendar_icon"/>
@@ -125,7 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/activity_detail_location"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="20dp"
                     android:src="@drawable/ic_baseline_person_24"/>
 
                 <TextView
@@ -133,11 +148,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="22dp"
                     android:layout_below="@id/activity_detail_location"
                     android:layout_toEndOf="@id/participant_icon"
                     android:text="5"
-                    android:textSize="14sp" />
+                    android:textColor="#757575"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/activity_description_text"
@@ -147,7 +163,7 @@
                     android:layout_below="@id/activity_detail_participant"
                     android:text="Description"
                     android:textStyle="bold"
-                    android:textSize="16sp"/>
+                    android:textSize="18sp"/>
 
                 <TextView
                     android:id="@+id/activity_detail_description"
@@ -155,17 +171,20 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="your best basketball experience"
-                    android:textSize="14dp"
+                    android:textColor="#757575"
+                    android:textSize="14sp"
                     android:layout_below="@id/activity_description_text"/>
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/activity_creator_icon"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_below="@id/activity_detail_description"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="25dp"
                     android:src="@drawable/ic_baseline_person_24"
-                    android:scaleType="centerCrop"/>
+                    android:scaleType="centerCrop"
+                    app:civ_border_width="1dp"
+                    app:civ_border_color="@color/black"/>
 
                 <TextView
                     android:id="@+id/activity_detail_creator"
@@ -173,11 +192,11 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/activity_detail_description"
                     android:layout_toEndOf="@id/activity_creator_icon"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="25dp"
                     android:layout_marginStart="15dp"
                     android:text="The Creator"
                     android:textStyle="bold"
-                    android:textSize="14dp"/>
+                    android:textSize="16dp"/>
 
                 <TextView
                     android:id="@+id/creator_text"
@@ -236,11 +255,14 @@
                         android:id="@+id/invite_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:cornerRadius="20dp"
+                        app:cornerRadius="10dp"
                         android:elevation="10dp"
+                        android:textColor="@color/white"
                         android:text="Invite"
                         android:layout_weight="3"
-                        android:backgroundTint="@android:color/holo_green_dark"
+                        android:backgroundTint="#1565c0
+
+"
                         />
 
                     <LinearLayout
@@ -252,11 +274,12 @@
                         android:id="@+id/chat_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:cornerRadius="20dp"
+                        app:cornerRadius="10dp"
                         android:elevation="10dp"
                         android:text="Chat"
+                        android:textColor="@color/white"
                         android:layout_weight="6"
-                        android:backgroundTint="@android:color/holo_purple"
+                        android:backgroundTint="#22d8b9"
                         />
 
                 </LinearLayout>

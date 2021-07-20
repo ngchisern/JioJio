@@ -9,11 +9,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
+import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.NotificationBinding
 import com.example.producity.ui.myactivity.MyActivityViewModel
+import com.giphy.sdk.analytics.models.enums.AttributeKey
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import com.squareup.picasso.Picasso
 
 class NotificationFragment: Fragment() {
 
@@ -22,7 +26,9 @@ class NotificationFragment: Fragment() {
     private val binding get() = _binding!!
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val notificationViewModel: NotificationViewModel by viewModels()
+    private val notificationViewModel: NotificationViewModel by viewModels() {
+        NotificationViewModelFactory(ServiceLocator.provideUserRepository())
+    }
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -32,12 +38,11 @@ class NotificationFragment: Fragment() {
     ): View {
 
         _binding = NotificationBinding.inflate(inflater, container, false)
+
         val root: View = binding.root
 
         val bottomNav: View? = activity?.findViewById(R.id.nav_view)
         bottomNav?.isVisible = false
-
-        listen()
 
         return root
     }
@@ -45,23 +50,60 @@ class NotificationFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        notificationViewModel.updateList(sharedViewModel.currentUser.value!!.username)
+        val viewPager = binding.notiPager
+        val pagerAdapter = NotificationAdapter(this, myActivityViewModel, sharedViewModel, notificationViewModel)
+        viewPager.adapter = pagerAdapter
 
-        val recyclerView = binding.notificationRecycleView
-        val adapter = NotificationAdapter(this, myActivityViewModel, sharedViewModel, notificationViewModel)
-        recyclerView.adapter = adapter
+        val tabLayout = binding.tabLayout
 
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                context,
-                DividerItemDecoration.VERTICAL
-            )
-        )
+        pagerAdapter.submitList(listOf(1,2))
 
-        notificationViewModel.notificationList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-        }
+        val tabTitles = arrayOf("Social Update", "Request")
 
+        TabLayoutMediator(tabLayout, viewPager) { myTabLayout, position ->
+            myTabLayout.text = tabTitles[position]
+
+            val size = pagerAdapter.getListSize(0)
+
+            if(size <= 0) {
+                Picasso.get().load("https://cdn.dribbble.com/users/1418633/screenshots/6693173/empty-state.png")
+                    .into(binding.emptyNotiImage)
+                binding.emptyNotiText.text = "No Social Update"
+
+            }
+
+        }.attach()
+
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                val position = tab!!.position
+                val size = pagerAdapter.getListSize(position)
+
+                if(size <= 0) {
+                    Picasso.get().load("https://cdn.dribbble.com/users/1418633/screenshots/6693173/empty-state.png")
+                        .into(binding.emptyNotiImage)
+                    if(position == 0) {
+                        binding.emptyNotiText.text = "No Social Update"
+                    } else {
+                        binding.emptyNotiText.text = "No Recent Requests"
+                    }
+                } else {
+                    binding.emptyNotiImage.setImageDrawable(null)
+                    binding.emptyNotiText.text = ""
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+
+        })
+
+        listen()
     }
 
 

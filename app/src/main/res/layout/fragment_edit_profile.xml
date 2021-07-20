@@ -183,28 +183,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:hint="Edit your telegram handle"
-                        app:boxCornerRadiusBottomEnd="5dp"
-                        app:boxCornerRadiusBottomStart="5dp"
-                        app:boxCornerRadiusTopEnd="5dp"
-                        app:boxCornerRadiusTopStart="5dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edit_telegram_handle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:maxLength="32"
-                            android:maxLines="1"
-                            tools:ignore="KeyboardInaccessibleWidget" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
                         android:hint="Edit your location"
                         app:boxCornerRadiusBottomEnd="5dp"
                         app:boxCornerRadiusBottomStart="5dp"

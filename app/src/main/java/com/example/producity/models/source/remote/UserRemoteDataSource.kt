@@ -13,6 +13,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
 import java.util.*
 
@@ -20,23 +21,24 @@ private const val TAG = "UserRemoteDataSource"
 
 class UserRemoteDataSource : IUserRemoteDataSource {
 
-    private val db = MyFirebase.db
-    private val rtdb = MyFirebase.rtdb
-    private val storage = MyFirebase.storage
+    private val db = Firebase.firestore
+    private val storage = Firebase.storage
 
     override fun createUser(username: String, uid: String) {
+
         val user = User(
             username, uid
         )
 
         db.document("users/$username")
             .set(user)
+            .addOnCompleteListener {
+                Log.d("Main", "Done")
+            }
             .addOnSuccessListener {
                 Log.d("Main", "Successfully sign up!")
             }
-            .addOnFailureListener { e ->
-                Log.d("Main", "Error adding document")
-            }
+
     }
 
     override fun isUsernmeTaken(username: String): Task<DocumentSnapshot> {
@@ -139,6 +141,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
     }
 
     override suspend fun sendFriendRequest(sender: User, receiverUsername: String) {
+        /*
         val noti = Notification(sender.username,
             Notification.FRIENDREQUEST,
             null,
@@ -153,6 +156,8 @@ class UserRemoteDataSource : IUserRemoteDataSource {
             .addOnFailureListener {
                 Log.d(TAG, it.message.toString())
             }
+
+         */
     }
 
     override suspend fun addFriend(currUser: User, friend: User) {

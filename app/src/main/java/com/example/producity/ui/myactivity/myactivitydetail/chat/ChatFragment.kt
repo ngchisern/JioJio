@@ -51,7 +51,7 @@ class ChatFragment: Fragment() {
         chatViewModel.updateList()
 
         val recyclerView = binding.recyclerChat
-        val adapter = ChatAdapter(this, username)
+        val adapter = ChatAdapter(this, username, chatViewModel)
 
         recyclerView.adapter = adapter
 
@@ -76,12 +76,10 @@ class ChatFragment: Fragment() {
         val event = ChatFragmentArgs.fromBundle(requireArguments()).event
 
         binding.groupText.text = event.title
-
-
+        chatViewModel.loadActivityImage(event.docId, binding.groupImage)
     }
 
     private fun listen() {
-
         binding.topAppBar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }

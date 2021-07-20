@@ -17,7 +17,7 @@ import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatAdapter(private val context: Fragment, private val username: String)
+class ChatAdapter(private val context: Fragment, private val username: String, private val chatViewmodel: ChatViewModel)
     : androidx.recyclerview.widget.ListAdapter<Message, ChatAdapter.ChatViewHolder>(LOG_COMPARATOR){
 
 
@@ -28,13 +28,12 @@ class ChatAdapter(private val context: Fragment, private val username: String)
 
         companion object {
             fun create(parent: ViewGroup, viewType: Int): ChatViewHolder {
-                val itemView: View
 
-                if(viewType.equals(0)) {  // from message
-                    itemView = LayoutInflater.from(parent.context)
+                val itemView: View = if(viewType == 0) {  // from message
+                    LayoutInflater.from(parent.context)
                         .inflate(R.layout.chat_room_frommessage, parent, false)
                 } else { // to message
-                    itemView = LayoutInflater.from(parent.context)
+                    LayoutInflater.from(parent.context)
                         .inflate(R.layout.chat_room_tomessage, parent, false)
                 }
 
@@ -64,17 +63,17 @@ class ChatAdapter(private val context: Fragment, private val username: String)
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val current = getItem(position)
 
-        holder.message.setText(current.message)
+        holder.message.text = current.message
 
         val isSameDate: Boolean
 
         if(position != 0 && current.timestamp / 86400000 == getItem(position - 1).timestamp / 86400000 ) {
-            holder.date.setTextSize(0F)
+            holder.date.textSize = 0F
             holder.date.setPadding(0)
             isSameDate = true
         } else {
             val format = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-            holder.date.setText(format.format(current.timestamp))
+            holder.date.text = format.format(current.timestamp)
             isSameDate = false
         }
 
@@ -83,10 +82,10 @@ class ChatAdapter(private val context: Fragment, private val username: String)
             val name: TextView = holder.view.findViewById(R.id.chat_user)
 
             if(position == 0 || (current.username != getItem(position - 1).username && isSameDate) || !isSameDate ) {
-                //Picasso.get().load(current.imageUrl).into(image)
-                //name.setText(current.displayName)
+                chatViewmodel.loadUserImage(current.username, image)
+                chatViewmodel.loadNickname(current.username, name)
             } else {
-                name.setTextSize(0F)
+                name.textSize = 0F
             }
         }
 

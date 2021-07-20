@@ -1,21 +1,21 @@
 package com.example.producity
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.producity.models.User
+import com.example.producity.models.source.AuthRepository
 import com.example.producity.models.source.IAuthRepository
 import com.example.producity.models.source.IUserRepository
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class RegisterViewModel(private val authRepo: IAuthRepository,
                         private val userRepo: IUserRepository): ViewModel() {
 
     fun isUsernameTaken(username: String): Boolean {
         return userRepo.isUsernameTaken(username)
-    }
-
-    fun createUser(username: String, email: String, password: String) {
-        val uid = authRepo.createUserWithEmailAndPassword(email, password)
-
-        userRepo.createUser(username, uid)
     }
 
     fun createUserInFirestore(username: String, uid: String) {

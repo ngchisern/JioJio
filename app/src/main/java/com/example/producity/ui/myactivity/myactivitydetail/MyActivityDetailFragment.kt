@@ -1,6 +1,7 @@
 package com.example.producity.ui.myactivity.myactivitydetail
 
 import android.content.Intent
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +25,7 @@ import com.example.producity.models.Activity
 import com.example.producity.models.Participant
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.example.producity.ui.myactivity.myactivitydetail.invite.MyActivityInviteFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -142,8 +144,9 @@ class MyActivityDetailFragment : Fragment() {
         val dateFormat: DateFormat = SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault())
 
         _binding?.apply {
-            //Picasso.get().load(activity.imageUrl).into(activityImage)
-            //Picasso.get().load(activity.ownerImageUrl).into(activityCreatorIcon)
+            myActivityDetailViewModel.loadActivityImage(activity.docId, activityImage)
+            myActivityDetailViewModel.loadUserImage(activity.owner, activityCreatorIcon)
+            myActivityDetailViewModel.loadNickname(activity.owner, activityDetailCreator)
             activityDetailTitle.text = activity.title
             activityDetailDate.text = dateFormat.format(activity.date)
             activityDetailTime.text = timeFormat.format(activity.date)
@@ -152,11 +155,19 @@ class MyActivityDetailFragment : Fragment() {
             participantShow.setBackgroundResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
             activityDetailParticipant.setText("${activity.participant.size}/${activity.pax}")
 
-            if(!activity.isVirtual) {
-                activityDetailLocation.text = activity.location
+            if(activity.isVirtual) {
+                activityDetailLocation.text = "Online"
             } else {
-                val text = "Online"
-                activityDetailLocation.text = text
+                val geocoder = Geocoder(context, Locale.getDefault())
+
+                val address = geocoder.getFromLocation(activity.latitude, activity.longitude, 1)
+
+                if(address.isEmpty()) {
+                    activityDetailLocation.text = "Unknown"
+                } else {
+                    activityDetailLocation.text = address[0].getAddressLine(0)
+                }
+
             }
 
         }
@@ -186,8 +197,7 @@ class MyActivityDetailFragment : Fragment() {
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.leave -> {
-                    val username = sharedViewModel.currentUser.value!!.username
-                    myActivityDetailViewModel.removeParticipant(username)
+                    popLeaveDialog()
                     true
                 }
                 R.id.manage -> {
@@ -208,6 +218,37 @@ class MyActivityDetailFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun popLeaveDialog() {
+        if(isOwner) {
+            val builder = MaterialAlertDialogBuilder(requireContext())
+
+            builder.setMessage("You are the creator of this activity. Leave the activity?")
+                .setPositiveButton("Confirm") { _, _ ->
+                    val username = sharedViewModel.currentUser.value!!.username
+                    myActivityDetailViewModel.removeParticipant(username)
+                    myActivityDetailViewModel.assignNewOwner()
+                }
+                .setNegativeButton("Cancel") { dialog, which ->
+                    dialog.cancel()
+                }
+
+            builder.show()
+        } else {
+            val builder = MaterialAlertDialogBuilder(requireContext())
+
+            builder.setMessage("Leave the activity?")
+                .setPositiveButton("Confirm") { _, _ ->
+                    val username = sharedViewModel.currentUser.value!!.username
+                    myActivityDetailViewModel.removeParticipant(username)
+                }
+                .setNegativeButton("Cancel") { dialog, which ->
+                    dialog.cancel()
+                }
+
+            builder.show()
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.producity.ui.profile.memory
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import com.example.producity.databinding.MemoriesBinding
 import com.example.producity.ui.myactivity.MyActivityAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.ktx.Firebase
+import com.squareup.picasso.Picasso
 
 class MemoryFragment: Fragment() {
 
@@ -54,13 +56,20 @@ class MemoryFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val recyclerView = binding.memoryRecycleView
-        val adapter = MemoryAdapter(this)
+        val adapter = MemoryAdapter(this, memoryViewModel)
 
         recyclerView.adapter = adapter
 
         memoryViewModel.getList(sharedViewModel.getUser().username).observe(viewLifecycleOwner) {
-            if(it.isEmpty()) return@observe
+            if(it.isEmpty()) {
+                Picasso.get().load("https://images.all-free-download.com/images/graphiclarge/world_travel_symbols_312136.jpg")
+                    .into(binding.emptyMemory)
+                binding.emptyMemoryText.text = "Join events and create memories\n that will last forever."
+                view.setBackgroundColor(Color.parseColor("#FFFFFF"))
+                return@observe
+            }
 
+            view.setBackgroundColor(Color.parseColor("#f5f7ff"))
             adapter.submitList(it)
         }
 

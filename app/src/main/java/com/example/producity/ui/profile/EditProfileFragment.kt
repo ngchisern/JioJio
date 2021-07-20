@@ -7,20 +7,18 @@ import android.app.Dialog
 import android.content.Intent
 import android.location.Geocoder
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -37,18 +35,14 @@ import com.giphy.sdk.ui.Giphy
 import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.themes.GridType
 import com.giphy.sdk.ui.views.GiphyDialogFragment
-import com.google.android.gms.common.api.Status
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -59,7 +53,10 @@ class EditProfileFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels {
-        ProfileViewModelFactory(ServiceLocator.provideUserRepository(), ServiceLocator.provideAuthRepository())
+        ProfileViewModelFactory(
+            ServiceLocator.provideUserRepository(),
+            ServiceLocator.provideAuthRepository()
+        )
     }
 
     private lateinit var userProfile: User // current user profile
@@ -185,11 +182,10 @@ class EditProfileFragment : Fragment() {
         Picasso.get().load(sharedViewModel.userImage.value!!).into(binding.editProfilePic)
 
         binding.editDisplayName.setText(userProfile.nickname)
-        binding.editTelegramHandle.setText(userProfile.telegramHandle)
         binding.birthday.text = dateFormat.format(userProfile.birthday)
         binding.editBio.setText(userProfile.bio)
 
-        if(userProfile.latitude == -1.0 && userProfile.longitude == -1.0) {
+        if (userProfile.latitude == -1.0 && userProfile.longitude == -1.0) {
             binding.editLocation.setText("Not selected yet")
         } else {
             val geocoder = Geocoder(context, Locale.getDefault())
@@ -207,53 +203,62 @@ class EditProfileFragment : Fragment() {
 
         val uid = sharedViewModel.currentUser.value!!.uid
         val displayName = binding.editDisplayName.text.toString()
-        val telegramHandle = binding.editTelegramHandle.text.toString()
         val bio = binding.editBio.text.toString()
-        val banner = if(bannerUrl == null) userProfile.banner else bannerUrl!!
+        val banner = if (bannerUrl == null) userProfile.banner else bannerUrl!!
 
-        val birthdate = if(datePickerFragment == null || datePickerFragment!!.birthdate == null)
+        val birthdate = if (datePickerFragment == null || datePickerFragment!!.birthdate == null)
             sharedViewModel.currentUser.value!!.birthday else datePickerFragment!!.birthdate
 
         val rating = sharedViewModel.currentUser.value!!.rating
         val review = sharedViewModel.currentUser.value!!.review
 
-        val gender = when(binding.genderOptions.checkedRadioButtonId) {
+        val gender = when (binding.genderOptions.checkedRadioButtonId) {
             R.id.male_button -> 0
             R.id.female_button -> 1
             R.id.other_button -> 2
             else -> -1
         }
 
+        GlobalScope.launch {
 
-        val geocoder = Geocoder(context, Locale.getDefault())
-        val address = geocoder.getFromLocationName(binding.editLocation.text.toString(),1)
-        val lat = if (address.size == 0) -1.0 else address[0].latitude
-        val long = if (address.size == 0) -1.0 else address[0].longitude
+            val geocoder = Geocoder(context, Locale.getDefault())
+            val address = geocoder.getFromLocationName(binding.editLocation.text.toString(), 1)
+            val lat = if (address.size == 0) -1.0 else address[0].latitude
+            val long = if (address.size == 0) -1.0 else address[0].longitude
 
-        val editedUserProfile = User(
-            userProfile.username, uid, displayName, telegramHandle, gender, birthdate!!,
-            bio, banner, rating, review, lat, long
-        )
+            val editedUserProfile = User(
+                userProfile.username, uid, displayName, userProfile.telegramHandle, gender, birthdate!!,
+                bio, banner, rating, review, lat, long
+            )
 
-        if (profilePicUri == null) { // no new image selected
-            profileViewModel.updateUserProfile(editedUserProfile)
-            // with current imageUrl, no need to upload image again
-            sharedViewModel.updateUser(editedUserProfile)
-            showEditSuccessfulDialog()
-        } else {
-            CoroutineScope(Dispatchers.Main).launch {
-                val returnedUser = profileViewModel.uploadImageToFirebaseStorageAndEditProfile(
-                    profilePicUri, editedUserProfile
-                )
+            if (profilePicUri == null) { // no new image selected
 
-                sharedViewModel.currentUser.postValue(returnedUser)
-                sharedViewModel.userImage.postValue(profilePicUri.toString())
-                sharedViewModel.loadUserImage()
-                ContextCompat.getMainExecutor(context).execute {
+                CoroutineScope(Dispatchers.Main).launch {
+                    profileViewModel.updateUserProfile(editedUserProfile)
+                    // with current imageUrl, no need to upload image again
+                    sharedViewModel.updateUser(editedUserProfile)
                     showEditSuccessfulDialog()
                 }
+            } else {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val returnedUser = profileViewModel.uploadImageToFirebaseStorageAndEditProfile(
+                        profilePicUri, editedUserProfile
+                    )
+
+                    sharedViewModel.currentUser.postValue(returnedUser)
+                    sharedViewModel.userImage.postValue(profilePicUri.toString())
+                    sharedViewModel.loadUserImage()
+                    ContextCompat.getMainExecutor(context).execute {
+                        showEditSuccessfulDialog()
+                    }
+                }
+            }
+
+            if (userProfile.nickname != editedUserProfile.nickname) {
+                profileViewModel.updateDatabase(userProfile.username, editedUserProfile.nickname)
             }
         }
+
     }
 
     private fun showEditSuccessfulDialog() {
@@ -290,7 +295,7 @@ class EditProfileFragment : Fragment() {
         override fun onDateSet(view: DatePicker, year: Int, month: Int, day: Int) {
             // set the text beside the datePickerButton to show the date
             val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-            birthdate  = Date(year - 1900, month, day)
+            birthdate = Date(year - 1900, month, day)
             val birthdayText = prevView.findViewById<TextView>(R.id.birthday)
             birthdayText.text = dateFormat.format(birthdate!!)
         }
@@ -338,8 +343,6 @@ class EditProfileFragment : Fragment() {
 
         }
     }
-
-
 
 
 }

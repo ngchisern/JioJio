@@ -32,6 +32,10 @@ class MyActivityInviteFragment(val doc: String): BottomSheetDialogFragment() {
         FriendListViewModelFactory(ServiceLocator.provideUserRepository(), ServiceLocator.provideActivityRepository())
     }
 
+    override fun getTheme(): Int {
+        return R.style.SheetDialog
+    }
+
     override fun setupDialog(dialog: Dialog, style: Int) {
         val contentView = View.inflate(context, R.layout.activity_detail_invite, null)
 
@@ -54,7 +58,9 @@ class MyActivityInviteFragment(val doc: String): BottomSheetDialogFragment() {
             adapter.submitList(it)
         }
 
+
         dialog.setContentView(contentView)
         (contentView.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
+
     }
 }

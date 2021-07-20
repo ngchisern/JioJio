@@ -7,15 +7,25 @@ import java.util.*
 @Parcelize
 data class Activity(val docId: String = "No doc Id",
                     val title: String = "No Title",
+                    val lowerCaseTitle: String = "No title",
                     val owner: String = "No Owner",
-                    @field:JvmField
-                    val isPublic: Boolean = false,
+                    val privacy: Int = -1,
                     @field:JvmField
                     val isVirtual: Boolean = false,
                     val date: Date = Date(2021-1900,1-1,1,12,0),
-                    val location: String = "Delhi",
+                    val latitude: Double = -1.0,
+                    val longitude: Double = -1.0,
                     val pax: Int = 1,
                     val description: String = "No Description",
                     val participant: List<String> = listOf(),
-                    val viewers: List<String> = listOf()
-                    ) : Parcelable
+                    val label: List<String>? = listOf()
+                    ) : Parcelable {
+
+                        companion object {
+                            val PRIVATE = 0
+                            val PROTECTED = 1
+                            val PUBLIC = 2
+
+                        }
+
+                    }
