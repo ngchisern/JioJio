@@ -15,6 +15,10 @@ class FakeUserRepository(private val userRemoteDataSource: IUserRemoteDataSource
         TODO("Not yet implemented")
     }
 
+    override suspend fun checkUserExists(username: String): User? {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun loadUserProfile(username: String): User {
         return userRemoteDataSource.loadUserProfile(username)
     }
@@ -25,6 +29,18 @@ class FakeUserRepository(private val userRemoteDataSource: IUserRemoteDataSource
 
     override suspend fun loadFriends(username: String): List<User> {
         return userRemoteDataSource.loadFriends(username)
+    }
+
+    override suspend fun sendFriendRequest(sender: User, receiverUsername: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun addFriend(currUser: User, friend: User) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteFriend(currUser: User, friend: User) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun uploadImageToFirebaseStorage(imageUri: Uri, username: String): String {

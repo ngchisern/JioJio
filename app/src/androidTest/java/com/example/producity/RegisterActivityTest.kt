@@ -5,8 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
@@ -65,7 +64,7 @@ class RegisterActivityTest {
         onView(withId(R.id.signup_username)).perform(typeText("benlim"))
         onView(withId(R.id.sign_up_email)).perform(typeText("benlim@gmail.com"))
         onView(withId(R.id.sign_up_password)).perform(typeText("benlimben"))
-        onView(withId(R.id.confirm_password)).perform(typeText("benlimben"))
+        onView(withId(R.id.confirm_password)).perform(typeText("benlimben"), closeSoftKeyboard())
 
 
         Espresso.onView(ViewMatchers.withId(R.id.sign_up_button)).perform(click())
@@ -98,7 +97,7 @@ class RegisterActivityTest {
         onView(withId(R.id.signup_username)).perform(typeText("benlim"))
         onView(withId(R.id.sign_up_email)).perform(typeText("benlim@gmail.com."))
         onView(withId(R.id.sign_up_password)).perform(typeText("benlimben"))
-        onView(withId(R.id.confirm_password)).perform(typeText("benlimben"))
+        onView(withId(R.id.confirm_password)).perform(typeText("benlimben"), closeSoftKeyboard())
 
         onView(withId(R.id.sign_up_button)).perform(click())
 
@@ -114,12 +113,12 @@ class RegisterActivityTest {
         onView(withId(R.id.signup_username)).perform(typeText("benlim"))
         onView(withId(R.id.sign_up_email)).perform(typeText("benlim@gmail.com"))
         onView(withId(R.id.sign_up_password)).perform(typeText("benlimben"))
-        onView(withId(R.id.confirm_password)).perform(typeText("benlimbenn"))
+        onView(withId(R.id.confirm_password)).perform(typeText("benlimbenn"), closeSoftKeyboard())
 
         onView(withId(R.id.sign_up_button)).perform(click())
 
         onView(withId(R.id.confirm_password)).check(matches(isDisplayed()))
-        onView(withId(R.id.confirm_password)).check(matches(hasErrorText("Passwords does not match.")))
+        onView(withId(R.id.confirm_password)).check(matches(hasErrorText("Passwords do not match.")))
 
         Thread.sleep(2000)
 
@@ -130,7 +129,7 @@ class RegisterActivityTest {
         onView(withId(R.id.signup_username)).perform(typeText("dummy1"))
         onView(withId(R.id.sign_up_email)).perform(typeText("benlim@gmail.com"))
         onView(withId(R.id.sign_up_password)).perform(typeText("benlimben"))
-        onView(withId(R.id.confirm_password)).perform(typeText("benlimben"))
+        onView(withId(R.id.confirm_password)).perform(typeText("benlimben"), closeSoftKeyboard())
 
         onView(withId(R.id.sign_up_button)).perform(click())
 
@@ -146,12 +145,12 @@ class RegisterActivityTest {
         onView(withId(R.id.signup_username)).perform(typeText("ben10"))
         onView(withId(R.id.sign_up_email)).perform(typeText("ben10@gmail.com.my"))
         onView(withId(R.id.sign_up_password)).perform(typeText("benlimben"))
-        onView(withId(R.id.confirm_password)).perform(typeText("benlimbenlim"))
+        onView(withId(R.id.confirm_password)).perform(typeText("benlimbenlim"), closeSoftKeyboard())
 
         onView(withId(R.id.sign_up_button)).perform(click())
 
         onView(withId(R.id.confirm_password)).check(matches(isDisplayed()))
-        onView(withId(R.id.confirm_password)).check(matches(hasErrorText("Passwords does not match.")))
+        onView(withId(R.id.confirm_password)).check(matches(hasErrorText("Passwords do not match.")))
 
         Thread.sleep(2000)
 

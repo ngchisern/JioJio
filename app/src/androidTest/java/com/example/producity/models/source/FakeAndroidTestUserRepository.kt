@@ -20,6 +20,10 @@ class FakeAndroidTestUserRepository: IUserRepository {
         return userData.contains(username)
     }
 
+    override suspend fun checkUserExists(username: String): User? {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun loadUserProfile(username: String): User {
         TODO("Not yet implemented")
     }
@@ -29,6 +33,18 @@ class FakeAndroidTestUserRepository: IUserRepository {
     }
 
     override suspend fun loadFriends(username: String): List<User> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun sendFriendRequest(sender: User, receiverUsername: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun addFriend(currUser: User, friend: User) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteFriend(currUser: User, friend: User) {
         TODO("Not yet implemented")
     }
 

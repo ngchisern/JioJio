@@ -45,7 +45,7 @@ object AuthRepository: IAuthRepository {
 
         Log.d("Main", task.isComplete.toString())
 
-        return auth.uid!!
+        return auth.currentUser!!.uid
 
     }
 

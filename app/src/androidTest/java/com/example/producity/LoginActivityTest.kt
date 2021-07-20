@@ -1,8 +1,8 @@
 package com.example.producity
 
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -48,7 +48,9 @@ class LoginActivityTest {
         Intents.init()
 
         onView(withId(R.id.login_email)).perform(typeText("apple@gmail.com"))
-        onView(withId(R.id.login_password)).perform(typeText("applepie"))
+        onView(withId(R.id.login_password)).perform(
+            typeText("applepie"), closeSoftKeyboard()
+        )
         onView(withId(R.id.login_button)).perform(click())
 
         Intents.intended(hasComponent(MainActivity::class.java.name))
@@ -62,7 +64,9 @@ class LoginActivityTest {
     fun clickLogIn_wrongInput() {
 
         onView(withId(R.id.login_email)).perform(typeText("bee@gmail.com"))
-        onView(withId(R.id.login_password)).perform(typeText("applepie"))
+        onView(withId(R.id.login_password)).perform(
+            typeText("applepie"), closeSoftKeyboard()
+        )
         onView(withId(R.id.login_button)).perform(click())
 
         onView(withId(R.id.login_error_message)).check(matches(isDisplayed()))
@@ -70,7 +74,6 @@ class LoginActivityTest {
 
         Thread.sleep(2000)
     }
-
 
 
     @Test
@@ -85,7 +88,6 @@ class LoginActivityTest {
 
         Thread.sleep(2000)
     }
-
 
 
 }
