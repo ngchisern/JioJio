@@ -93,7 +93,7 @@ class ActivityRemoteDataSource : IActivityRemoteDataSource {
             }
     }
 
-    override suspend fun getNextActivity(username: String): Activity {
+    override suspend fun getNextActivity(username: String): Activity? {
 
         return try {
             val activity = db.collection("activity")
@@ -107,7 +107,7 @@ class ActivityRemoteDataSource : IActivityRemoteDataSource {
 
             activity[0]
         } catch (e: Exception) {
-            Activity()
+            null
         }
     }
 

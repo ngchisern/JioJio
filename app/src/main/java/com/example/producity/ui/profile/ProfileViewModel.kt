@@ -32,9 +32,11 @@ class ProfileViewModel(
 
     fun uploadImageToFirebaseStorage(imageUri: Uri, username: String): String {
         var newImageUrl = RegisterActivity.BLANK_PROFILE_IMG_URL
+
         viewModelScope.launch {
             newImageUrl = userRepository.uploadImageToFirebaseStorage(imageUri, username)
         }
+
         return newImageUrl
     }
 

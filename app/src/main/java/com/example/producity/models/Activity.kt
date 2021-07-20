@@ -18,7 +18,7 @@ data class Activity(
     val longitude: Double = -1.0,
     val pax: Int = 1,
     val description: String = "No Description",
-    val participant: List<String> = listOf(),
+    var participant: List<String> = listOf(),
     val label: List<String>? = listOf()
 ) : Parcelable {
 

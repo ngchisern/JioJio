@@ -45,6 +45,7 @@ class RegisterActivity : AppCompatActivity() {
         goToSignIn.setOnClickListener {
             finish()
         }
+
     }
 
     fun String.removeSpace() = trim().replace("\\s+".toRegex(), replacement = "")

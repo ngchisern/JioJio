@@ -166,7 +166,7 @@ class MyActivityDetailFragment : Fragment() {
         val activity = myActivityDetailViewModel.currentActivity!!
 
         binding.inviteButton.setOnClickListener {
-            MyActivityInviteFragment(activity.docId)
+            MyActivityInviteFragment()
                 .show(requireActivity().supportFragmentManager, "Bottom sheet Dialog Fragment")
         }
 

@@ -2,6 +2,7 @@ package com.example.producity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -18,13 +19,13 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import timber.log.Timber
 
+private const val TAG = "LoginActivity"
 private const val RC_SIGN_IN = 1
 
 class LoginActivity : AppCompatActivity() {
 
-    private val loginViewModel: LoginViewModel by viewModels {
+    private val loginViewModel: LoginViewModel by viewModels() {
         LoginViewModelFactory(ServiceLocator.provideAuthRepository())
     }
 
@@ -50,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             } else {
-                findViewById<TextView>(R.id.login_error_message).text = "Wrong email or password"
+                findViewById<TextView>(R.id.login_error_message).setText("Wrong email or password")
             }
 
             /* TODO Uncomment this and remove the above if-else block to check for email verification
@@ -73,6 +74,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
+
         // Configure Google Sign In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -88,7 +90,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signInWithGoogle() {
-        val signInIntent: Intent = googleSignInClient.signInIntent
+        val signInIntent: Intent = googleSignInClient.getSignInIntent()
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
@@ -99,17 +101,16 @@ class LoginActivity : AppCompatActivity() {
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
-            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)
-                Timber.d("firebaseAuthWithGoogle:" + account.id)
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
-                Timber.d("Google sign in failed")
-                findViewById<TextView>(R.id.login_error_message).text =
-                    "An error occured. Please try again."
+                Log.d(TAG, "Google sign in failed", e)
+                findViewById<TextView>(R.id.login_error_message).setText("An error occured. Please try again.")
             }
         }
     }
@@ -120,10 +121,10 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Timber.d("signInWithCredential:success")
+                    Log.d(TAG, "signInWithCredential:success")
 
-                    if (task.result.additionalUserInfo!!.isNewUser) {
-                        Timber.d("New Google account")
+                    if (task.result!!.additionalUserInfo!!.isNewUser) {
+                        Log.d(TAG, "New Google account")
                         navigateToGoogleLoginRegisterUsernameActivity()
                     } else {
                         val currentUid = auth.currentUser!!.uid
@@ -132,8 +133,8 @@ class LoginActivity : AppCompatActivity() {
                             .limit(1)
                             .get()
                             .addOnSuccessListener {
-                                if (it.isEmpty) {
-                                    Timber.d("Google account not yet registered")
+                                if (it == null || it.isEmpty) {
+                                    Log.d(TAG, "Google account not yet registered")
                                     navigateToGoogleLoginRegisterUsernameActivity()
                                 } else {
                                     navigateToMainActivity()
@@ -142,9 +143,8 @@ class LoginActivity : AppCompatActivity() {
                     }
                 } else {
                     // If sign in fails, display a message to the user.
-                    Timber.d(task.exception, "signInWithCredential:failure")
-                    findViewById<TextView>(R.id.login_error_message).text =
-                        "An error occured. Please try again."
+                    Log.d(TAG, "signInWithCredential:failure", task.exception)
+                    findViewById<TextView>(R.id.login_error_message).setText("An error occured. Please try again.")
                 }
             }
     }
