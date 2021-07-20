@@ -17,7 +17,7 @@ class UserRepository(private val userRemoteDataSource: IUserRemoteDataSource) : 
 
         }
 
-        return task.result!!.exists()
+        return task.result.exists()
     }
 
     override suspend fun checkUserExists(username: String): User? {

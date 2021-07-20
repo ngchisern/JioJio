@@ -1,9 +1,9 @@
 package com.example.producity.ui.explore
 
+import android.location.Geocoder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -14,12 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
 import com.example.producity.models.Activity
 import com.google.android.material.card.MaterialCardView
-import com.squareup.picasso.Picasso
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ExploreListAdapter(private val context: Fragment) :
+class ExploreListAdapter(private val context: Fragment, private val exploreViewModel: ExploreViewModel) :
     ListAdapter<Activity, ExploreListAdapter.ExploreViewHolder>(TASKS_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExploreViewHolder {
@@ -35,24 +34,33 @@ class ExploreListAdapter(private val context: Fragment) :
         val dayFormat: DateFormat = SimpleDateFormat("d", Locale.getDefault())
         val monthFormat: DateFormat = SimpleDateFormat("MMM", Locale.getDefault())
 
-        //Picasso.get().load(current.imageUrl).into(holder.imageView)
-        //Picasso.get().load(current.ownerImageUrl).into(holder.ownerImage)
-
         holder.title.text = current.title
         holder.owner.text = current.owner
         holder.month.text = monthFormat.format(current.date)
         holder.day.text = dayFormat.format(current.date)
 
-        if(!current.isVirtual) {
-            holder.location.text = current.location
+        if(current.isVirtual) {
+            holder.location.text = "Online"
         } else {
-            holder.location.setText("Online")
+            val geocoder = Geocoder(context.requireContext(), Locale.getDefault())
+
+            val address = geocoder.getFromLocation(current.latitude, current.longitude, 1)
+
+            if(address.isEmpty()) {
+                holder.location.text = "Unknown"
+            } else {
+                holder.location.text = address[0].getAddressLine(0)
+            }
+
         }
 
         holder.itemView.findViewById<MaterialCardView>(R.id.my_activity_card).setOnClickListener {
             val action = ExploreFragmentDirections.actionNavigationExploreToExploreDetailFragment(current)
             context.findNavController().navigate(action)
         }
+
+        exploreViewModel.loadActivityImage(current.docId, holder.imageView)
+        exploreViewModel.loadUserImage(current.owner, holder.ownerImage)
 
     }
 

@@ -1,5 +1,7 @@
 package com.example.producity.ui.explore.exploredetail
 
+import android.graphics.Color
+import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -70,27 +72,46 @@ class ExploreDetailFragment: Fragment() {
         val dateFormat: DateFormat = SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault())
 
         _binding?.apply {
-            //Picasso.get().load(activity.imageUrl).into(exploreDetailImage)
-            //Picasso.get().load(activity.ownerImageUrl).into(creatorImage)
+            exploreViewModel.loadActivityImage(activity.docId, exploreDetailImage)
+            exploreViewModel.loadUserImage(activity.owner, creatorImage)
             exploreDetailTitle.text = activity.title
             exploreDetailDate.text = dateFormat.format(activity.date)
             exploreDetailTime.text = timeFormat.format(activity.date)
             exploreDetailDescription.text = activity.description
-            exploreDetailCreator.text = activity.owner
+            exploreViewModel.loadNickname(activity.owner, exploreDetailCreator)
+            exploreDetailParticipant.text = "+${activity.participant.size}/${activity.pax} going"
 
-            if(!activity.isVirtual) {
-                exploreDetailLocation.text = activity.location
+            if(activity.isVirtual) {
+                exploreDetailLocation.text = "Online"
             } else {
-                exploreDetailLocation.setText("Online")
+                val geocoder = Geocoder(context, Locale.getDefault())
+
+                val address = geocoder.getFromLocation(activity.latitude, activity.longitude, 1)
+
+                if(address.isEmpty()) {
+                    exploreDetailLocation.text = "Unknown"
+                } else {
+                    exploreDetailLocation.text = address[0].getAddressLine(0)
+                }
+
+                if(activity.participant.size >= activity.pax) {
+                    binding.joinButton.text = "Full"
+                }
+
             }
         }
 
     }
 
     private fun trackListener(event: Activity) {
-
         binding.joinButton.setOnClickListener {
             addToFirestore(event)
+        }
+
+        if(event.participant.size >= event.pax) {
+            binding.joinButton.text = "Full"
+            binding.joinButton.isClickable = false
+            binding.joinButton.setTextColor(Color.WHITE)
         }
 
         binding.cancelButton.setOnClickListener {
@@ -99,14 +120,9 @@ class ExploreDetailFragment: Fragment() {
     }
 
     private fun addToFirestore(event: Activity) {
-        val user = sharedViewModel.currentUser.value ?: return
-
         val docId = event.docId
 
-        val participant = Participant(user.nickname,
-            user.username)
-
-        exploreViewModel.addParticipant(participant, docId)
+        exploreViewModel.addParticipant(sharedViewModel.getUser(), docId)
     }
 
 }

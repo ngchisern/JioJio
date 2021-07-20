@@ -2,27 +2,33 @@ package com.example.producity.models.source.remote
 
 import android.util.Log
 import com.example.producity.models.Participant
+import com.example.producity.models.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class ParticipantRemoteDataSource: IParticipantDataSource {
 
-    override fun addToDataBase(user: Participant, docId: String) {
+    override fun addToDataBase(user: User, docId: String) {
         val rtdb = Firebase.database
 
         rtdb.getReference("participant/${user.username}")
-            .setValue(user)
+            .get()
             .addOnSuccessListener {
-                Log.d("Main", "added participant")
+                if(!it.exists()) {
+                    val participant = Participant(user.nickname, user.username, mapOf(), listOf())
+                    rtdb.getReference("participant/${user.username}")
+                        .setValue(participant)
+                }
             }
             .addOnFailureListener {
                 Log.d("Main", it.message.toString())
             }
 
-        rtdb.getReference().child("activity/$docId/participant").push()
+        rtdb.reference.child("activity/$docId/participant").push()
             .setValue(user.username)
             .addOnSuccessListener {
                 Log.d("Main", "added participant")
@@ -77,6 +83,17 @@ class ParticipantRemoteDataSource: IParticipantDataSource {
                 }
             })
 
+
+    }
+
+    override fun updateRecommendation(username: String, list: List<String>) {
+        val rtdb = Firebase.database
+
+        for(item in list) {
+            rtdb.reference.child("participant/$username/recommendation/$item")
+                .setValue(ServerValue.increment(1))
+
+        }
 
     }
 

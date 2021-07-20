@@ -7,6 +7,8 @@ import com.example.producity.RegisterActivity
 import com.example.producity.models.User
 import com.example.producity.models.source.IAuthRepository
 import com.example.producity.models.source.IUserRepository
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -77,6 +79,13 @@ class ProfileViewModel(private val userRepository: IUserRepository,
 
     fun changePassword(pass: String) {
         authRepository.changePassword(pass)
+    }
+
+    fun updateDatabase(username: String, nickname: String) {
+        val rtdb = Firebase.database
+
+        rtdb.getReference("participant/$username")
+            .updateChildren(mapOf("nickname" to nickname))
     }
 
 

@@ -28,14 +28,23 @@
         <action
             android:id="@+id/action_navigation_explore_to_exploreDetailFragment"
             app:destination="@id/exploreDetailFragment" />
+        <action
+            android:id="@+id/action_navigation_explore_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_addEvent"
-        android:name="com.example.producity.ui.addactivity.AddActivityFragment"
+        android:id="@+id/navigation_createActivity"
+        android:name="com.example.producity.ui.createactivity.CreateActivityFragment"
         android:label="@string/title_addEvent"
         tools:layout="@layout/add_activity">
 
+        <action
+            android:id="@+id/action_navigation_addEvent_to_createLocationFragment"
+            app:destination="@id/createLocationFragment" />
+        <action
+            android:id="@+id/action_navigation_addEvent_to_createPrivacyFragment"
+            app:destination="@id/createPrivacyFragment" />
     </fragment>
 
     <fragment
@@ -67,14 +76,6 @@
             android:name="friendProfile"
             app:argType="com.example.producity.models.User" />
         <action
-            android:id="@+id/action_friendProfileFragment_to_friendlistOfFriendFragment"
-            app:destination="@id/friendlistOfFriendFragment" />
-        <action
-            android:id="@+id/action_friendProfileFragment_to_strangerProfileFragment"
-            app:destination="@id/strangerProfileFragment"
-            app:popUpTo="@id/friendProfileFragment"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_friendProfileFragment_to_scheduleDetailFragment"
             app:destination="@id/scheduleDetailFragment" />
         <action
@@ -86,32 +87,6 @@
         <action
             android:id="@+id/action_friendProfileFragment_to_reviewListFragment"
             app:destination="@id/reviewListFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/friendlistOfFriendFragment"
-        android:name="com.example.producity.ui.friends.friend_profile.FriendlistOfFriendFragment"
-        android:label="fragment_friendlist_of_friend"
-        tools:layout="@layout/fragment_friendlist_of_friend" >
-        <action
-            android:id="@+id/action_friendlistOfFriendFragment_to_strangerProfileFragment"
-            app:destination="@id/strangerProfileFragment" />
-        <action
-            android:id="@+id/action_friendlistOfFriendFragment_to_friendProfileFragment"
-            app:destination="@id/friendProfileFragment" />
-        <action
-            android:id="@+id/action_friendlistOfFriendFragment_to_navigation_profile"
-            app:destination="@id/navigation_profile" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/strangerProfileFragment"
-        android:name="com.example.producity.ui.friends.stranger_profile.StrangerProfileFragment"
-        android:label="fragment_stranger_profile"
-        tools:layout="@layout/fragment_stranger_profile" >
-        <argument
-            android:name="strangerProfile"
-            app:argType="com.example.producity.models.User" />
     </fragment>
 
     <fragment
@@ -196,6 +171,9 @@
         <action
             android:id="@+id/action_notificationFragment_to_scheduleDetailFragment"
             app:destination="@id/scheduleDetailFragment" />
+        <action
+            android:id="@+id/action_notificationFragment_to_friendProfileFragment"
+            app:destination="@id/friendProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/editAccountFragment"
@@ -250,6 +228,29 @@
         <argument
             android:name="user"
             app:argType="com.example.producity.models.User" />
+    </fragment>
+    <fragment
+        android:id="@+id/createLocationFragment"
+        android:name="com.example.producity.ui.createactivity.CreateLocationFragment"
+        android:label="CreateLocationFragment"
+        tools:layout="@layout/create_location">
+        <action
+            android:id="@+id/action_createLocationFragment_to_createPrivacyFragment"
+            app:destination="@id/createPrivacyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createDetailFragment"
+        android:name="com.example.producity.ui.createactivity.CreateDetailFragment"
+        android:label="CreateDetailFragment"
+        tools:layout="@layout/create_detail"/>
+    <fragment
+        android:id="@+id/createPrivacyFragment"
+        android:name="com.example.producity.ui.createactivity.CreatePrivacyFragment"
+        android:label="CreatePrivacyFragment"
+        tools:layout="@layout/create_privacy">
+        <action
+            android:id="@+id/action_createPrivacyFragment_to_createDetailFragment"
+            app:destination="@id/createDetailFragment" />
     </fragment>
 
 </navigation>

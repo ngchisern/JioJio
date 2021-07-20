@@ -109,6 +109,13 @@ dependencies {
     // Google Play services library
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
 
+    //jsoup
+    implementation 'org.jsoup:jsoup:1.10.3'
+
+    // image label
+    implementation 'com.google.mlkit:image-labeling:17.0.5'
+    implementation 'com.google.android.gms:play-services-mlkit-image-labeling:16.0.5'
+
     // Dependencies for local unit tests
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"

@@ -43,21 +43,4 @@ class RegisterViewModelTest {
         assertThat(registerViewModel.isUsernameTaken("hello"), `is`(false))
         assertThat(registerViewModel.isUsernameTaken("ali muthu"), `is`(false))
     }
-
-    @Test
-    fun createUser() {
-        registerViewModel.createUser("gorgor", "gorgor@hotmail.com", "gorgorno1")
-        registerViewModel.createUser("dododo", "dodo@hotmail.com", "dododo")
-        registerViewModel.createUser("Alice Tan", "alice20@hotmail.com", "iambeautiful")
-
-        assertThat(authRepo.authData["gorgor@hotmail.com"] == "gorgorno1", `is`(true))
-        assertThat(userRepo.userData["gorgor"] == "random", `is`(true))
-        assertThat(authRepo.authData["dodo@hotmail.com"] == "dododo", `is`(true))
-        assertThat(userRepo.userData["dododo"] == "random", `is`(true))
-        assertThat(authRepo.authData["alice20@hotmail.com"] == "iambeautiful", `is`(true))
-        assertThat(userRepo.userData["Alice Tan"] == "random", `is`(true))
-
-        assertThat(authRepo.authData["alice20@hotmail.com"] == "iamugly", `is`(false))
-        assertThat(userRepo.userData["Alice Tan"] == "Alice Tan", `is`(false))
-    }
 }

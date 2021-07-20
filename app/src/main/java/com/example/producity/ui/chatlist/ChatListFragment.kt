@@ -54,6 +54,11 @@ class ChatListFragment : Fragment() {
         )
 
         chatListViewModel.chatRooms.observe(viewLifecycleOwner) {
+            if(it.isEmpty()) {
+                binding.emptyChatlistTitle.text = "You don't have any \nchat room yet"
+                binding.emptyChatlistSubtitle.text = "Chat room is automatically created when you created/joined an activity."
+            }
+
             adapter.submitList(it)
         }
 

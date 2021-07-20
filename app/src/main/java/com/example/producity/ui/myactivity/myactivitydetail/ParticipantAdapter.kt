@@ -1,5 +1,6 @@
 package com.example.producity.ui.myactivity.myactivitydetail
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,17 +25,16 @@ class ParticipantlAdapter(val context: Fragment, val showName: Boolean, val mana
         val remove: ImageView = view.findViewById(R.id.remove_icon)
 
         fun bind(current: Participant, showName: Boolean, manage: Boolean) {
-            //Picasso.get().load(current.imageUrl).transform(CropCircleTransformation()).into(image)
-
             if(showName) {
-                name.setText(current.nickname)
+                name.text = current.nickname
             } else {
-                name.setText("")
+                name.text = ""
             }
 
             if(manage) {
                 remove.setBackgroundResource(R.drawable.ic_cancel_24)
                 remove.setOnClickListener {
+                    Log.d("Main", "remove")
                     viewModel.removeParticipant(current.username)
                 }
             }
@@ -68,6 +68,8 @@ class ParticipantlAdapter(val context: Fragment, val showName: Boolean, val mana
         val current = getItem(position)
 
         holder.bind(current, showName, manage)
+
+        viewModel.loadUserImage(current.username, holder.image)
     }
 
 

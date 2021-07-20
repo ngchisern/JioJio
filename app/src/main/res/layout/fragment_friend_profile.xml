@@ -267,11 +267,12 @@
                 android:background="@color/white">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/profile_activity_image"
+                    android:id="@+id/activity_image_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <ImageView
+                        android:id="@+id/profile_activity_image"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         app:layout_constraintTop_toTopOf="parent"
@@ -285,7 +286,7 @@
                     android:id="@+id/profile_activity_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/profile_activity_image"
+                    android:layout_below="@id/activity_image_layout"
                     android:text="Group Trekking"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"

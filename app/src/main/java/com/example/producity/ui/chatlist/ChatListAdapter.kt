@@ -17,6 +17,8 @@ import com.example.producity.models.Activity
 import com.example.producity.models.ChatRoom
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
 import java.util.*
@@ -41,6 +43,14 @@ class ChatListAdapter(private val context: Fragment, val username: String):
             if(current.unread[username]!! <= 0) {
                 unread.isVisible = false
             }
+
+            val storage = Firebase.storage
+
+            storage.getReference("activity_images/${current.docId}")
+                .downloadUrl
+                .addOnSuccessListener {  uri ->
+                    Picasso.get().load(uri).into(image)
+                }
 
         }
 

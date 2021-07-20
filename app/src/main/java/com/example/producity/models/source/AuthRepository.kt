@@ -39,13 +39,9 @@ object AuthRepository: IAuthRepository {
                 */
             }
 
-        while(!task.isComplete) {
-
-        }
-
         Log.d("Main", task.isComplete.toString())
 
-        return auth.uid!!
+        return ""
 
     }
 

@@ -23,6 +23,7 @@ import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentFriendListBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.*
 import org.w3c.dom.Text
 
@@ -68,6 +69,12 @@ class FriendListFragment : Fragment() {
 
         val currentUsername = sharedViewModel.currentUser.value!!.username
         friendListViewModel.getAllFriends(currentUsername).observe(viewLifecycleOwner) {
+            if(it.isEmpty()) {
+                Picasso.get().load("https://thumbs.dreamstime.com/b/happy-cat-dog-friendship-cartoon-illustration-best-friends-memes-68796146.jpg")
+                    .into(binding.emptyFriendlistImage)
+                binding.emptyFriendlistText.text = "Get started by adding a friend"
+            }
+
             adapter.submitList(it)
         }
 

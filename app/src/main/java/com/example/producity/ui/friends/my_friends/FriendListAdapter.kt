@@ -40,7 +40,7 @@ class FriendListAdapter(val context: Fragment,
                 }
             }
 
-            //Picasso.get().load(imageUrl).transform(CropCircleTransformation()).into(pic)
+
         }
 
         private fun message(user: User) {

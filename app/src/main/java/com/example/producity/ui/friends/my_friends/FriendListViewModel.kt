@@ -1,17 +1,20 @@
 package com.example.producity.ui.friends.my_friends
 
+import android.util.Log
 import android.widget.ImageView
 import androidx.lifecycle.*
-import com.example.producity.models.Activity
-import com.example.producity.models.User
+import com.example.producity.models.*
 import com.example.producity.models.source.IActivityRepository
 import com.example.producity.models.source.IUserRepository
+import com.google.firebase.Timestamp
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class FriendListViewModel(private val userRepository: IUserRepository,
                           private val activityRepository: IActivityRepository) : ViewModel() {
@@ -65,8 +68,20 @@ class FriendListViewModel(private val userRepository: IUserRepository,
             }
     }
 
+    fun loadActivityImage(docId: String, view: ImageView) {
+        val storage = Firebase.storage
+
+        storage.getReference("activity_images/${docId}")
+            .downloadUrl
+            .addOnSuccessListener {  uri ->
+                if(uri == null) return@addOnSuccessListener
+
+                Picasso.get().load(uri).into(view)
+            }
+    }
+
     fun getNextEvent(username: String): MutableLiveData<Activity> {
-        val activity: MutableLiveData<Activity> = MutableLiveData(Activity())
+        val activity: MutableLiveData<Activity> = MutableLiveData(Activity(lowerCaseTitle = ""))
         viewModelScope.launch {
             activity.value = activityRepository.getNextActivity(username)
         }
@@ -75,9 +90,29 @@ class FriendListViewModel(private val userRepository: IUserRepository,
 
     }
 
-    fun sendFriendRequest() {
+    fun sendFriendRequest(request: Request) {
+        val rtdb = Firebase.database
+
+        rtdb.getReference("request/${request.subject}/${request.requester}")
+            .setValue(request)
+            .addOnSuccessListener {
+
+            }
+    }
+
+    suspend fun doesRequestExist(requester: String, requestee: String): Boolean {
+        val rtdb = Firebase.database
+
+        val exist = rtdb.getReference("request/$requestee/$requester")
+            .get()
+            .await()
+            .getValue(Review::class.java)
+
+        return exist != null
 
     }
+
+
 
 
 }
