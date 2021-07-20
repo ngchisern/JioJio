@@ -1,7 +1,5 @@
 package com.example.producity.ui.notification
 
-import android.opengl.Visibility
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,33 +7,31 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
 import com.example.producity.SharedViewModel
 import com.example.producity.models.*
-import com.example.producity.ui.friends.my_friends.FriendListFragmentDirections
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class NotiRequestAdapter(val context: Fragment, val myActivityViewModel: MyActivityViewModel,
-                          val sharedViewModel: SharedViewModel, val notificationViewModel: NotificationViewModel)
-    : ListAdapter<Request, NotiRequestAdapter.NotiRequestViewHolder>(NotiRequestComparator()){
+class NotiRequestAdapter(
+    val context: Fragment, val myActivityViewModel: MyActivityViewModel,
+    val sharedViewModel: SharedViewModel, val notificationViewModel: NotificationViewModel
+) : ListAdapter<Request, NotiRequestAdapter.NotiRequestViewHolder>(NotiRequestComparator()) {
 
     class NotiRequestViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val image: ImageView = view.findViewById(R.id.sender_image)
@@ -47,14 +43,13 @@ class NotiRequestAdapter(val context: Fragment, val myActivityViewModel: MyActiv
         val options: LinearLayout = view.findViewById(R.id.request_option)
 
         fun bind(current: Request) {
-            val timeFormat: DateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
             val dateFormat: DateFormat = SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault())
 
             //Picasso.get().load(current.imageUrl).transform(CropCircleTransformation()).into(image)
             date.text = dateFormat.format(current.timestamp)
             name.text = "Dummy value"
 
-            if(current.code == Request.FRIENDREQUEST) {
+            if (current.code == Request.FRIENDREQUEST) {
                 message.text = "Sent you a friend request."
             }
 
@@ -63,7 +58,8 @@ class NotiRequestAdapter(val context: Fragment, val myActivityViewModel: MyActiv
         companion object {
             fun create(parent: ViewGroup): NotiRequestViewHolder {
                 val itemView =
-                    LayoutInflater.from(parent.context).inflate(R.layout.notification_request_item, parent, false)
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.notification_request_item, parent, false)
 
                 return NotiRequestViewHolder(itemView)
             }
@@ -95,10 +91,9 @@ class NotiRequestAdapter(val context: Fragment, val myActivityViewModel: MyActiv
     }
 
 
-
     private fun listen(holder: NotiRequestViewHolder, current: Request) {
 
-        if(current.code == Request.FRIENDREQUEST) {
+        if (current.code == Request.FRIENDREQUEST) {
             holder.cancel.setOnClickListener {
                 removeFriendRequest(current)
                 holder.options.visibility = View.GONE
@@ -134,16 +129,12 @@ class NotiRequestAdapter(val context: Fragment, val myActivityViewModel: MyActiv
         db.document("users/$sender")
             .get()
             .addOnSuccessListener {
-                if (it == null || !it.exists()) {
+                if (!it.exists()) {
                     return@addOnSuccessListener
                 }
 
                 val friend = it.toObject(User::class.java) ?: return@addOnSuccessListener
                 val currentUser = sharedViewModel.getUser()
-
-                if (currentUser.username == null) {
-                    return@addOnSuccessListener
-                }
 
                 db.document("users/${currentUser.username}/friends/$sender")
                     .set(friend)
@@ -155,7 +146,7 @@ class NotiRequestAdapter(val context: Fragment, val myActivityViewModel: MyActiv
 
             }
             .addOnFailureListener {
-                Log.d("Main", it.toString())
+                Timber.d(it.toString())
             }
     }
 
@@ -163,7 +154,8 @@ class NotiRequestAdapter(val context: Fragment, val myActivityViewModel: MyActiv
         val rtdb = Firebase.database
 
         val msg = "${sharedViewModel.getUser().nickname} accepted your friend request."
-        val noti = Notification(current.requester, msg, Timestamp.now().toDate().time, current.subject)
+        val noti =
+            Notification(current.requester, msg, Timestamp.now().toDate().time, current.subject)
 
         rtdb.getReference("notification/${current.requester}")
             .push()
@@ -176,12 +168,14 @@ class NotiRequestAdapter(val context: Fragment, val myActivityViewModel: MyActiv
             val user = notificationViewModel.checkUserExists(current.requester)
             if (user != null) {
                 //friendListViewModel.sendFriendRequest(sharedViewModel.currentUser.value!!, checkUsername)
-                val action = NotificationFragmentDirections.actionNotificationFragmentToFriendProfileFragment(user)
+                val action =
+                    NotificationFragmentDirections.actionNotificationFragmentToFriendProfileFragment(
+                        user
+                    )
                 context.findNavController().navigate(action)
             }
         }
     }
-
 
 
 }

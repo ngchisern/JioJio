@@ -10,16 +10,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".ui.profile.ProfileFragment"
-        android:paddingBottom="100dp">
+        android:paddingBottom="100dp"
+        tools:context=".ui.profile.ProfileFragment">
 
         <ImageView
             android:id="@+id/profile_banner"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="16:9"
             android:scaleType="fitXY"
             android:src="@color/light_blue_600"
+            app:layout_constraintDimensionRatio="16:9"
             app:layout_constraintTop_toTopOf="parent" />
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -31,9 +31,9 @@
             android:src="@color/light_blue_600"
             app:civ_border_color="@color/black"
             app:civ_border_width="1dp"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/profile_banner"
-            app:layout_constraintTop_toBottomOf="@id/profile_banner"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profile_banner" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/edit_profile_card"
@@ -83,33 +83,32 @@
             android:id="@+id/rating_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/profile_bio"
-            app:layout_constraintStart_toStartOf="@id/profile_bio">
+            app:layout_constraintStart_toStartOf="@id/profile_bio"
+            app:layout_constraintTop_toBottomOf="@id/profile_bio">
 
             <TextView
                 android:id="@+id/profile_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5.0"
-                android:layout_marginEnd="5dp"/>
+                android:layout_marginEnd="5dp"
+                android:text="5.0" />
 
             <RatingBar
                 android:id="@+id/profile_stars"
+                style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="?android:attr/ratingBarStyleSmall"
+                android:layout_marginTop="2dp"
                 android:numStars="5"
                 android:rating="3.5"
-                android:stepSize="0.1"
-                android:layout_marginTop="2dp"
-                />
+                android:stepSize="0.1" />
 
             <TextView
                 android:id="@+id/profile_totalreview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(13)"
-                android:layout_marginStart="5dp"/>
+                android:layout_marginStart="5dp"
+                android:text="(13)" />
 
         </LinearLayout>
 
@@ -223,9 +222,9 @@
                 android:id="@+id/profile_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/email_forward_arrow"
                 android:layout_marginVertical="10dp"
                 android:layout_marginEnd="20dp"
+                android:layout_toStartOf="@id/email_forward_arrow"
                 android:text="alex@gmail.com"
                 android:textAlignment="textEnd" />
 

@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -31,12 +31,8 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
-
-private const val FRIEND_PROFILE = "friendProfile"
-
 
 class FriendProfileFragment : Fragment() {
 
@@ -45,7 +41,10 @@ class FriendProfileFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private val friendListViewModel: FriendListViewModel by activityViewModels {
-        FriendListViewModelFactory(ServiceLocator.provideUserRepository(), ServiceLocator.provideActivityRepository())
+        FriendListViewModelFactory(
+            ServiceLocator.provideUserRepository(),
+            ServiceLocator.provideActivityRepository()
+        )
     }
 
     private var _binding: FragmentFriendProfileBinding? = null
@@ -63,7 +62,7 @@ class FriendProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentFriendProfileBinding.inflate(inflater, container, false)
 
@@ -86,14 +85,15 @@ class FriendProfileFragment : Fragment() {
     private fun listen() {
         // Open Telegram
         binding.actionCard.setOnClickListener {
-            if(isFriend!!) {
+            if (isFriend!!) {
                 message()
-            } else if(!doesRequestExist!!){
+            } else if (!doesRequestExist!!) {
                 sendFriendRequest()
                 it.isClickable = false
-                binding.mainAction.text = "Friend Request Sent"
+                val sent = "Friend Request Sent"
+                binding.mainAction.text = sent
                 binding.mainAction.setTextColor(Color.GRAY)
-            }  else {
+            } else {
                 it.isClickable = false
             }
         }
@@ -107,7 +107,10 @@ class FriendProfileFragment : Fragment() {
         }
 
         binding.ratingLayout.setOnClickListener {
-            val action = FriendProfileFragmentDirections.actionFriendProfileFragmentToReviewListFragment(friend)
+            val action =
+                FriendProfileFragmentDirections.actionFriendProfileFragmentToReviewListFragment(
+                    friend
+                )
             findNavController().navigate(action)
         }
     }
@@ -121,7 +124,7 @@ class FriendProfileFragment : Fragment() {
 
         binding.profileNickname.text = friend.nickname
         binding.profileUsername.text = friend.username
-        binding.profileGender.text = when(friend.gender) {
+        binding.profileGender.text = when (friend.gender) {
             0 -> "Male"
             1 -> "Female"
             2 -> "Other"
@@ -132,21 +135,25 @@ class FriendProfileFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             doesRequestExist = exist()
-            binding.mainAction.text = if(isFriend!!) "Send Message"
-                            else if(doesRequestExist!!) "Friend Request Sent"
-                            else "Send Friend Request"
+            binding.mainAction.text = when {
+                isFriend!! -> "Send Message"
+                doesRequestExist!! -> "Friend Request Sent"
+                else -> "Send Friend Request"
+            }
         }
 
-        if(friend.latitude == -1.0 && friend.longitude == -1.0) {
-            binding.profileLocation.text = "Not selected yet"
+        if (friend.latitude == -1.0 && friend.longitude == -1.0) {
+            val notSelected = "Not selected yet"
+            binding.profileLocation.text = notSelected
         } else {
             val geocoder = Geocoder(context, Locale.getDefault())
             val address = geocoder.getFromLocation(friend.latitude, friend.longitude, 1)
 
-            binding.profileLocation.text = "${address[0].locality}, ${address[0].countryName}"
+            val location = "${address[0].locality}, ${address[0].countryName}"
+            binding.profileLocation.text = location
         }
 
-        if(isFriend!!) {
+        if (isFriend!!) {
             binding.nextEventText.isVisible = true
             binding.nextEventCard.isVisible = true
 
@@ -162,30 +169,33 @@ class FriendProfileFragment : Fragment() {
 
                 if (difference < 86400000) {
                     timeFrame = 3600000
-                    val hour = difference/ timeFrame % 24
-                    countdown.text = "In about $hour hours"
+                    val hour = difference / timeFrame % 24
+                    val timeLeft = "In about $hour hours"
+                    countdown.text = timeLeft
                 } else {
                     timeFrame = 86400000
                     val day = difference / timeFrame
-                    countdown.text = "In about $day days"
+                    val timeLeft = "In about $day days"
+                    countdown.text = timeLeft
                 }
 
 
             }
         }
 
-        if(friend.review == 0) {
+        if (friend.review == 0) {
             binding.profileStars.rating = 0F
             binding.profileRating.text = "0.0"
-            binding.profileTotalreview.text = "no review yet"
+            val noReview = "no review yet"
+            binding.profileTotalreview.text = noReview
         } else {
-            val rating = "%.${1}f".format(friend.rating/friend.review).toFloat()
+            val rating = "%.${1}f".format(friend.rating / friend.review).toFloat()
 
             binding.profileRating.text = rating.toString()
-            binding.profileTotalreview.text = "(${friend.review})"
+            val total = "(${friend.review})"
+            binding.profileTotalreview.text = total
             binding.profileStars.rating = rating
         }
-
 
 
     }
@@ -228,7 +238,8 @@ class FriendProfileFragment : Fragment() {
 
     private fun refresh() {
         findNavController().popBackStack()
-        val action = FriendListFragmentDirections.actionFriendListFragmentToFriendProfileFragment(friend)
+        val action =
+            FriendListFragmentDirections.actionFriendListFragmentToFriendProfileFragment(friend)
         findNavController().navigate(action)
     }
 
@@ -237,7 +248,7 @@ class FriendProfileFragment : Fragment() {
 
         val dialog = BottomSheetDialog(requireContext(), R.style.SheetDialog)
 
-        if(isFriend!!) {
+        if (isFriend!!) {
             contentView = View.inflate(context, R.layout.friend_moreactions, null)
             dialog.setContentView(contentView)
 
@@ -284,34 +295,46 @@ class FriendProfileFragment : Fragment() {
     }
 
     private fun isFriend(username: String): Boolean {
-        val friendUsernames: List<String> = friendListViewModel.friendList.value!!.map { it.username }
+        val friendUsernames: List<String> =
+            friendListViewModel.friendList.value!!.map { it.username }
         return friendUsernames.contains(username)
     }
 
     private suspend fun exist(): Boolean {
-        return friendListViewModel.doesRequestExist(sharedViewModel.getUser().username, friend.username)
+        return friendListViewModel.doesRequestExist(
+            sharedViewModel.getUser().username,
+            friend.username
+        )
     }
 
     private fun message() {
         if (friend.telegramHandle == "") {
-            Toast.makeText(context, "The user has not set a Telegram handle", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "The user has not set a Telegram handle", Toast.LENGTH_LONG)
+                .show()
         } else {
             launchTelegram()
         }
     }
 
     private fun sendFriendRequest() {
-        val request = Request(Request.FRIENDREQUEST, sharedViewModel.getUser().username, friend.username, Timestamp.now().toDate().time)
+        val request = Request(
+            Request.FRIENDREQUEST,
+            sharedViewModel.getUser().username,
+            friend.username,
+            Timestamp.now().toDate().time
+        )
         friendListViewModel.sendFriendRequest(request)
     }
 
     private fun goToReportUser() {
-        val action = FriendProfileFragmentDirections.actionFriendProfileFragmentToReportUserFragment(friend)
+        val action =
+            FriendProfileFragmentDirections.actionFriendProfileFragmentToReportUserFragment(friend)
         findNavController().navigate(action)
     }
 
     private fun goToReviewUser() {
-        val action = FriendProfileFragmentDirections.actionFriendProfileFragmentToReviewUserFragment(friend)
+        val action =
+            FriendProfileFragmentDirections.actionFriendProfileFragmentToReviewUserFragment(friend)
         findNavController().navigate(action)
     }
 

@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
 import com.example.producity.models.Activity
-import com.squareup.picasso.Picasso
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -22,7 +21,7 @@ class MyActivityAdapter(val context: Fragment, val myActivityViewModel: MyActivi
 
     class HomeViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
-        val image : ImageView = view.findViewById(R.id.my_activity_card_image)
+        val image: ImageView = view.findViewById(R.id.my_activity_card_image)
         val title: TextView = view.findViewById(R.id.my_activity_card_title)
         val date: TextView = view.findViewById(R.id.my_activity_card_date)
         val time: TextView = view.findViewById(R.id.my_activity_card_time)
@@ -57,7 +56,8 @@ class MyActivityAdapter(val context: Fragment, val myActivityViewModel: MyActivi
         holder.bind(current)
 
         holder.itemView.setOnClickListener {
-            val action = MyActivityFragmentDirections.actionNavigationHomeToScheduleDetailFragment(current)
+            val action =
+                MyActivityFragmentDirections.actionNavigationHomeToScheduleDetailFragment(current)
             context.findNavController().navigate(action)
         }
 

@@ -1,14 +1,10 @@
 package com.example.producity.ui.friends.friend_profile
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -17,17 +13,14 @@ import androidx.navigation.fragment.findNavController
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.producity.R
-import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
-import com.example.producity.databinding.EditAccountBinding
 import com.example.producity.databinding.ReportUserBinding
 import com.example.producity.models.User
-import com.example.producity.ui.profile.ProfileViewModel
-import com.example.producity.ui.profile.ProfileViewModelFactory
 
-const val APPSCRIPTLINK = "https://script.google.com/macros/s/AKfycbzDv-Znw0fbNakfo6KaVrsC6t0CFPH2JLssBjAaZ_ypptcQdNmR2-N1uD009Le4l1n4/exec"
+const val APPSCRIPTLINK =
+    "https://script.google.com/macros/s/AKfycbzDv-Znw0fbNakfo6KaVrsC6t0CFPH2JLssBjAaZ_ypptcQdNmR2-N1uD009Le4l1n4/exec"
 
-class ReportUserFragment: Fragment() {
+class ReportUserFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
@@ -39,7 +32,7 @@ class ReportUserFragment: Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = ReportUserBinding.inflate(inflater, container, false)
         val root = binding.root
@@ -73,7 +66,6 @@ class ReportUserFragment: Fragment() {
     }
 
 
-
     private fun listen() {
         binding.backIcon.setOnClickListener {
             findNavController().navigateUp()
@@ -85,12 +77,12 @@ class ReportUserFragment: Fragment() {
 
         binding.submitText.isClickable = false
 
-        binding.reportDescription.doOnTextChanged { text, start, before, count ->
-            if(text == null) return@doOnTextChanged
+        binding.reportDescription.doOnTextChanged { text, _, _, _ ->
+            if (text == null) return@doOnTextChanged
 
             val submit = binding.submitText
 
-            if(text.isEmpty()) {
+            if (text.isEmpty()) {
                 submit.isClickable = false
                 submit.setTextColor(Color.GRAY)
             } else {
@@ -105,7 +97,7 @@ class ReportUserFragment: Fragment() {
 
     private fun submitReport() {
 
-        val request = object: StringRequest(Method.POST, APPSCRIPTLINK, { response ->
+        val request = object : StringRequest(Method.POST, APPSCRIPTLINK, {
             findNavController().navigateUp()
         }, {
 
@@ -117,10 +109,10 @@ class ReportUserFragment: Fragment() {
                 val reportee = userProfile.username
                 val content = binding.reportDescription.text.toString()
 
-                map.put("action", "addItem")
-                map.put("reporter", reporter)
-                map.put("reportee", reportee)
-                map.put("content", content)
+                map["action"] = "addItem"
+                map["reporter"] = reporter
+                map["reportee"] = reportee
+                map["content"] = content
 
                 return map
             }

@@ -5,6 +5,6 @@
         android:id="@+id/more"
         android:icon="@drawable/ic_baseline_more_horiz_24"
         android:title="done"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 
 </menu>

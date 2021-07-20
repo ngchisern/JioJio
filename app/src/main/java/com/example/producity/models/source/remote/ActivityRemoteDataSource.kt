@@ -1,22 +1,19 @@
 package com.example.producity.models.source.remote
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.example.producity.MyFirebase
 import com.example.producity.models.Activity
-import com.example.producity.models.User
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 
-private const val TAG = "ActivityDataSource"
 
-class ActivityRemoteDataSource: IActivityRemoteDataSource {
+class ActivityRemoteDataSource : IActivityRemoteDataSource {
 
-    private val db by lazy { MyFirebase.db }
+    private val db = Firebase.firestore
 
     override suspend fun fetchUpcomingActivities(username: String): List<Activity> {
         return try {
@@ -29,7 +26,7 @@ class ActivityRemoteDataSource: IActivityRemoteDataSource {
                 .documents
                 .mapNotNull { it.toObject(Activity::class.java) }
         } catch (e: Exception) {
-            Log.d(TAG, "Error getting upcoming activities: $e")
+            Timber.d("Error getting upcoming activities: $e")
             listOf()
         }
     }
@@ -57,10 +54,10 @@ class ActivityRemoteDataSource: IActivityRemoteDataSource {
             .document(activity.docId)
             .set(activity)
             .addOnSuccessListener {
-                Log.d(TAG, "edited activity")
+                Timber.d("edited activity")
             }
             .addOnFailureListener {
-                Log.d(TAG, it.toString())
+                Timber.d(it.toString())
             }
     }
 
@@ -74,10 +71,10 @@ class ActivityRemoteDataSource: IActivityRemoteDataSource {
         db.document("activity/$docId")
             .update(delete)
             .addOnSuccessListener {
-                Log.d("Main", "Removed from firestore")
+                Timber.d("Removed from firestore")
             }
             .addOnFailureListener {
-                Log.d("Main", it.message.toString())
+                Timber.d(it.message.toString())
             }
     }
 
@@ -89,14 +86,14 @@ class ActivityRemoteDataSource: IActivityRemoteDataSource {
         db.document("activity/$docId")
             .update(union)
             .addOnSuccessListener {
-                Log.d("Main", "DocumentSnapshot successfully updated!")
+                Timber.d("DocumentSnapshot successfully updated!")
             }
             .addOnFailureListener {
-                Log.d("Main", it.message.toString())
+                Timber.d(it.message.toString())
             }
     }
 
-    override suspend fun getNextActivity(username: String): Activity {
+    override suspend fun getNextActivity(username: String): Activity? {
 
         return try {
             val activity = db.collection("activity")
@@ -110,7 +107,7 @@ class ActivityRemoteDataSource: IActivityRemoteDataSource {
 
             activity[0]
         } catch (e: Exception) {
-            Activity()
+            null
         }
     }
 

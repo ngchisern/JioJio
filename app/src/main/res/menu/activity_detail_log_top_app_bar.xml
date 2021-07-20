@@ -6,6 +6,6 @@
         android:id="@+id/add_log"
         android:icon="@drawable/ic_add"
         android:title="done"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 
 </menu>

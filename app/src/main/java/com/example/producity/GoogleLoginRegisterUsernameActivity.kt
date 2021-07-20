@@ -1,12 +1,14 @@
 package com.example.producity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class GoogleLoginRegisterUsernameActivity : AppCompatActivity() {
 
@@ -23,7 +25,7 @@ class GoogleLoginRegisterUsernameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_google_login_register_username)
 
-        auth = MyFirebase.auth
+        auth = Firebase.auth
 
         val signUpButton: Button = findViewById(R.id.google_sign_up_button)
 

@@ -9,10 +9,10 @@
         android:id="@+id/chat_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#C0C0C0"
+        android:paddingVertical="4dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:paddingVertical="4dp"
+        android:textColor="#C0C0C0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

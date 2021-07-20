@@ -1,6 +1,5 @@
 package com.example.producity.ui.profile
 
-import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.app.Dialog
@@ -35,8 +34,6 @@ import com.giphy.sdk.ui.Giphy
 import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.themes.GridType
 import com.giphy.sdk.ui.views.GiphyDialogFragment
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
@@ -47,7 +44,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 private const val SELECT_PROFILE_PIC_REQUEST = 1
-private const val AUTOCOMPLETE_REQUEST_CODE = 2
 
 class EditProfileFragment : Fragment() {
 
@@ -70,7 +66,7 @@ class EditProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
         val root = binding.root
@@ -112,25 +108,7 @@ class EditProfileFragment : Fragment() {
             profilePicUri = profilePic
         }
 
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
-            when (resultCode) {
-                RESULT_OK -> {
-                    data?.let {
-                        val place = Autocomplete.getPlaceFromIntent(data)
-                    }
-                }
-                AutocompleteActivity.RESULT_ERROR -> {
-                    // TODO: Handle the error.
-                    data?.let {
-                        val status = Autocomplete.getStatusFromIntent(data)
-                    }
-                }
-                RESULT_CANCELED -> {
-                    // The user canceled the operation.
-                }
-            }
-            return
-        }
+
 
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -227,8 +205,18 @@ class EditProfileFragment : Fragment() {
             val long = if (address.size == 0) -1.0 else address[0].longitude
 
             val editedUserProfile = User(
-                userProfile.username, uid, displayName, userProfile.telegramHandle, gender, birthdate!!,
-                bio, banner, rating, review, lat, long
+                userProfile.username,
+                uid,
+                displayName,
+                userProfile.telegramHandle,
+                gender,
+                birthdate!!,
+                bio,
+                banner,
+                rating,
+                review,
+                lat,
+                long
             )
 
             if (profilePicUri == null) { // no new image selected

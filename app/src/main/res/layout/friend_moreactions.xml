@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="10dp"
-        android:layout_marginHorizontal="10dp">
+        android:layout_marginHorizontal="10dp"
+        app:cardCornerRadius="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,11 +20,11 @@
                 android:id="@+id/reportuser_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Report User"
-                android:textSize="16sp"
-                android:textAlignment="center"
                 android:padding="15dp"
-                android:textColor="@color/gph_dark_red"/>
+                android:text="Report User"
+                android:textAlignment="center"
+                android:textColor="@color/gph_dark_red"
+                android:textSize="16sp" />
 
             <View
                 android:layout_width="match_parent"
@@ -35,11 +35,11 @@
                 android:id="@+id/reviewUser_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Review User"
-                android:textSize="16sp"
-                android:textAlignment="center"
                 android:padding="15dp"
-                android:textColor="@color/light_blue_900"/>
+                android:text="Review User"
+                android:textAlignment="center"
+                android:textColor="@color/light_blue_900"
+                android:textSize="16sp" />
 
             <View
                 android:layout_width="match_parent"
@@ -50,11 +50,11 @@
                 android:id="@+id/removefriend_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Remove Friend"
-                android:textSize="16sp"
-                android:textAlignment="center"
                 android:padding="15dp"
-                android:textColor="@color/light_blue_900"/>
+                android:text="Remove Friend"
+                android:textAlignment="center"
+                android:textColor="@color/light_blue_900"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
@@ -64,19 +64,19 @@
         android:id="@+id/cancel_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
         android:layout_marginTop="20dp"
-        app:cardCornerRadius="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginHorizontal="10dp">
+        app:cardCornerRadius="10dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
             android:layout_gravity="center"
             android:padding="15dp"
-            android:textSize="16sp"
-            android:textColor="@color/light_blue_900"/>
+            android:text="Cancel"
+            android:textColor="@color/light_blue_900"
+            android:textSize="16sp" />
 
     </com.google.android.material.card.MaterialCardView>
 

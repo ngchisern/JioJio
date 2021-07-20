@@ -1,11 +1,8 @@
 package com.example.producity.ui.myactivity
 
-import android.graphics.Color
 import android.location.Geocoder
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.text.Html
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +24,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
@@ -65,10 +61,15 @@ class MyActivityFragment : Fragment() {
         val recyclerView = binding.scheduleRecycleView
 
         recyclerView.adapter = upcomingAdapter
-        recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
 
         myActivityViewModel.myActivityList.observe(viewLifecycleOwner) {
-            if(it.isEmpty()) {
+            if (it.isEmpty()) {
                 binding.primaryCountdownText.text = "Happening now"
                 binding.primaryTitle.text = "Living ..."
                 binding.primaryLocation.text = "Everywhere and anywhere"
@@ -76,7 +77,8 @@ class MyActivityFragment : Fragment() {
                 binding.primaryTime.text = "Forever"
                 binding.homePrimaryEvent.isClickable = false
 
-                Picasso.get().load("https://media.tenor.com/images/0cc5aae09f18a8ad8400f6a1a03a2dc0/tenor.png")
+                Picasso.get()
+                    .load("https://media.tenor.com/images/0cc5aae09f18a8ad8400f6a1a03a2dc0/tenor.png")
                     .into(binding.emptyComingnextImage)
                 binding.emptyComingnext.text = "Wow, such empty :("
                 return@observe
@@ -84,8 +86,9 @@ class MyActivityFragment : Fragment() {
 
             binding.homePrimaryEvent.isClickable = true
 
-            if(it.size == 1) {
-                Picasso.get().load("https://media.tenor.com/images/0cc5aae09f18a8ad8400f6a1a03a2dc0/tenor.png")
+            if (it.size == 1) {
+                Picasso.get()
+                    .load("https://media.tenor.com/images/0cc5aae09f18a8ad8400f6a1a03a2dc0/tenor.png")
                     .into(binding.emptyComingnextImage)
                 binding.emptyComingnext.text = "Wow, such empty :("
             }
@@ -104,14 +107,15 @@ class MyActivityFragment : Fragment() {
         val tabLayout = binding.tabLayout
 
         myActivityViewModel.recommended.observe(viewLifecycleOwner) {
-            if(it.isEmpty()) {
+            if (it.isEmpty()) {
                 val image = binding.emptyRecommendationImage
                 image.shapeAppearanceModel = image.shapeAppearanceModel
                     .toBuilder()
                     .setAllCorners(CornerFamily.ROUNDED, 20F)
                     .build()
 
-                Picasso.get().load("https://massets.appsflyer.com/wp-content/uploads/2021/02/machine-learning-in-digital-marketing-featured-min.png")
+                Picasso.get()
+                    .load("https://massets.appsflyer.com/wp-content/uploads/2021/02/machine-learning-in-digital-marketing-featured-min.png")
                     .into(image)
 
                 val str = String(Character.toChars(0x1F916)) + " " + getString(R.string.learning)
@@ -124,22 +128,22 @@ class MyActivityFragment : Fragment() {
 
         var count = 0
         timer = Timer()
-        timer.schedule(object: TimerTask(){
+        timer.schedule(object : TimerTask() {
 
             override fun run() {
                 // handle empty count
-                if(pagerAdapter.itemCount == 0) return
+                if (pagerAdapter.itemCount == 0) return
 
                 requireActivity().runOnUiThread {
-                    viewPager.currentItem = count%pagerAdapter.itemCount
+                    viewPager.currentItem = count % pagerAdapter.itemCount
                 }
 
-                count ++
+                count++
             }
 
-        },5000, 5000)
+        }, 5000, 5000)
 
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+        TabLayoutMediator(tabLayout, viewPager) { _, _ ->
 
         }.attach()
 
@@ -169,25 +173,28 @@ class MyActivityFragment : Fragment() {
 
     private fun updateLayout() {
         sharedViewModel.userImage.observe(viewLifecycleOwner) { url ->
-            if(url == "") return@observe
+            if (url == "") return@observe
 
             Picasso.get().load(url).into(binding.profileImage)
         }
 
         sharedViewModel.currentUser.observe(viewLifecycleOwner) {
-            binding.welcomeText.text = "Hello, ${it.nickname.toUpperCase()}"
+            binding.welcomeText.text = "Hello, ${it.nickname.toUpperCase(Locale.ROOT)}"
         }
 
     }
 
     private fun listen() {
         binding.homePrimaryEvent.setOnClickListener {
-            val action = MyActivityFragmentDirections.actionNavigationHomeToScheduleDetailFragment(myActivityViewModel.getActivity(0))
+            val action = MyActivityFragmentDirections.actionNavigationHomeToScheduleDetailFragment(
+                myActivityViewModel.getActivity(0)
+            )
             findNavController().navigate(action)
         }
 
         binding.welcomeNoti.setOnClickListener {
-            val action = MyActivityFragmentDirections.actionNavigationMyActivityToNotificationFragment()
+            val action =
+                MyActivityFragmentDirections.actionNavigationMyActivityToNotificationFragment()
             findNavController().navigate(action)
         }
     }
@@ -203,17 +210,16 @@ class MyActivityFragment : Fragment() {
             primaryTime.text = format.format(subject.date)
 
             val difference = subject.date.time - Timestamp.now().toDate().time
-            val timeFrame: Long
 
-            if(difference < 86400000) {
-                timeFrame = 3600000
+            val timeFrame: Long = if (difference < 86400000) {
+                3600000
             } else {
-                timeFrame = 86400000
+                86400000
             }
 
-            val countDownTimer = object: CountDownTimer(difference, timeFrame) {
+            val countDownTimer = object : CountDownTimer(difference, timeFrame) {
                 override fun onTick(millisUntilFinished: Long) {
-                    if(timeFrame == 3600000L) {
+                    if (timeFrame == 3600000L) {
                         val hour = millisUntilFinished / timeFrame % 24
                         primaryCountdownText.text = "In about $hour hours"
                     } else {
@@ -230,10 +236,10 @@ class MyActivityFragment : Fragment() {
 
             val geocoder = Geocoder(requireContext(), Locale.getDefault())
 
-            primaryLocation.text = if(subject.isVirtual) "Online" else {
+            primaryLocation.text = if (subject.isVirtual) "Online" else {
                 val address = geocoder.getFromLocation(subject.latitude, subject.longitude, 1)
 
-                if(address.isEmpty()) {
+                if (address.isEmpty()) {
                     "Unknown"
                 } else {
                     address[0].getAddressLine(0)

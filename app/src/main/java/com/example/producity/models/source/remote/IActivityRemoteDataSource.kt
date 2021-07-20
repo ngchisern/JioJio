@@ -9,5 +9,5 @@ interface IActivityRemoteDataSource {
     fun manageActivity(activity: Activity)
     fun removeParticipant(username: String, docId: String)
     fun addParticipant(username: String, docId: String)
-    suspend fun getNextActivity(username: String): Activity
+    suspend fun getNextActivity(username: String): Activity?
 }

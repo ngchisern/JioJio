@@ -14,10 +14,10 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             app:contentScrim="@android:color/transparent"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-            app:statusBarScrim="@android:color/transparent"
-            android:background="@color/white">
+            app:statusBarScrim="@android:color/transparent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -28,10 +28,10 @@
                     android:id="@+id/activity_image"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/ic_launcher_background"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintDimensionRatio="16:9"
-                    android:scaleType="centerCrop" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -39,10 +39,10 @@
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:layout_marginBottom="-200dp"
                 android:background="@android:color/transparent"
                 app:layout_collapseMode="pin"
-                app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
-                android:layout_marginBottom="-200dp"/>
+                app:navigationIcon="@drawable/ic_baseline_arrow_back_24" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -71,9 +71,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="Basketball"
-                    android:textSize="22sp"
                     android:textColor="#424242"
-                    android:textStyle="bold"/>
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
                 <ImageView
                     android:id="@+id/activity_calendar_icon"
@@ -81,19 +81,19 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/activity_detail_title"
                     android:layout_marginTop="30dp"
-                    android:src="@drawable/ic_calendar"/>
+                    android:src="@drawable/ic_calendar" />
 
                 <TextView
                     android:id="@+id/activity_detail_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@id/activity_detail_title"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="30dp"
+                    android:layout_toEndOf="@id/activity_calendar_icon"
                     android:text="Sunday, June 19, 2021"
                     android:textColor="#757575"
-                    android:textSize="14sp"
-                    android:layout_below="@id/activity_detail_title"
-                    android:layout_toEndOf="@id/activity_calendar_icon"/>
+                    android:textSize="14sp" />
 
                 <ImageView
                     android:id="@+id/activity_time_icon"
@@ -101,19 +101,19 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/activity_detail_date"
                     android:layout_marginTop="20dp"
-                    android:src="@drawable/ic_baseline_access_time_24"/>
+                    android:src="@drawable/ic_baseline_access_time_24" />
 
                 <TextView
                     android:id="@+id/activity_detail_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textColor="#757575"
-                    android:textSize="14sp"
-                    android:text="01:00 PM"
-                    android:layout_marginTop="22dp"
                     android:layout_below="@id/activity_detail_date"
-                    android:layout_toEndOf="@id/activity_time_icon"/>
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="22dp"
+                    android:layout_toEndOf="@id/activity_time_icon"
+                    android:text="01:00 PM"
+                    android:textColor="#757575"
+                    android:textSize="14sp" />
 
                 <ImageView
                     android:id="@+id/activity_location_icon"
@@ -121,19 +121,19 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/activity_detail_time"
                     android:layout_marginTop="20dp"
-                    android:src="@drawable/ic_baseline_location_on_24"/>
+                    android:src="@drawable/ic_baseline_location_on_24" />
 
                 <TextView
                     android:id="@+id/activity_detail_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@id/activity_detail_time"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="20dp"
+                    android:layout_toEndOf="@id/activity_calendar_icon"
                     android:text="National University of Singapore"
                     android:textColor="#757575"
-                    android:textSize="14sp"
-                    android:layout_below="@id/activity_detail_time"
-                    android:layout_toEndOf="@id/activity_calendar_icon"/>
+                    android:textSize="14sp" />
 
                 <ImageView
                     android:id="@+id/participant_icon"
@@ -141,15 +141,15 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/activity_detail_location"
                     android:layout_marginTop="20dp"
-                    android:src="@drawable/ic_baseline_person_24"/>
+                    android:src="@drawable/ic_baseline_person_24" />
 
                 <TextView
                     android:id="@+id/activity_detail_participant"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@id/activity_detail_location"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="22dp"
-                    android:layout_below="@id/activity_detail_location"
                     android:layout_toEndOf="@id/participant_icon"
                     android:text="5"
                     android:textColor="#757575"
@@ -159,21 +159,21 @@
                     android:id="@+id/activity_description_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
                     android:layout_below="@id/activity_detail_participant"
+                    android:layout_marginTop="20dp"
                     android:text="Description"
-                    android:textStyle="bold"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/activity_detail_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@id/activity_description_text"
                     android:layout_marginTop="5dp"
                     android:text="your best basketball experience"
                     android:textColor="#757575"
-                    android:textSize="14sp"
-                    android:layout_below="@id/activity_description_text"/>
+                    android:textSize="14sp" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/activity_creator_icon"
@@ -181,51 +181,51 @@
                     android:layout_height="40dp"
                     android:layout_below="@id/activity_detail_description"
                     android:layout_marginTop="25dp"
-                    android:src="@drawable/ic_baseline_person_24"
                     android:scaleType="centerCrop"
-                    app:civ_border_width="1dp"
-                    app:civ_border_color="@color/black"/>
+                    android:src="@drawable/ic_baseline_person_24"
+                    app:civ_border_color="@color/black"
+                    app:civ_border_width="1dp" />
 
                 <TextView
                     android:id="@+id/activity_detail_creator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/activity_detail_description"
-                    android:layout_toEndOf="@id/activity_creator_icon"
-                    android:layout_marginTop="25dp"
                     android:layout_marginStart="15dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_toEndOf="@id/activity_creator_icon"
                     android:text="The Creator"
-                    android:textStyle="bold"
-                    android:textSize="16dp"/>
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/creator_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/activity_detail_creator"
-                    android:layout_toEndOf="@id/activity_creator_icon"
-                    android:layout_marginTop="2dp"
                     android:layout_marginStart="15dp"
-                    android:text="Creator"/>
+                    android:layout_marginTop="2dp"
+                    android:layout_toEndOf="@id/activity_creator_icon"
+                    android:text="Creator" />
 
                 <TextView
                     android:id="@+id/participant_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Participant"
-                    android:textStyle="bold"
-                    android:textSize="14dp"
+                    android:layout_below="@id/creator_text"
                     android:layout_marginTop="20dp"
-                    android:layout_below="@id/creator_text"/>
+                    android:text="Participant"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
 
                 <ImageView
                     android:id="@+id/participant_show"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/participant_text"
                     android:layout_below="@id/creator_text"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="18dp"
-                    android:layout_marginStart="10dp"/>
+                    android:layout_toEndOf="@id/participant_text" />
 
                 <LinearLayout
                     android:id="@+id/linearlayout"
@@ -239,7 +239,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="9dp"
                         android:padding="6dp"
-                        tools:itemCount="12"/>
+                        tools:itemCount="12" />
 
                 </LinearLayout>
 
@@ -255,15 +255,14 @@
                         android:id="@+id/invite_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:cornerRadius="10dp"
-                        android:elevation="10dp"
-                        android:textColor="@color/white"
-                        android:text="Invite"
                         android:layout_weight="3"
                         android:backgroundTint="#1565c0
 
 "
-                        />
+                        android:elevation="10dp"
+                        android:text="Invite"
+                        android:textColor="@color/white"
+                        app:cornerRadius="10dp" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -274,13 +273,12 @@
                         android:id="@+id/chat_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:cornerRadius="10dp"
+                        android:layout_weight="6"
+                        android:backgroundTint="#22d8b9"
                         android:elevation="10dp"
                         android:text="Chat"
                         android:textColor="@color/white"
-                        android:layout_weight="6"
-                        android:backgroundTint="#22d8b9"
-                        />
+                        app:cornerRadius="10dp" />
 
                 </LinearLayout>
 

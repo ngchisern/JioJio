@@ -1,6 +1,5 @@
 package com.example.producity.ui.notification
 
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.MutableLiveData
@@ -11,9 +10,7 @@ import com.example.producity.models.Notification
 import com.example.producity.models.Participant
 import com.example.producity.models.Request
 import com.example.producity.models.User
-import com.example.producity.models.source.IActivityRepository
 import com.example.producity.models.source.IUserRepository
-import com.example.producity.ui.friends.my_friends.FriendListViewModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -23,8 +20,9 @@ import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
+import timber.log.Timber
 
-class NotificationViewModel(val userRepository: IUserRepository): ViewModel() {
+class NotificationViewModel(val userRepository: IUserRepository) : ViewModel() {
     private val rtdb = Firebase.database
 
     fun getUpdate(username: String): MutableLiveData<List<Notification>> {
@@ -69,7 +67,7 @@ class NotificationViewModel(val userRepository: IUserRepository): ViewModel() {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.d("Main", "failed to update log")
+                    Timber.d("failed to update log")
                 }
             })
         return result
@@ -81,9 +79,7 @@ class NotificationViewModel(val userRepository: IUserRepository): ViewModel() {
 
         storage.getReference("profile_pictures/${username}")
             .downloadUrl
-            .addOnSuccessListener {  uri ->
-                if(uri == null) return@addOnSuccessListener
-
+            .addOnSuccessListener { uri ->
                 Picasso.get().load(uri).into(view)
             }
     }
@@ -94,7 +90,7 @@ class NotificationViewModel(val userRepository: IUserRepository): ViewModel() {
         rtdb.getReference("participant/$username")
             .get()
             .addOnSuccessListener {
-                if(!it.exists()) return@addOnSuccessListener
+                if (!it.exists()) return@addOnSuccessListener
 
                 view.text = it.getValue(Participant::class.java)!!.nickname
             }

@@ -5,24 +5,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
-import com.example.producity.models.ChatRoom
 import com.example.producity.models.Review
-import com.example.producity.ui.chatlist.ChatListAdapter
-import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ReviewListAdapter(private val context: Fragment, private val reviewListViewModel: ReviewListViewModel):
+class ReviewListAdapter(
+    private val context: Fragment,
+    private val reviewListViewModel: ReviewListViewModel
+) :
     ListAdapter<Review, ReviewListAdapter.ReviewListViewHolder>(ReviewComparator()) {
 
-    class ReviewListViewHolder(val view: View): RecyclerView.ViewHolder(view) {
+    class ReviewListViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val image: ImageView = view.findViewById(R.id.reviewer_image)
         val nickname: TextView = view.findViewById(R.id.reviewer_nickname)
         val content: TextView = view.findViewById(R.id.review_description)
@@ -31,7 +29,7 @@ class ReviewListAdapter(private val context: Fragment, private val reviewListVie
 
         fun bind(current: Review) {
             val format = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-            if(current.description.isEmpty()) {
+            if (current.description.isEmpty()) {
                 content.textSize = 0F
             } else {
                 content.text = current.description
@@ -50,7 +48,7 @@ class ReviewListAdapter(private val context: Fragment, private val reviewListVie
     }
 
 
-    class ReviewComparator: DiffUtil.ItemCallback<Review>() {
+    class ReviewComparator : DiffUtil.ItemCallback<Review>() {
         override fun areItemsTheSame(oldItem: Review, newItem: Review): Boolean {
             return oldItem == newItem
         }
@@ -61,7 +59,10 @@ class ReviewListAdapter(private val context: Fragment, private val reviewListVie
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewListAdapter.ReviewListViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ReviewListViewHolder {
         return ReviewListViewHolder.create(parent)
     }
 

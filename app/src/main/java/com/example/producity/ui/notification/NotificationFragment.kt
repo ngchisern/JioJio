@@ -14,19 +14,18 @@ import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.NotificationBinding
 import com.example.producity.ui.myactivity.MyActivityViewModel
-import com.giphy.sdk.analytics.models.enums.AttributeKey
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 
-class NotificationFragment: Fragment() {
+class NotificationFragment : Fragment() {
 
     private var _binding: NotificationBinding? = null
 
     private val binding get() = _binding!!
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val notificationViewModel: NotificationViewModel by viewModels() {
+    private val notificationViewModel: NotificationViewModel by viewModels {
         NotificationViewModelFactory(ServiceLocator.provideUserRepository())
     }
     private val myActivityViewModel: MyActivityViewModel by activityViewModels()
@@ -51,12 +50,13 @@ class NotificationFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val viewPager = binding.notiPager
-        val pagerAdapter = NotificationAdapter(this, myActivityViewModel, sharedViewModel, notificationViewModel)
+        val pagerAdapter =
+            NotificationAdapter(this, myActivityViewModel, sharedViewModel, notificationViewModel)
         viewPager.adapter = pagerAdapter
 
         val tabLayout = binding.tabLayout
 
-        pagerAdapter.submitList(listOf(1,2))
+        pagerAdapter.submitList(listOf(1, 2))
 
         val tabTitles = arrayOf("Social Update", "Request")
 
@@ -65,8 +65,9 @@ class NotificationFragment: Fragment() {
 
             val size = pagerAdapter.getListSize(0)
 
-            if(size <= 0) {
-                Picasso.get().load("https://cdn.dribbble.com/users/1418633/screenshots/6693173/empty-state.png")
+            if (size <= 0) {
+                Picasso.get()
+                    .load("https://cdn.dribbble.com/users/1418633/screenshots/6693173/empty-state.png")
                     .into(binding.emptyNotiImage)
                 binding.emptyNotiText.text = "No Social Update"
 
@@ -74,15 +75,16 @@ class NotificationFragment: Fragment() {
 
         }.attach()
 
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 val position = tab!!.position
                 val size = pagerAdapter.getListSize(position)
 
-                if(size <= 0) {
-                    Picasso.get().load("https://cdn.dribbble.com/users/1418633/screenshots/6693173/empty-state.png")
+                if (size <= 0) {
+                    Picasso.get()
+                        .load("https://cdn.dribbble.com/users/1418633/screenshots/6693173/empty-state.png")
                         .into(binding.emptyNotiImage)
-                    if(position == 0) {
+                    if (position == 0) {
                         binding.emptyNotiText.text = "No Social Update"
                     } else {
                         binding.emptyNotiText.text = "No Recent Requests"

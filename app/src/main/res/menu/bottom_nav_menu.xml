@@ -14,7 +14,7 @@
     <item
         android:id="@+id/navigation_createActivity"
         android:icon="@drawable/ic_add"
-        android:title="@string/title_addEvent"/>
+        android:title="@string/title_addEvent" />
 
     <item
         android:id="@+id/navigation_chat"
@@ -24,6 +24,6 @@
     <item
         android:id="@+id/navigation_profile"
         android:icon="@drawable/ic_baseline_person_24"
-        android:title="@string/title_profile"/>
+        android:title="@string/title_profile" />
 
 </menu>

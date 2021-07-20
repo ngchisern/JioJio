@@ -3,7 +3,6 @@ package com.example.producity
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputFilter
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -13,15 +12,16 @@ import com.example.producity.models.User
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import timber.log.Timber
 
 class RegisterActivity : AppCompatActivity() {
 
     companion object {
-        val BLANK_PROFILE_IMG_URL =
+        const val BLANK_PROFILE_IMG_URL =
             "https://firebasestorage.googleapis.com/v0/b/orbital-7505e.appspot.com/o/profile_pictures%2Fblank-profile-picture.png?alt=media&token=cfaa6afb-1651-4563-9654-a0d6f14fdffc"
     }
 
-    private val registerViewModel: RegisterViewModel by viewModels() {
+    private val registerViewModel: RegisterViewModel by viewModels {
         RegisterViewModelFactory(
             ServiceLocator.provideAuthRepository(),
             ServiceLocator.provideUserRepository()
@@ -45,6 +45,7 @@ class RegisterActivity : AppCompatActivity() {
         goToSignIn.setOnClickListener {
             finish()
         }
+
     }
 
     fun String.removeSpace() = trim().replace("\\s+".toRegex(), replacement = "")
@@ -72,7 +73,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         if (password.text.toString() != confirmPassword.text.toString()) {
-            confirmPassword.setError("Passwords do not match.")
+            confirmPassword.error = "Passwords do not match."
             isValid = false
         }
 
@@ -80,7 +81,7 @@ class RegisterActivity : AppCompatActivity() {
         if (username.text.toString().isEmpty()) {
             username.error = "Please enter your username."
             isValid = false
-        } else if (username.text.length < 6 ) {
+        } else if (username.text.length < 6) {
             username.error = "Username must contain at least 6 characters."
         }
 
@@ -111,7 +112,7 @@ class RegisterActivity : AppCompatActivity() {
             )
                 .addOnCompleteListener { task ->
                     if (!task.isSuccessful) {
-                        Log.d("Main", "${task.exception}")
+                        Timber.d("${task.exception}")
                     }
 
                     val name = username.text.toString()
@@ -129,7 +130,7 @@ class RegisterActivity : AppCompatActivity() {
                     db.document("users/${name}")
                         .set(user)
                         .addOnCompleteListener {
-                            Log.d("Main", "Done")
+                            Timber.d("Done")
                             val intent = Intent(this, MainActivity::class.java)
 
                             /* TODO Uncomment to display sent email verification page
@@ -141,7 +142,7 @@ class RegisterActivity : AppCompatActivity() {
                             startActivity(intent)
                         }
                         .addOnSuccessListener {
-                            Log.d("Main", "Successfully sign up!")
+                            Timber.d("Successfully sign up!")
                         }
                 }
 

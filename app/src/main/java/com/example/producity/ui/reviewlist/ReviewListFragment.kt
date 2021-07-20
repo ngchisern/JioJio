@@ -6,27 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.producity.R
-import com.example.producity.SharedViewModel
-import com.example.producity.databinding.ChatListBinding
 import com.example.producity.databinding.ReviewListBinding
 import com.example.producity.models.User
-import com.example.producity.ui.chatlist.ChatListAdapter
-import com.example.producity.ui.chatlist.ChatListViewModel
-import com.squareup.picasso.Picasso
 
-class ReviewListFragment: Fragment() {
+class ReviewListFragment : Fragment() {
 
     private var _binding: ReviewListBinding? = null
     private val binding get() = _binding!!
 
     private val reviewListViewModel: ReviewListViewModel by viewModels()
 
-    private lateinit var user : User
+    private lateinit var user: User
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,9 +72,9 @@ class ReviewListFragment: Fragment() {
     }
 
     private fun updateLayout() {
-        val rating = "%.${1}f".format(user.rating/user.review).toFloat()
+        val rating = "%.${1}f".format(user.rating / user.review).toFloat()
         binding.rating.text = rating.toString()
-        binding.ratingProgress.progress = (rating/5*100).toInt()
+        binding.ratingProgress.progress = (rating / 5 * 100).toInt()
         binding.reviewStar.rating = rating
         binding.totalReview.text = "${user.review} reviews"
 

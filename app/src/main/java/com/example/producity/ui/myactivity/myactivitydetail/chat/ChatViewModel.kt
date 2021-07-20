@@ -1,6 +1,5 @@
 package com.example.producity.ui.myactivity.myactivitydetail.chat
 
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.MutableLiveData
@@ -13,8 +12,9 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
+import timber.log.Timber
 
-class ChatViewModel: ViewModel() {
+class ChatViewModel : ViewModel() {
 
     private val rtdb = Firebase.database
 
@@ -22,7 +22,7 @@ class ChatViewModel: ViewModel() {
     val chatMessages: MutableLiveData<List<Message>> = MutableLiveData(listOf())
 
     fun updateList() {
-        rtdb.getReference().child("activity/$documentId/message")
+        rtdb.reference.child("activity/$documentId/message")
             .orderByChild("timestamp")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -31,13 +31,13 @@ class ChatViewModel: ViewModel() {
                         val temp = it.getValue(Message::class.java) ?: return
                         list.add(temp)
                     }
-                    Log.d("Main", list.size.toString())
+                    Timber.d(list.size.toString())
                     chatMessages.value = list
 
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.d("Main", "failed to update log")
+                    Timber.d("failed to update log")
                 }
             })
     }
@@ -46,10 +46,10 @@ class ChatViewModel: ViewModel() {
         rtdb.getReference("activity/$documentId/message").push()
             .setValue(message)
             .addOnSuccessListener {
-                Log.d("ChatViewModel", "added noti to database")
+                Timber.d("added noti to database")
             }
             .addOnFailureListener {
-                Log.d("Main", it.message.toString())
+                Timber.d(it.message.toString())
             }
 
         rtdb.getReference("chatroom/$documentId")
@@ -57,17 +57,19 @@ class ChatViewModel: ViewModel() {
             .addOnSuccessListener {
                 val chatRoom = it.getValue(ChatRoom::class.java)!!
 
-                val unread = chatRoom.unread.mapValues {
-                    it.value + 1
+                val unread = chatRoom.unread.mapValues { x ->
+                    x.value + 1
                 }
 
-                val updated = ChatRoom(message.timestamp, chatRoom.group, chatRoom.docId,
-                                        message.username, message.message, unread )
+                val updated = ChatRoom(
+                    message.timestamp, chatRoom.group, chatRoom.docId,
+                    message.username, message.message, unread
+                )
 
                 rtdb.getReference("chatroom/$documentId")
                     .setValue(updated)
                     .addOnSuccessListener {
-                        Log.d("ChatViewModel", "updated chatroom")
+                        Timber.d("updated chatroom")
                     }
 
             }
@@ -80,7 +82,7 @@ class ChatViewModel: ViewModel() {
         rtdb.getReference("chatroom/$documentId/unread/$username")
             .setValue(0)
             .addOnSuccessListener {
-                Log.d("ChatViewModel", "read messages")
+                Timber.d("read messages")
             }
     }
 
@@ -89,7 +91,7 @@ class ChatViewModel: ViewModel() {
 
         storage.getReference("profile_pictures/${username}")
             .downloadUrl
-            .addOnSuccessListener {  uri ->
+            .addOnSuccessListener { uri ->
 
                 Picasso.get().load(uri).into(view)
             }
@@ -100,7 +102,7 @@ class ChatViewModel: ViewModel() {
 
         storage.getReference("activity_images/${docId}")
             .downloadUrl
-            .addOnSuccessListener {  uri ->
+            .addOnSuccessListener { uri ->
                 Picasso.get().load(uri).into(view)
             }
     }
@@ -111,7 +113,7 @@ class ChatViewModel: ViewModel() {
         rtdb.getReference("participant/$username")
             .get()
             .addOnSuccessListener {
-                if(!it.exists()) return@addOnSuccessListener
+                if (!it.exists()) return@addOnSuccessListener
 
                 view.text = it.getValue(Participant::class.java)!!.nickname
             }

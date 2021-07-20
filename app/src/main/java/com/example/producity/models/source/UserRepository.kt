@@ -13,7 +13,7 @@ class UserRepository(private val userRemoteDataSource: IUserRemoteDataSource) : 
     override fun isUsernameTaken(username: String): Boolean {
         val task = userRemoteDataSource.isUsernmeTaken(username)
 
-        while(!task.isComplete) {
+        while (!task.isComplete) {
 
         }
 
@@ -64,7 +64,10 @@ class UserRepository(private val userRemoteDataSource: IUserRemoteDataSource) : 
         imageUri: Uri,
         userProfile: User
     ): User {
-        return userRemoteDataSource.uploadImageToFirebaseStorageAndEditProfile(imageUri, userProfile)
+        return userRemoteDataSource.uploadImageToFirebaseStorageAndEditProfile(
+            imageUri,
+            userProfile
+        )
     }
 
 }

@@ -4,41 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_marginVertical="10dp"
     android:background="@null"
-    android:layout_marginVertical="10dp">
+    android:orientation="vertical">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/sender_image"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:src="@drawable/ic_baseline_person_24"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/ic_baseline_person_24"
-        app:civ_border_width="1dp"
-        app:civ_border_color="#FF000000"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/sender_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:textStyle="bold"
         android:layout_marginTop="5dp"
         android:layout_toEndOf="@id/sender_image"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
         tools:text="friend_username" />
 
     <TextView
         android:id="@+id/noti_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:textSize="12sp"
-        android:layout_toEndOf="@id/sender_image"
         android:layout_below="@id/sender_name"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@id/sender_image"
+        android:textSize="12sp"
         tools:text="friend_username" />
 
     <TextView
@@ -47,19 +47,18 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="20dp"
-        android:textSize="10dp"/>
+        android:textSize="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Responded"
-        android:textSize="14dp"
-        android:textColor="@color/quantum_grey700"
         android:layout_below="@id/noti_message"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@id/sender_image"
-        />
+        android:text="Responded"
+        android:textColor="@color/quantum_grey700"
+        android:textSize="14dp" />
 
     <LinearLayout
         android:id="@+id/request_option"
@@ -67,10 +66,10 @@
         android:layout_height="40dp"
         android:layout_below="@id/noti_message"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="2dp"
         android:layout_toEndOf="@id/sender_image"
         android:gravity="center|start"
-        android:weightSum="10"
-        android:layout_marginTop="2dp">
+        android:weightSum="10">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_button"
@@ -81,8 +80,8 @@
             android:text="Cancel"
             android:textColor="@color/quantum_grey700"
             app:cornerRadius="1dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="@color/quantum_grey50"/>
+            app:strokeColor="@color/quantum_grey50"
+            app:strokeWidth="1dp" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -95,9 +94,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="5"
             android:backgroundTint="#66bb6a"
-            android:textColor="@color/white"
             android:text="Accept"
-            app:cornerRadius="1dp"/>
+            android:textColor="@color/white"
+            app:cornerRadius="1dp" />
 
     </LinearLayout>
 

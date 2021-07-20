@@ -10,24 +10,25 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.producity.R
-import com.example.producity.SharedViewModel
-import com.example.producity.databinding.CreateActivityBinding
 import com.example.producity.databinding.CreatePrivacyBinding
 import com.example.producity.models.Activity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class CreatePrivacyFragment: Fragment() {
+class CreatePrivacyFragment : Fragment() {
 
-    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val createActivityViewModel: CreateActivityViewModel by activityViewModels()
 
     private var _binding: CreatePrivacyBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    )
             : View {
 
-        _binding = CreatePrivacyBinding.inflate(inflater,container,false)
+        _binding = CreatePrivacyBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val bottomNav: View? = activity?.findViewById(R.id.nav_view)
@@ -74,7 +75,8 @@ class CreatePrivacyFragment: Fragment() {
     }
 
     private fun navigateToDetail() {
-        val action = CreatePrivacyFragmentDirections.actionCreatePrivacyFragmentToCreateDetailFragment()
+        val action =
+            CreatePrivacyFragmentDirections.actionCreatePrivacyFragmentToCreateDetailFragment()
         findNavController().navigate(action)
     }
 

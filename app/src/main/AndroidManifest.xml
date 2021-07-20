@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProduCity.NoActionBar">
         <activity android:name=".SentEmailVerificationActivity" />
-        <activity android:name=".GoogleLoginRegisterUsernameActivity"></activity>
+        <activity android:name=".GoogleLoginRegisterUsernameActivity"/>
 
         <activity
             android:name=".MainActivity"

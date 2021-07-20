@@ -8,14 +8,10 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -26,12 +22,12 @@ import com.example.producity.SharedViewModel
 import com.example.producity.databinding.CreateDetailBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.mlkit.vision.common.InputImage
-import java.io.IOException
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class CreateDetailFragment: Fragment() {
+class CreateDetailFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val createActivityViewModel: CreateActivityViewModel by activityViewModels()
@@ -39,10 +35,14 @@ class CreateDetailFragment: Fragment() {
     private var _binding: CreateDetailBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    )
             : View {
 
-        _binding = CreateDetailBinding.inflate(inflater,container,false)
+        _binding = CreateDetailBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val bottomNav: View? = activity?.findViewById(R.id.nav_view)
@@ -57,7 +57,7 @@ class CreateDetailFragment: Fragment() {
         listen()
     }
 
-    var selectedPhoto: Uri? = null
+    private var selectedPhoto: Uri? = null
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -67,7 +67,7 @@ class CreateDetailFragment: Fragment() {
             val bitmap = MediaStore.Images.Media.getBitmap(context?.contentResolver, selectedPhoto)
             val bitmapDrawable = BitmapDrawable(bitmap)
 
-            Log.d("Main", selectedPhoto.toString())
+            Timber.d(selectedPhoto.toString())
 
             binding.activityImage.setBackgroundDrawable(bitmapDrawable)
             binding.addImageButton.visibility = View.GONE
@@ -113,15 +113,23 @@ class CreateDetailFragment: Fragment() {
     }
 
     private fun done() {
-        if(checkInput()) {
-            val creator =sharedViewModel.getUser().username
+        if (checkInput()) {
+            val creator = sharedViewModel.getUser().username
             val title = binding.createTitle.text.toString()
             val description = binding.createDescription.text.toString()
             val pax = binding.createPax.text.toString().toInt()
 
             val image = InputImage.fromFilePath(requireContext(), selectedPhoto!!)
 
-            createActivityViewModel.createActivity(selectedPhoto!!, title, creator, description, date!!, pax, image)
+            createActivityViewModel.createActivity(
+                selectedPhoto!!,
+                title,
+                creator,
+                description,
+                date!!,
+                pax,
+                image
+            )
 
             findNavController().popBackStack(R.id.navigation_createActivity, false)
             findNavController().navigate(R.id.navigation_myActivity)
@@ -165,23 +173,25 @@ class CreateDetailFragment: Fragment() {
     private fun checkInput(): Boolean {
         var isCorrect = true
 
-        if(binding.createTitle.text.toString().isEmpty()) {
+        if (binding.createTitle.text.toString().isEmpty()) {
             isCorrect = false
             binding.titleLayout.error = "Please choose a title for your activity"
         }
 
-        if(binding.createPax.text.toString().isEmpty() || binding.createPax.text.toString().toInt() < 1) {
+        if (binding.createPax.text.toString().isEmpty() || binding.createPax.text.toString()
+                .toInt() < 1
+        ) {
             isCorrect = false
             binding.paxLayout.error = "Please choose a valid pax for your activity."
 
         }
 
-        if(date == null) {
+        if (date == null) {
             isCorrect = false
             binding.dateLayout.error = "Please choose a start date and time for your activity."
         }
 
-        if(selectedPhoto == null) {
+        if (selectedPhoto == null) {
             isCorrect = false
             binding.addImageButton.setTextColor(Color.RED)
         }
@@ -199,18 +209,19 @@ class CreateDetailFragment: Fragment() {
     private fun showDateDialog() {
         val datePicker: DatePickerDialog
         val currentDate = Calendar.getInstance()
-        val day = currentDate.get(Calendar.DAY_OF_MONTH)
-        val month = currentDate.get(Calendar.MONTH)
-        val year = currentDate.get(Calendar.YEAR)
+        val cday = currentDate.get(Calendar.DAY_OF_MONTH)
+        val cmonth = currentDate.get(Calendar.MONTH)
+        val cyear = currentDate.get(Calendar.YEAR)
 
-        datePicker = DatePickerDialog(requireContext(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
+        datePicker = DatePickerDialog(
+            requireContext(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
             { _, year, month, dayOfMonth ->
                 pyear = year
                 pmonth = month
                 pday = dayOfMonth
 
                 showTimeDialog()
-            }, year, month, day
+            }, cyear, cmonth, cday
         )
 
         datePicker.show()
@@ -219,20 +230,21 @@ class CreateDetailFragment: Fragment() {
     private fun showTimeDialog() {
         val mTimePicker: TimePickerDialog
         val mcurrentTime = Calendar.getInstance()
-        val hour = mcurrentTime.get(Calendar.HOUR_OF_DAY)
-        val minute = mcurrentTime.get(Calendar.MINUTE)
+        val chour = mcurrentTime.get(Calendar.HOUR_OF_DAY)
+        val cminute = mcurrentTime.get(Calendar.MINUTE)
 
-        mTimePicker = TimePickerDialog(context, android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
+        mTimePicker = TimePickerDialog(
+            context, android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
             { _, hourOfDay, minute ->
                 phour = hourOfDay
                 pminute = minute
 
-                val formatter  = SimpleDateFormat("d MMM 'at' hh:mm aaa", Locale.getDefault())
-                date = Date(pyear -1900, pmonth, pday, phour, pminute)
-                binding.createDatetime.setText(formatter.format(date))
+                val formatter = SimpleDateFormat("d MMM 'at' hh:mm aaa", Locale.getDefault())
+                date = Date(pyear - 1900, pmonth, pday, phour, pminute)
+                binding.createDatetime.setText(formatter.format(date!!))
 
 
-            }, hour, minute, false
+            }, chour, cminute, false
         )
 
         mTimePicker.show()
