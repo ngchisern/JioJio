@@ -8,9 +8,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.runner.RunWith
 import com.example.producity.AndroidTestMainCoroutineRule
+import com.example.producity.models.source.FakeAndroidTestUserRepository
 import com.example.producity.models.source.IUserRepository
-import com.example.producity.source.FakeAndroidTestUserRemoteDataSource
-import com.example.producity.source.FakeAndroidTestUserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Rule
@@ -29,7 +28,7 @@ class ProfileFragmentTest {
 
     @Before
     fun initRepository() = runBlockingTest {
-        fakeRepo = FakeAndroidTestUserRepository(FakeAndroidTestUserRemoteDataSource())
+        fakeRepo = FakeAndroidTestUserRepository()
         ServiceLocator.userRepository = fakeRepo // TODO use shared repo
 
 //        // Set up a sample user profile // TODO Now not working, shared repo not done

@@ -11,6 +11,11 @@ import com.google.firebase.ktx.Firebase
 class FakeTestUserRepository: IUserRepository {
     var userData = LinkedHashMap<String, String>()
 
+    private val friends = mutableListOf(
+        User("friend0", "uid0"),
+        User("friend1", "uid1")
+    )
+
     fun buildUserData(map: LinkedHashMap<String, String>) {
         userData = map
     }
@@ -24,50 +29,55 @@ class FakeTestUserRepository: IUserRepository {
     }
 
     override suspend fun checkUserExists(username: String): User? {
-        TODO("Not yet implemented")
+        return if (userData.contains(username)) {
+            User(username = username)
+        } else {
+            null
+        }
     }
 
     override suspend fun loadUserProfile(username: String): User {
-        TODO("Not yet implemented")
+        return User(username = username)
+
     }
 
     override suspend fun editUserProfile(editedUserProfile: User) {
-        TODO("Not yet implemented")
+
     }
 
     override suspend fun loadFriends(username: String): List<User> {
-        TODO("Not yet implemented")
+        return friends
     }
 
     override suspend fun sendFriendRequest(sender: User, receiverUsername: String) {
-        TODO("Not yet implemented")
+
     }
 
     override suspend fun addFriend(currUser: User, friend: User) {
-        TODO("Not yet implemented")
+        friends.add(friend)
     }
 
     override suspend fun deleteFriend(currUser: User, friend: User) {
-        TODO("Not yet implemented")
+        friends.remove(friend)
     }
 
     override suspend fun uploadImageToFirebaseStorage(imageUri: Uri, username: String): String {
-        TODO("Not yet implemented")
+        return ""
     }
 
     override suspend fun getProfilePicUrl(username: String): String {
-        TODO("Not yet implemented")
+        return ""
     }
 
     override suspend fun updateProfileInFriends(editedUserProfile: User, friendUsername: String) {
-        TODO("Not yet implemented")
+
     }
 
     override suspend fun uploadImageToFirebaseStorageAndEditProfile(
         imageUri: Uri,
         userProfile: User
     ): User {
-        TODO("Not yet implemented")
+        return User()
     }
 
 }

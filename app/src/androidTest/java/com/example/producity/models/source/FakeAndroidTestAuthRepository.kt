@@ -16,15 +16,15 @@ class FakeAndroidTestAuthRepository: IAuthRepository {
     }
 
     override fun verifyPassword(pass: String): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun changeEmail(email: String) {
-        TODO("Not yet implemented")
+
     }
 
     override fun changePassword(pass: String) {
-        TODO("Not yet implemented")
+
     }
 
     fun addAccount(email:String, password: String) {

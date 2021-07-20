@@ -1,12 +1,10 @@
 package com.example.producity.ui.friends.my_friends
 
-import android.util.Log
 import android.widget.ImageView
 import androidx.lifecycle.*
 import com.example.producity.models.*
 import com.example.producity.models.source.IActivityRepository
 import com.example.producity.models.source.IUserRepository
-import com.google.firebase.Timestamp
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
