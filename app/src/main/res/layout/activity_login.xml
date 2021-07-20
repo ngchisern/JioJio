@@ -86,12 +86,13 @@
 
         <View
             android:id="@+id/login_line_start"
-            android:layout_width="170dp"
+            android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginTop="45dp"
             android:background="@color/grey"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/or"
             app:layout_constraintTop_toBottomOf="@id/login_button" />
 
         <TextView
@@ -101,18 +102,19 @@
             android:text="@string/or"
             android:textColor="@color/grey"
             app:layout_constraintBottom_toBottomOf="@id/login_line_start"
-            app:layout_constraintEnd_toStartOf="@id/login_line_end"
-            app:layout_constraintStart_toEndOf="@id/login_line_start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/login_line_start" />
 
         <View
             android:id="@+id/login_line_end"
-            android:layout_width="170dp"
+            android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginTop="45dp"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:background="@color/grey"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/or"
             app:layout_constraintTop_toBottomOf="@id/login_button" />
 
         <com.google.android.gms.common.SignInButton
