@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputFilter
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -11,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.producity.models.Participant
 import com.example.producity.models.User
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
@@ -87,6 +89,7 @@ class RegisterActivity : AppCompatActivity() {
             isValid = false
         } else if (username.text.length < 6) {
             username.error = "Username must contain at least 6 characters."
+            isValid = false
         }
 
 
@@ -117,6 +120,12 @@ class RegisterActivity : AppCompatActivity() {
                 .addOnCompleteListener { task ->
                     if (!task.isSuccessful) {
                         Timber.d("${task.exception}")
+                        try {
+                            throw task.exception
+                        } catch (e: FirebaseAuthUserCollisionException) {
+                            email.error = "This email is already taken."
+                            return@addOnCompleteListener
+                        }
                     }
 
                     val name = username.text.toString()
@@ -158,11 +167,8 @@ class RegisterActivity : AppCompatActivity() {
                         }
                 }
 
-
         }
 
-
     }
-
 
 }

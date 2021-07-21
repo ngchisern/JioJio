@@ -97,7 +97,7 @@ class EditAccountFragment: Fragment() {
         val currentEmail = Firebase.auth.currentUser!!.email
 
         binding.editAccountTitle.text = "CHANGE EMAIL"
-        binding.editAccountSubtitle.text = "Your current email address is $currentEmail.\n What would like to change it to?"
+        binding.editAccountSubtitle.text = "Your current email address is $currentEmail.\n What would you like to change it to?"
         binding.editAccountSubject.text = "EMAIL"
         binding.editAccountInput.hint = "Email"
         binding.editAccountButton.text = "Change Email"
@@ -114,7 +114,7 @@ class EditAccountFragment: Fragment() {
         } else {
             binding.editAccountTitle.text = "CHANGE TELEGRAM HANDLE"
             binding.editAccountButton.text = "Change Telegram Handle"
-            binding.editAccountSubtitle.text = "Your current telegram handle is $tele.\n What would like to change it to?"
+            binding.editAccountSubtitle.text = "Your current telegram handle is $tele.\n What would you like to change it to?"
         }
 
         binding.editAccountSubject.text = "TELEGRAM HANDLE"
