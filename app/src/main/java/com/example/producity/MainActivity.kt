@@ -120,6 +120,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                     db.collection("activity")
+                        .whereEqualTo("privacy", Activity.PUBLIC)
                         .orderBy("date")
                         .startAt(Timestamp.now())
                         .limit(5)

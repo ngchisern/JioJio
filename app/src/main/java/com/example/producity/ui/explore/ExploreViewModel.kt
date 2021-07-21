@@ -3,16 +3,16 @@ package com.example.producity.ui.explore
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.*
-import com.example.producity.models.Activity
-import com.example.producity.models.Participant
-import com.example.producity.models.User
+import com.example.producity.models.*
 import com.example.producity.models.source.IActivityRepository
 import com.example.producity.models.source.IParticipantRepository
+import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
+import timber.log.Timber
 import java.util.*
 
 class ExploreViewModel(
@@ -46,7 +46,7 @@ class ExploreViewModel(
             .orderBy("lowerCaseTitle")
             .startAt(query.toLowerCase(Locale.ROOT))
             .endAt(query.toLowerCase(Locale.ROOT) + "\uf8ff")
-            .limit(20)
+            .limit(10)
             .get()
             .addOnSuccessListener {
                 val list = it.toObjects(Activity::class.java)
@@ -88,6 +88,50 @@ class ExploreViewModel(
                 if (!it.exists()) return@addOnSuccessListener
 
                 view.text = it.getValue(Participant::class.java)!!.nickname
+            }
+    }
+
+    fun addRecommendation(labels: List<String>, username: String) {
+        val rtdb = Firebase.database
+
+        for (item in labels) {
+            rtdb.reference.child("participant/$username/recommendation/$item")
+                .setValue(ServerValue.increment(1))
+        }
+    }
+
+    fun sendMessage(message: Message, docId: String) {
+        val rtdb = Firebase.database
+
+        rtdb.getReference("activity/$docId/message").push()
+            .setValue(message)
+            .addOnSuccessListener {
+                Timber.d("added noti to database")
+            }
+            .addOnFailureListener {
+                Timber.d(it.message.toString())
+            }
+
+        rtdb.getReference("chatroom/$docId")
+            .get()
+            .addOnSuccessListener {
+                val chatRoom = it.getValue(ChatRoom::class.java)!!
+
+                val unread = chatRoom.unread.mapValues { x ->
+                    x.value + 1
+                }
+
+                val updated = ChatRoom(
+                    message.timestamp, chatRoom.group, chatRoom.docId,
+                    message.username, message.message, unread
+                )
+
+                rtdb.getReference("chatroom/$docId")
+                    .setValue(updated)
+                    .addOnSuccessListener {
+                        Timber.d("updated chatroom")
+                    }
+
             }
     }
 

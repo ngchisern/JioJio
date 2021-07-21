@@ -63,6 +63,8 @@ class MemoryFragment : Fragment() {
                 return@observe
             }
 
+            binding.emptyMemory.setImageDrawable(null)
+            binding.emptyMemoryText.text = ""
             view.setBackgroundColor(Color.parseColor("#f5f7ff"))
             adapter.submitList(it)
         }

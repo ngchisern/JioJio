@@ -36,6 +36,9 @@ class ParticipantRemoteDataSource : IParticipantDataSource {
             .addOnFailureListener {
                 Timber.d(it.message.toString())
             }
+
+        rtdb.reference.child("chatroom/$docId/unread/${user.username}")
+            .setValue(0)
     }
 
     override fun updateList(documentId: String): List<Participant> {
@@ -69,11 +72,15 @@ class ParticipantRemoteDataSource : IParticipantDataSource {
     override fun removeFromDatabase(username: String, docId: String) {
         val rtdb = Firebase.database
 
+        Timber.d("removed")
+
         rtdb.getReference("activity/$docId/participant")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (doc in snapshot.children) {
+                        Timber.d(doc.value.toString())
                         if (doc.value.toString() == username) {
+                            Timber.d("removed")
                             doc.ref.removeValue()
                         }
                     }

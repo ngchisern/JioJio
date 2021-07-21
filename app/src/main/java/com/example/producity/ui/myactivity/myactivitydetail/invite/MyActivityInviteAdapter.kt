@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
+import com.example.producity.models.Message
 import com.example.producity.models.Notification
 import com.example.producity.models.User
 import com.example.producity.ui.myactivity.myactivitydetail.MyActivityDetailViewModel
@@ -61,7 +62,15 @@ class MyActivityInviteAdapter(
 
             builder.setMessage("Invite ${current.nickname} to the activity?")
                 .setPositiveButton("Confirm") { _, _ ->
-                    addToNotification(current)
+                    holder.inviteButton.text = "Invited"
+                    holder.inviteButton.isClickable = false
+
+                    val act = activityDetailViewModel.currentActivity!!
+                    val participants = act.participant.toMutableList()
+                    participants.add(current.username)
+                    act.participant = participants
+
+                    addParticipant(current)
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.cancel()
@@ -82,9 +91,13 @@ class MyActivityInviteAdapter(
         }
     }
 
-    private fun addToNotification(user: User) {
+    private fun addParticipant(user: User) {
 
         val docId = activityDetailViewModel.currentActivity!!.docId
+
+        val message = Message("I invited ${user.nickname} to the activity",
+            currentUser.username, Timestamp.now().toDate().time)
+        activityDetailViewModel.sendMessage(message)
 
         val noti = Notification(
             user.username,
@@ -104,6 +117,8 @@ class MyActivityInviteAdapter(
                 Timber.d(it.message.toString())
             }
 
+        rtdb.reference.child("chatroom/$docId/unread/${user.username}")
+            .setValue(0)
 
         val participant = User(user.username, nickname = user.nickname)
 

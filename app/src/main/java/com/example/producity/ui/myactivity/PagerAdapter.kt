@@ -47,7 +47,7 @@ class PagerAdapter(private val context: Fragment, val myActivityViewModel: MyAct
 
         holder.itemView.setOnClickListener {
             val action =
-                MyActivityFragmentDirections.actionNavigationHomeToScheduleDetailFragment(current)
+                MyActivityFragmentDirections.actionNavigationMyActivityToExploreDetailFragment(current)
             context.findNavController().navigate(action)
         }
 

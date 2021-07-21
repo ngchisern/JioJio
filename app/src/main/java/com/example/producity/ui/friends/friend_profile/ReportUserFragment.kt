@@ -27,8 +27,6 @@ class ReportUserFragment : Fragment() {
     private var _binding: ReportUserBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var userProfile: User // current user profile
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,8 +44,6 @@ class ReportUserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        userProfile = ReportUserFragmentArgs.fromBundle(requireArguments()).user
-
         updateLayout()
         listen()
     }
@@ -58,7 +54,8 @@ class ReportUserFragment : Fragment() {
     }
 
     private fun updateLayout() {
-        val title = "Report ${userProfile.nickname}"
+        val name = ReportUserFragmentArgs.fromBundle(requireArguments()).name
+        val title = "Report $name"
         binding.reportTitle.text = title
 
 
@@ -106,7 +103,7 @@ class ReportUserFragment : Fragment() {
                 val map: HashMap<String, String> = hashMapOf()
 
                 val reporter = sharedViewModel.getUser().username
-                val reportee = userProfile.username
+                val reportee = ReportUserFragmentArgs.fromBundle(requireArguments()).id
                 val content = binding.reportDescription.text.toString()
 
                 map["action"] = "addItem"

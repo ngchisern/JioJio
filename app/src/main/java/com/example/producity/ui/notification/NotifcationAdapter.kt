@@ -3,6 +3,8 @@ package com.example.producity.ui.notification
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -11,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.producity.R
 import com.example.producity.SharedViewModel
 import com.example.producity.ui.myactivity.MyActivityViewModel
+import com.google.android.material.tabs.TabLayout
+import com.squareup.picasso.Picasso
 
 class NotificationAdapter(
     val context: Fragment, val myActivityViewModel: MyActivityViewModel,
@@ -63,6 +67,23 @@ class NotificationAdapter(
             )
 
             notificationViewModel.getUpdate(username).observe(context.viewLifecycleOwner) {
+                val image = context.requireView().findViewById<ImageView>(R.id.empty_noti_image)
+                val text = context.requireView().findViewById<TextView>(R.id.empty_noti_text)
+
+                first = it.size
+
+                if (it.isEmpty()) {
+                    Picasso.get()
+                        .load("https://cdn.dribbble.com/users/1418633/screenshots/6693173/empty-state.png")
+                        .into(image)
+
+                    text.text = "No Social Update"
+
+                } else {
+                    image.setImageDrawable(null)
+                    text.text = ""
+                }
+
                 adapter.submitList(it)
             }
 
@@ -77,6 +98,23 @@ class NotificationAdapter(
             recyclerView.adapter = adapter
 
             notificationViewModel.getRequest(username).observe(context.viewLifecycleOwner) {
+                val image = context.requireView().findViewById<ImageView>(R.id.empty_noti_image)
+                val text = context.requireView().findViewById<TextView>(R.id.empty_noti_text)
+
+                second = it.size
+
+                if (it.isEmpty()) {
+                    Picasso.get()
+                        .load("https://cdn.dribbble.com/users/1418633/screenshots/6693173/empty-state.png")
+                        .into(image)
+
+                    text.text = "No Recent Requests"
+
+                } else {
+                    image.setImageDrawable(null)
+                    text.text = ""
+                }
+
                 adapter.submitList(it)
             }
         }
@@ -86,14 +124,14 @@ class NotificationAdapter(
         return NotificationViewHolder.create(parent)
     }
 
-    private val first: List<Any>? = null
-    private val second: List<Any>? = null
+    private var first: Int? = null
+    private var second: Int? = null
 
     fun getListSize(position: Int): Int {
         return if (position == 0) {
-            first?.size ?: 0
+            first ?: 0
         } else {
-            second?.size ?: 0
+            second ?: 0
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.producity.ui.myactivity.myactivitydetail.invite
 
 import android.app.Dialog
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -55,7 +56,10 @@ class MyActivityInviteFragment : BottomSheetDialogFragment() {
 
         val currentUsername = sharedViewModel.currentUser.value!!.username
         friendListViewModel.getAllFriends(currentUsername).observe(this) {
-            adapter.submitList(it)
+            adapter.submitList(it.filter { x ->
+                Log.d("Main", activityDetailViewModel.currentActivity!!.participant.toString())
+                !activityDetailViewModel.currentActivity!!.participant.contains(x.username)
+            })
         }
 
 

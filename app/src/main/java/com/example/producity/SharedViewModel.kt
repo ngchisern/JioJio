@@ -19,7 +19,7 @@ class SharedViewModel : ViewModel() {
     }
 
     fun loadUserImage() {
-        Firebase.storage.getReference("profile_pictures/${currentUser.value!!.username}")
+        Firebase.storage.getReference("profile_pictures/${getUser().username}")
             .downloadUrl
             .addOnSuccessListener { uri ->
                 userImage.value = uri.toString()

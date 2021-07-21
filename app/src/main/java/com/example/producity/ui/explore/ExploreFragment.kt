@@ -71,6 +71,9 @@ class ExploreFragment : Fragment() {
                 return@observe
             }
 
+            binding.emptyExploreText.text = ""
+            binding.emptyExplore.setImageDrawable(null)
+
             view.setBackgroundColor(Color.parseColor("#f5f7ff"))
             adapter.submitList(it)
         }

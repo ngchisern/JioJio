@@ -53,7 +53,7 @@
             android:id="@+id/report_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tell us your concern about this user so that we can review it thoroughly.
+            android:text="Tell us your concern about this matter so that we can review it thoroughly.
 Provide more detail about this issue. You may include links to whichever resources might help." />
 
         <com.google.android.material.textfield.TextInputLayout

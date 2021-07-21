@@ -79,8 +79,11 @@ class FriendListFragment : Fragment() {
 
                 val addFriend = "Get started by adding a friend"
                 binding.emptyFriendlistText.text = addFriend
+                return@observe
             }
 
+            binding.emptyFriendlistImage.setImageDrawable(null)
+            binding.emptyFriendlistText.text = ""
             adapter.submitList(it)
         }
 

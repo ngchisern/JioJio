@@ -30,6 +30,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Timestamp
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -158,6 +159,12 @@ class FriendProfileFragment : Fragment() {
             binding.nextEventCard.isVisible = true
 
             friendListViewModel.getNextEvent(friend.username).observe(viewLifecycleOwner) {
+                if(it == null) {
+                    Picasso.get().load("https://www.kindpng.com/picc/m/716-7160393_happy-people-illustration-hd-png-download.png")
+                        .into(binding.profileActivityImage)
+                    return@observe
+                }
+
                 friendListViewModel.loadImage(it.docId, binding.profileActivityImage)
                 binding.profileActivityName.text = it.title
                 binding.profileActivityCountdown.text
@@ -328,7 +335,7 @@ class FriendProfileFragment : Fragment() {
 
     private fun goToReportUser() {
         val action =
-            FriendProfileFragmentDirections.actionFriendProfileFragmentToReportUserFragment(friend)
+            FriendProfileFragmentDirections.actionFriendProfileFragmentToReportUserFragment(friend.username, friend.nickname)
         findNavController().navigate(action)
     }
 

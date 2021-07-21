@@ -5,9 +5,7 @@ import android.widget.TextView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.producity.models.Activity
-import com.example.producity.models.Participant
-import com.example.producity.models.User
+import com.example.producity.models.*
 import com.example.producity.models.source.IActivityRepository
 import com.example.producity.models.source.IParticipantRepository
 import com.google.firebase.database.DataSnapshot
@@ -37,20 +35,24 @@ class MyActivityDetailViewModel(
         val rtdb = Firebase.database
 
         rtdb.reference.child("activity/$documentId/participant")
-            .limitToFirst(6)
+            .limitToFirst(10)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Participant>()
+                    participantList.value = list
                     snapshot.children.forEach {
                         rtdb.getReference("participant/${it.value.toString()}")
                             .get()
                             .addOnSuccessListener { x ->
                                 val temp = x.getValue(Participant::class.java)
                                     ?: return@addOnSuccessListener
+                                Timber.d(temp.username)
                                 list.add(temp)
+
                                 participantList.value = list
                             }
                     }
+
 
                 }
 
@@ -160,6 +162,44 @@ class MyActivityDetailViewModel(
         activityRepository.addParticipant(user.username, docId)
         participantRepository.addToDataBase(user, docId)
     }
+
+    fun sendMessage(message: Message) {
+        val rtdb = Firebase.database
+        val docid = currentActivity!!.docId
+
+        rtdb.getReference("activity/$docid/message").push()
+            .setValue(message)
+            .addOnSuccessListener {
+                Timber.d("added noti to database")
+            }
+            .addOnFailureListener {
+                Timber.d(it.message.toString())
+            }
+
+        rtdb.getReference("chatroom/$docid")
+            .get()
+            .addOnSuccessListener {
+                val chatRoom = it.getValue(ChatRoom::class.java)!!
+
+                val unread = chatRoom.unread.mapValues { x ->
+                    x.value + 1
+                }
+
+                val updated = ChatRoom(
+                    message.timestamp, chatRoom.group, chatRoom.docId,
+                    message.username, message.message, unread
+                )
+
+                rtdb.getReference("chatroom/$docid")
+                    .setValue(updated)
+                    .addOnSuccessListener {
+                        Timber.d("updated chatroom")
+                    }
+
+            }
+    }
+
+
 
 }
 

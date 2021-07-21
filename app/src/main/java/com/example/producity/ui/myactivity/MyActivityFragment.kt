@@ -91,6 +91,9 @@ class MyActivityFragment : Fragment() {
                     .load("https://media.tenor.com/images/0cc5aae09f18a8ad8400f6a1a03a2dc0/tenor.png")
                     .into(binding.emptyComingnextImage)
                 binding.emptyComingnext.text = "Wow, such empty :("
+            } else {
+                binding.emptyComingnext.text = ""
+                binding.emptyComingnextImage.setImageDrawable(null)
             }
 
 

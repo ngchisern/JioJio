@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_navigation_myActivity_to_notificationFragment"
             app:destination="@id/notificationFragment" />
+        <action
+            android:id="@+id/action_navigation_myActivity_to_exploreDetailFragment"
+            app:destination="@id/exploreDetailFragment" />
 
     </fragment>
 
@@ -103,6 +106,9 @@
         <argument
             android:name="event"
             app:argType="com.example.producity.models.Activity" />
+        <action
+            android:id="@+id/action_scheduleDetailFragment_to_reportUserFragment"
+            app:destination="@id/reportUserFragment" />
     </fragment>
 
     <fragment
@@ -208,8 +214,11 @@
         android:label="ReportUserFragment"
         tools:layout="@layout/report_user">
         <argument
-            android:name="user"
-            app:argType="com.example.producity.models.User" />
+            android:name="id"
+            app:argType="string" />
+        <argument
+            android:name="name"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/reviewUserFragment"

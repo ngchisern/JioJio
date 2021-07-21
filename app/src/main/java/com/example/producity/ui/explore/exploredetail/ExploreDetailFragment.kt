@@ -1,5 +1,6 @@
 package com.example.producity.ui.explore.exploredetail
 
+import android.graphics.Color
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,8 +15,10 @@ import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.ExploreDetailBinding
 import com.example.producity.models.Activity
+import com.example.producity.models.Message
 import com.example.producity.ui.explore.ExploreViewModel
 import com.example.producity.ui.explore.ExploreViewModelFactory
+import com.google.firebase.Timestamp
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -98,9 +101,15 @@ class ExploreDetailFragment : Fragment() {
                     exploreDetailLocation.text = address[0].getAddressLine(0)
                 }
 
-                if (activity.participant.size >= activity.pax) {
+                if(activity.participant.contains(sharedViewModel.getUser().username)) {
+                    val joined = "Joined"
+                    binding.joinButton.text = joined
+                    binding.joinButton.setBackgroundColor(Color.parseColor("#00ffd2"))
+                    binding.joinButton.isClickable = false
+                } else if (activity.participant.size >= activity.pax) {
                     val full = "Full"
                     binding.joinButton.text = full
+                    binding.joinButton.isClickable = false
                 }
 
             }
@@ -110,24 +119,34 @@ class ExploreDetailFragment : Fragment() {
 
     private fun trackListener(event: Activity) {
         binding.joinButton.setOnClickListener {
-            addToFirestore(event)
-        }
+            joinActivity(event)
 
-        if (event.participant.size >= event.pax) {
-            val full = "Full"
-            binding.joinButton.text = full
+            val activity: Activity = ExploreDetailFragmentArgs.fromBundle(requireArguments()).event
+            val participants = activity.participant.toMutableList()
+            participants.add(sharedViewModel.getUser().username)
+            activity.participant = participants
+
+            val joined = "Joined"
+            binding.joinButton.text = joined
+            binding.joinButton.setBackgroundColor(Color.parseColor("#00ffd2"))
             binding.joinButton.isClickable = false
         }
+
 
         binding.cancelButton.setOnClickListener {
             findNavController().navigateUp()
         }
     }
 
-    private fun addToFirestore(event: Activity) {
+    private fun joinActivity(event: Activity) {
         val docId = event.docId
+        val user = sharedViewModel.getUser()
+
+        val message = Message("Hello, everyone. I just joined this activity.", user.username, Timestamp.now().toDate().time )
+        exploreViewModel.sendMessage(message, docId)
 
         exploreViewModel.addParticipant(sharedViewModel.getUser(), docId)
+        exploreViewModel.addRecommendation(event.label!!, sharedViewModel.getUser().username)
     }
 
 }

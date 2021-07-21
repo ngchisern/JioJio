@@ -1,6 +1,7 @@
 package com.example.producity
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.InputFilter
 import android.widget.Button
@@ -8,10 +9,13 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.producity.models.Participant
 import com.example.producity.models.User
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import timber.log.Timber
 
 class RegisterActivity : AppCompatActivity() {
@@ -126,6 +130,14 @@ class RegisterActivity : AppCompatActivity() {
                     )
 
                     val db = Firebase.firestore
+                    val rtdb = Firebase.database
+                    val storage = Firebase.storage
+
+                    rtdb.getReference("participant/$name")
+                        .setValue(Participant(name, name, mapOf(), listOf()))
+
+                    storage.getReference("profile_pictures/$name")
+                        .putFile(Uri.parse("https://www.healthylifestylesliving.com/wp-content/uploads/2012/01/the-beginning-of-something-new.png"))
 
                     db.document("users/${name}")
                         .set(user)

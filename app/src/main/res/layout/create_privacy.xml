@@ -40,6 +40,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
+        android:paddingBottom="20dp"
         app:layout_constraintTop_toBottomOf="@id/welcome_card">
 
         <TextView
@@ -53,7 +54,8 @@
             android:id="@+id/private_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            app:cardUseCompatPadding="true">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -77,6 +79,11 @@
                     android:text="Only people who are invited can join the event.
                                     Participants cannot invite their friends." />
 
+                <!--
+                android:text="Only people who are invited can join the event.
+                                    Participants cannot invite their friends."
+                                    -->
+
                 <ImageView
                     android:id="@+id/forward_arrow"
                     android:layout_width="wrap_content"
@@ -89,6 +96,7 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!--
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/protected_card"
             android:layout_width="match_parent"
@@ -129,11 +137,14 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        -->
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/public_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            app:cardUseCompatPadding="true">
 
             <RelativeLayout
                 android:layout_width="match_parent"

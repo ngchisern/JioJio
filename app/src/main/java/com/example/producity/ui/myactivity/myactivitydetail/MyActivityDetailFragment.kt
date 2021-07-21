@@ -18,8 +18,10 @@ import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.MyActivityDetailBinding
 import com.example.producity.models.Activity
+import com.example.producity.models.Message
 import com.example.producity.ui.myactivity.myactivitydetail.invite.MyActivityInviteFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.Timestamp
 import timber.log.Timber
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -87,15 +89,16 @@ class MyActivityDetailFragment : Fragment() {
 
         var isOne = true
 
+        val username = sharedViewModel.getUser().username
+
         val manager1 = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-        val adapter1 = ParticipantlAdapter(this, false, false, myActivityDetailViewModel)
+        val adapter1 = ParticipantlAdapter(this, false, false, username, myActivityDetailViewModel)
 
         val manager2 = LinearLayoutManager(context, RecyclerView.VERTICAL, true)
-        val adapter2 = ParticipantlAdapter(this, true, false, myActivityDetailViewModel)
+        val adapter2 = ParticipantlAdapter(this, true, false, username, myActivityDetailViewModel)
 
         recycleView.layoutManager = manager1
         recycleView.adapter = adapter1
-
 
         binding.participantShow.setOnClickListener {
             if (isOne) {
@@ -179,8 +182,6 @@ class MyActivityDetailFragment : Fragment() {
         }
 
         binding.topAppBar.setNavigationOnClickListener {
-            // val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToNavigationMyActivity()
-            //findNavController().navigate(action)
             Timber.d("navigateup")
             myActivityDetailViewModel.currentActivity = null
             findNavController().navigateUp()
@@ -209,6 +210,11 @@ class MyActivityDetailFragment : Fragment() {
                     startActivity(Intent.createChooser(intent, null))
                     true
                 }
+                R.id.report -> {
+                    val intent = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToReportUserFragment(activity.docId, activity.title)
+                    findNavController().navigate(intent)
+                    true
+                }
                 else -> true
             }
         }
@@ -221,9 +227,12 @@ class MyActivityDetailFragment : Fragment() {
 
             builder.setMessage("You are the creator of this activity. Leave the activity?")
                 .setPositiveButton("Confirm") { _, _ ->
-                    val username = sharedViewModel.currentUser.value!!.username
-                    myActivityDetailViewModel.removeParticipant(username)
+                    val user = sharedViewModel.getUser()
+                    myActivityDetailViewModel.removeParticipant(user.username)
                     myActivityDetailViewModel.assignNewOwner()
+
+                    val message = Message("left the activity.", user.username, Timestamp.now().toDate().time)
+                    myActivityDetailViewModel.sendMessage(message)
                 }
                 .setNegativeButton("Cancel") { dialog, which ->
                     dialog.cancel()
@@ -235,8 +244,14 @@ class MyActivityDetailFragment : Fragment() {
 
             builder.setMessage("Leave the activity?")
                 .setPositiveButton("Confirm") { _, _ ->
+
                     val username = sharedViewModel.currentUser.value!!.username
                     myActivityDetailViewModel.removeParticipant(username)
+
+                    val message = Message("left the activity.", username, Timestamp.now().toDate().time)
+                    myActivityDetailViewModel.sendMessage(message)
+
+                    findNavController().popBackStack(R.id.navigation_myActivity, true)
                 }
                 .setNegativeButton("Cancel") { dialog, which ->
                     dialog.cancel()

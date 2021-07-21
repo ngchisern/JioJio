@@ -1,15 +1,11 @@
 package com.example.producity
 
-import android.app.Activity
 import androidx.lifecycle.Lifecycle
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -45,7 +41,13 @@ class RegisterActivityTest {
         authRepo.addAccount("alextan@outlook.com", "ALEX123")
 
         userRepo = FakeAndroidTestUserRepository()
-        userRepo.buildUserData(linkedMapOf("dummy1" to "123", "ben10" to "forever 10", "Rachel Tan" to "pokemon123"))
+        userRepo.buildUserData(
+            linkedMapOf(
+                "dummy1" to "123",
+                "ben10" to "forever 10",
+                "Rachel Tan" to "pokemon123"
+            )
+        )
 
         ServiceLocator.authRepository = authRepo
         ServiceLocator.userRepository = userRepo
@@ -155,7 +157,6 @@ class RegisterActivityTest {
         Thread.sleep(2000)
 
     }
-
 
 
     @Test

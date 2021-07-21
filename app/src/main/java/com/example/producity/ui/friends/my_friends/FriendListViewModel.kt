@@ -76,7 +76,7 @@ class FriendListViewModel(
     }
 
     fun getNextEvent(username: String): MutableLiveData<Activity> {
-        val activity: MutableLiveData<Activity> = MutableLiveData(Activity(lowerCaseTitle = ""))
+        val activity: MutableLiveData<Activity> = MutableLiveData()
         viewModelScope.launch {
             activity.value = activityRepository.getNextActivity(username)
         }

@@ -1,9 +1,11 @@
 package com.example.producity.models.source.remote
 
 import android.net.Uri
+import com.example.producity.models.Participant
 import com.example.producity.models.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -16,6 +18,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
 
     private val db = Firebase.firestore
     private val storage = Firebase.storage
+    private val rtdb = Firebase.database
 
     override fun createUser(username: String, uid: String) {
 
@@ -26,6 +29,12 @@ class UserRemoteDataSource : IUserRemoteDataSource {
             bio = "Hello there.",
             banner = "https://media.giphy.com/media/bcKmIWkUMCjVm/giphy.gif"
         )
+
+        storage.getReference("profile_pictures/$username")
+            .putFile(Uri.parse("https://www.healthylifestylesliving.com/wp-content/uploads/2012/01/the-beginning-of-something-new.png"))
+
+        rtdb.getReference("participant/$username")
+            .setValue(Participant(username, username, mapOf(), listOf()))
 
         db.document("users/$username")
             .set(user)

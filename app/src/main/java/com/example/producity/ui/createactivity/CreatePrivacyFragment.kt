@@ -63,10 +63,13 @@ class CreatePrivacyFragment : Fragment() {
             navigateToDetail()
         }
 
+        /*
         binding.protectedCard.setOnClickListener {
             createActivityViewModel.updatePrivacy(Activity.PROTECTED)
             navigateToDetail()
         }
+
+         */
 
         binding.publicCard.setOnClickListener {
             createActivityViewModel.updatePrivacy(Activity.PUBLIC)

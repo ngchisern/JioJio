@@ -51,7 +51,7 @@ class CreateActivityFragment : Fragment() {
 
     private fun listen() {
         binding.cancelText.setOnClickListener {
-            popDiscardDialog()
+            cancel()
         }
 
         binding.onlineCard.setOnClickListener {

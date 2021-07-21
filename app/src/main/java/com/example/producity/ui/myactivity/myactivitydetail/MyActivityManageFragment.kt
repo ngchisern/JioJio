@@ -20,16 +20,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.producity.BuildConfig
 import com.example.producity.R
 import com.example.producity.ServiceLocator
+import com.example.producity.SharedViewModel
 import com.example.producity.databinding.ActivityDetailManageBinding
 import com.example.producity.models.Activity
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import timber.log.Timber.DebugTree
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -42,6 +46,8 @@ class MyActivityManageFragment : Fragment() {
         )
     }
 
+    private val sharedViewModel: SharedViewModel by activityViewModels()
+
     private var _binding: ActivityDetailManageBinding? = null
     private val binding get() = _binding!!
 
@@ -50,6 +56,10 @@ class MyActivityManageFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(DebugTree())
+        }
 
         _binding = ActivityDetailManageBinding.inflate(inflater, container, false)
 
@@ -75,6 +85,7 @@ class MyActivityManageFragment : Fragment() {
             this,
             showName = true,
             manage = true,
+            user = sharedViewModel.getUser().username,
             viewModel = myActivityDetailViewModel
         )
 
@@ -187,7 +198,6 @@ class MyActivityManageFragment : Fragment() {
                 when (menuItem.itemId) {
                     R.id.done -> {
                         update()
-                        Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show()
                         true
                     }
                     else -> true
@@ -313,6 +323,12 @@ class MyActivityManageFragment : Fragment() {
 
                 myActivityDetailViewModel.updateActivity(updatedActivity)
                 myActivityDetailViewModel.setActivity(updatedActivity)
+
+                myActivityDetailViewModel.setActivity(updatedActivity)
+
+                CoroutineScope(Dispatchers.Main).launch {
+                    findNavController().navigateUp()
+                }
             }
         }
 
@@ -322,7 +338,7 @@ class MyActivityManageFragment : Fragment() {
     private fun getDate(): Date {
         val date = myActivityDetailViewModel.currentActivity!!.date
         if (pyear == -1) {
-            pyear = date.year
+            pyear = date.year + 1900
         }
 
         if (pmonth == -1) {
@@ -330,7 +346,7 @@ class MyActivityManageFragment : Fragment() {
         }
 
         if (pday == -1) {
-            pday = date.day
+            pday = date.date
         }
 
         if (phour == -1) {

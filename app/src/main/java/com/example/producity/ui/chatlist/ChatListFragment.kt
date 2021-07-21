@@ -58,7 +58,10 @@ class ChatListFragment : Fragment() {
                 binding.emptyChatlistTitle.text = title
                 val subtitle = "Chat room is automatically created when you created/joined an activity."
                 binding.emptyChatlistSubtitle.text = subtitle
+                return@observe
             }
+            binding.emptyChatlistTitle.text = ""
+            binding.emptyChatlistSubtitle.text = ""
             adapter.submitList(it)
         }
 
