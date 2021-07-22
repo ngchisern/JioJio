@@ -148,8 +148,14 @@ class FriendListFragment : Fragment() {
 
 
     private fun checkUser(username: String, dialog: Dialog, textView: TextView) {
+        if(username == sharedViewModel.getUser().username) {
+            textView.textSize = 12F
+            return
+        }
+
         CoroutineScope(Dispatchers.Main).launch {
             val user = friendListViewModel.checkUserExists(username)
+
             if (user != null) {
                 //friendListViewModel.sendFriendRequest(sharedViewModel.currentUser.value!!, checkUsername)
                 val action =

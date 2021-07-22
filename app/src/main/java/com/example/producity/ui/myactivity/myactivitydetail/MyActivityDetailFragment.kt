@@ -23,6 +23,7 @@ import com.example.producity.ui.myactivity.myactivitydetail.invite.MyActivityInv
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Timestamp
 import timber.log.Timber
+import java.net.URL
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -203,8 +204,10 @@ class MyActivityDetailFragment : Fragment() {
                 }
                 R.id.share -> {
                     val intent = Intent(Intent.ACTION_SEND).apply {
-                        data = Uri.parse("smsto:")  // This ensures only SMS apps respond
-                        putExtra("sms_body", "come and join ${activity.title}")
+                        putExtra(Intent.EXTRA_TEXT, "come and join ${activity.title} in JioJio")
+                        putExtra(Intent.EXTRA_STREAM, URL("https://www.google.com/url?sa=i&url=https%3A%2F%2Fcomicbook.com%2Fanime%2Fnews%2Fjojos-bizarre-adventure-meets-gap-in-hilarious-anime-meme%2F&psig=AOvVaw1x-mC8KwAfeditG9n7KZ-k&ust=1627029968002000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCIiM1a-l9vECFQAAAAAdAAAAABAD")
+                            )
+                        type = "*/*";
                         //putExtra(Intent.EXTRA_STREAM, URL(activity.imageUrl).toURI())
                     }
                     startActivity(Intent.createChooser(intent, null))
