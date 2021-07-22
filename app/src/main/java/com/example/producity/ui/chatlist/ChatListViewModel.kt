@@ -1,5 +1,6 @@
 package com.example.producity.ui.chatlist
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.producity.models.Activity
@@ -19,6 +20,13 @@ class ChatListViewModel : ViewModel() {
     fun updateList(list: List<Activity>) {
         var updated: MutableList<ChatRoom> = mutableListOf()
 
+        Log.d("Main", list.size.toString())
+
+        if(list.isEmpty()) {
+            chatRooms.value = listOf()
+            return
+        }
+
         list.forEach { it ->
             rtdb.getReference("chatroom/${it.docId}")
                 .addValueEventListener(object : ValueEventListener {
@@ -32,7 +40,7 @@ class ChatListViewModel : ViewModel() {
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        Timber.d("failed to update log")
+
                     }
                 })
         }

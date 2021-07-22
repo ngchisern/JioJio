@@ -55,7 +55,7 @@ class MyActivityDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val arguments = MyActivityDetailFragmentArgs.fromBundle(requireArguments())
-        val temp: Activity = arguments.event
+        val temp: Activity = myActivityDetailViewModel.currentActivity ?: arguments.event
 
         isOwner = sharedViewModel.getUser().username == temp.owner
 
@@ -80,7 +80,7 @@ class MyActivityDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val arguments = MyActivityDetailFragmentArgs.fromBundle(requireArguments())
-        val activity: Activity =  arguments.event
+        val activity: Activity =  myActivityDetailViewModel.currentActivity ?: arguments.event
 
         myActivityDetailViewModel.updateList(activity.docId)
         myActivityDetailViewModel.setActivity(activity)

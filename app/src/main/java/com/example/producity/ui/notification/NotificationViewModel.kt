@@ -82,6 +82,19 @@ class NotificationViewModel(val userRepository: IUserRepository) : ViewModel() {
             .addOnSuccessListener { uri ->
                 Picasso.get().load(uri).into(view)
             }
+            .addOnFailureListener {
+                loadActivityImage(username, view)
+            }
+    }
+
+    fun loadActivityImage(docId: String, view: ImageView) {
+        val storage = Firebase.storage
+
+        storage.getReference("activity_images/${docId}")
+            .downloadUrl
+            .addOnSuccessListener { uri ->
+                Picasso.get().load(uri).into(view)
+            }
     }
 
     fun loadNickname(username: String, view: TextView) {

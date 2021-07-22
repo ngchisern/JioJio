@@ -22,6 +22,21 @@ class MyActivityViewModel : ViewModel() {
 
     fun updateList(newList: List<Activity>) {
         myActivityList.value = newList
+
+        val value = recommended.value ?: return
+
+        val newRecommend = value.filter { x ->
+            var exist = true
+            for( item in newList) {
+                if(x.docId == item.docId) {
+                    exist = false
+                    break
+                }
+            }
+            exist
+        }.toMutableList()
+
+        recommended.value = newRecommend
     }
 
     fun getRecommendation(username: String) {

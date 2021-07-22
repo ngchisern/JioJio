@@ -151,10 +151,10 @@ class ExploreDetailFragment : Fragment() {
         val user = sharedViewModel.getUser()
 
         val message = Message("Hello, everyone. I just joined this activity.", user.username, Timestamp.now().toDate().time )
-        exploreViewModel.sendMessage(message, docId)
-
         exploreViewModel.addParticipant(sharedViewModel.getUser(), docId)
         exploreViewModel.addRecommendation(event.label!!, sharedViewModel.getUser().username)
+
+        exploreViewModel.sendMessage(message, docId)
     }
 
 }

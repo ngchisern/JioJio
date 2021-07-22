@@ -38,7 +38,7 @@ class ParticipantRemoteDataSource : IParticipantDataSource {
             }
 
         rtdb.reference.child("chatroom/$docId/unread/${user.username}")
-            .setValue(0)
+            .setValue(-1)
     }
 
     override fun updateList(documentId: String): List<Participant> {

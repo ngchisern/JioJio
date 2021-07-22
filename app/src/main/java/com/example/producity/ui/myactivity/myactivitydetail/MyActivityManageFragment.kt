@@ -31,6 +31,7 @@ import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import timber.log.Timber.DebugTree
@@ -145,7 +146,17 @@ class MyActivityManageFragment : Fragment() {
                 activityDetailLocation.setText("Online")
             } else {
                 toggleButton.isChecked = true
-                activityDetailLocation.setText("")
+                CoroutineScope(IO).launch {
+                    val geocoder = Geocoder(context, Locale.getDefault())
+                    val address = geocoder.getFromLocation(activity.latitude, activity.longitude, 1)
+
+                    val name = address[0].getAddressLine(0)
+
+                    CoroutineScope(Main).launch {
+                        activityDetailLocation.setText(name)
+                    }
+
+                }
             }
 
             /*
@@ -322,8 +333,6 @@ class MyActivityManageFragment : Fragment() {
                 )
 
                 myActivityDetailViewModel.updateActivity(updatedActivity)
-                myActivityDetailViewModel.setActivity(updatedActivity)
-
                 myActivityDetailViewModel.setActivity(updatedActivity)
 
                 CoroutineScope(Dispatchers.Main).launch {

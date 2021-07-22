@@ -145,8 +145,10 @@ class RegisterActivity : AppCompatActivity() {
                     rtdb.getReference("participant/$name")
                         .setValue(Participant(name, name, mapOf(), listOf()))
 
-                    storage.getReference("profile_pictures/$name")
-                        .putFile(Uri.parse("https://www.healthylifestylesliving.com/wp-content/uploads/2012/01/the-beginning-of-something-new.png"))
+                    val uri = Uri.parse("android.resource://" + packageName + "/" + R.drawable.the_beginning_of_something_new)
+
+                    storage.getReference("/profile_pictures/$name")
+                        .putFile(uri)
 
                     db.document("users/${name}")
                         .set(user)
@@ -160,6 +162,8 @@ class RegisterActivity : AppCompatActivity() {
 
                             intent.flags =
                                 Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                            intent.putExtra(USER, user)
                             startActivity(intent)
                         }
                         .addOnSuccessListener {

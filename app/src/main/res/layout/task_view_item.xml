@@ -124,6 +124,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_toLeftOf="@id/explore_view_item_owner_image"
                     android:textColor="@color/black" />
 

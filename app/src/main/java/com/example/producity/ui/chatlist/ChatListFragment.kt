@@ -1,6 +1,7 @@
 package com.example.producity.ui.chatlist
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,11 +54,14 @@ class ChatListFragment : Fragment() {
         )
 
         chatListViewModel.chatRooms.observe(viewLifecycleOwner) {
+            Log.d("Main", "observe ${it.size}")
+
             if (it.isEmpty()) {
                 val title = "You don't have any \nchat room yet"
                 binding.emptyChatlistTitle.text = title
                 val subtitle = "Chat room is automatically created when you created/joined an activity."
                 binding.emptyChatlistSubtitle.text = subtitle
+                adapter.submitList(it)
                 return@observe
             }
             binding.emptyChatlistTitle.text = ""

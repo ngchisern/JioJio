@@ -109,6 +109,7 @@ class MyActivityDetailViewModel(
     private fun deleteActivity() {
         val db = Firebase.firestore
         val rtdb = Firebase.database
+        val storage = Firebase.storage
 
         db.document("activity/${currentActivity!!.docId}")
             .delete()
@@ -118,6 +119,9 @@ class MyActivityDetailViewModel(
 
         rtdb.getReference("chatroom/${currentActivity!!.docId}")
             .removeValue()
+
+        storage.reference.child("/activity_images/${currentActivity!!.docId}")
+            .delete()
 
 
     }
