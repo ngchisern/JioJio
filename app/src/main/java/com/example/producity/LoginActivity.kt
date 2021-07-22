@@ -3,11 +3,14 @@ package com.example.producity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.producity.models.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -19,6 +22,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import timber.log.Timber
 
 private const val TAG = "LoginActivity"
 private const val RC_SIGN_IN = 1
@@ -47,9 +51,7 @@ class LoginActivity : AppCompatActivity() {
             val isSuccessful = loginViewModel.logIn(email, password)
 
             if (isSuccessful) {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
+                navigateToMainActivity()
             } else {
                 findViewById<TextView>(R.id.login_error_message).setText("Wrong email or password")
             }
@@ -156,9 +158,31 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun navigateToMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
+        val currentUser = auth.currentUser ?: return
+
+        val progress: ProgressBar = findViewById(R.id.progress_bar)
+        progress.visibility = View.VISIBLE
+
+        db.collection("users")
+            .whereEqualTo("uid", currentUser.uid)
+            .limit(1)
+            .get()
+            .addOnSuccessListener {
+                progress.visibility = View.GONE
+                if (it.isEmpty) {
+                    Timber.d("cant set up user info")
+                    return@addOnSuccessListener
+                }
+
+                it.forEach { doc ->
+                    val user = doc.toObject(User::class.java)
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.putExtra(USER, user)
+
+                    startActivity(intent)
+                }
+            }
     }
 
 }

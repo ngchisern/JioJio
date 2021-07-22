@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.producity.BuildConfig
 import com.example.producity.R
 import com.example.producity.SharedViewModel
 import com.example.producity.databinding.FragmentHomeBinding
@@ -25,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -57,6 +59,10 @@ class MyActivityFragment : Fragment() {
         auth = Firebase.auth
         db = Firebase.firestore
 
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+
         val upcomingAdapter = MyActivityAdapter(this, myActivityViewModel)
         val recyclerView = binding.scheduleRecycleView
 
@@ -68,7 +74,10 @@ class MyActivityFragment : Fragment() {
             )
         )
 
+
         myActivityViewModel.myActivityList.observe(viewLifecycleOwner) {
+            if(it == null) return@observe
+
             if (it.isEmpty()) {
                 binding.primaryCountdownText.text = "Happening now"
                 binding.primaryTitle.text = "Living ..."
@@ -81,6 +90,8 @@ class MyActivityFragment : Fragment() {
                     .load("https://media.tenor.com/images/0cc5aae09f18a8ad8400f6a1a03a2dc0/tenor.png")
                     .into(binding.emptyComingnextImage)
                 binding.emptyComingnext.text = "Wow, such empty :("
+                Timber.d("apple " + "added")
+
                 return@observe
             }
 
@@ -91,11 +102,13 @@ class MyActivityFragment : Fragment() {
                     .load("https://media.tenor.com/images/0cc5aae09f18a8ad8400f6a1a03a2dc0/tenor.png")
                     .into(binding.emptyComingnextImage)
                 binding.emptyComingnext.text = "Wow, such empty :("
+
             } else {
+                Timber.d("Apple" + "deleted")
                 binding.emptyComingnext.text = ""
                 binding.emptyComingnextImage.setImageDrawable(null)
-            }
 
+            }
 
             val subject = it[0]
             updatePrimaryActivity(subject)

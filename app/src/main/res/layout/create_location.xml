@@ -101,7 +101,7 @@
                     android:layout_height="200dp"
                     android:layout_gravity="center"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_launcher_background"
+                    android:src="@drawable/location_tracking"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -139,7 +139,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:backgroundTint="@color/quantum_googblueA400"
-            android:text="Next" />
+            android:text="Next"
+            android:textColor="@color/white"/>
 
 
     </LinearLayout>

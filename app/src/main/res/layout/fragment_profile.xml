@@ -240,10 +240,43 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/telehandle_layout"
+            android:id="@+id/password_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/email_layout">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="20dp"
+                android:background="#bdbdbd" />
+
+            <TextView
+                android:id="@+id/password_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginVertical="10dp"
+                android:layout_marginStart="20dp"
+                android:text="Password" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginVertical="10dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_baseline_arrow_forward_ios_24" />
+
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/telehandle_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/password_layout">
 
             <View
                 android:layout_width="match_parent"
@@ -278,41 +311,10 @@
                 android:layout_marginEnd="10dp"
                 android:src="@drawable/ic_baseline_arrow_forward_ios_24" />
 
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/password_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/telehandle_layout">
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_marginStart="20dp"
-                android:background="#bdbdbd" />
-
-            <TextView
-                android:id="@+id/password_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginVertical="10dp"
-                android:layout_marginStart="20dp"
-                android:text="Password" />
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginVertical="10dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_baseline_arrow_forward_ios_24" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_below="@id/password_text"
+                android:layout_below="@id/profile_telehandle"
                 android:background="#bdbdbd" />
 
         </RelativeLayout>
@@ -476,7 +478,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="#fafafa"
-            app:layout_constraintTop_toBottomOf="@id/password_layout" />
+            app:layout_constraintTop_toBottomOf="@id/telehandle_layout" />
 
         <LinearLayout
             android:id="@+id/logout_layout"

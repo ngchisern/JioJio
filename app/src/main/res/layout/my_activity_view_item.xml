@@ -6,8 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
     android:orientation="vertical"
-    android:paddingVertical="8dp"
-    android:paddingStart="8dp">
+    android:paddingVertical="8dp">
 
 
     <RelativeLayout
@@ -47,6 +46,8 @@
             android:layout_marginStart="8dp"
             android:layout_toEndOf="@id/image_card"
             android:text="Title"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -56,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/my_activity_card_title"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:layout_toEndOf="@id/image_card"
             android:text="Date"
             android:textSize="15sp" />

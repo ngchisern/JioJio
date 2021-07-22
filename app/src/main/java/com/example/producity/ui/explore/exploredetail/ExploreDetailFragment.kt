@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.example.producity.BuildConfig
 import com.example.producity.R
 import com.example.producity.ServiceLocator
 import com.example.producity.SharedViewModel
@@ -19,6 +20,8 @@ import com.example.producity.models.Message
 import com.example.producity.ui.explore.ExploreViewModel
 import com.example.producity.ui.explore.ExploreViewModelFactory
 import com.google.firebase.Timestamp
+import timber.log.Timber
+import timber.log.Timber.DebugTree
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,6 +47,10 @@ class ExploreDetailFragment : Fragment() {
         _binding = ExploreDetailBinding.inflate(inflater, container, false)
 
         val root: View = binding.root
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(DebugTree())
+        }
 
         val bottomNav: View? = activity?.findViewById(R.id.nav_view)
         bottomNav?.isVisible = false
@@ -101,17 +108,6 @@ class ExploreDetailFragment : Fragment() {
                     exploreDetailLocation.text = address[0].getAddressLine(0)
                 }
 
-                if(activity.participant.contains(sharedViewModel.getUser().username)) {
-                    val joined = "Joined"
-                    binding.joinButton.text = joined
-                    binding.joinButton.setBackgroundColor(Color.parseColor("#00ffd2"))
-                    binding.joinButton.isClickable = false
-                } else if (activity.participant.size >= activity.pax) {
-                    val full = "Full"
-                    binding.joinButton.text = full
-                    binding.joinButton.isClickable = false
-                }
-
             }
         }
 
@@ -132,6 +128,18 @@ class ExploreDetailFragment : Fragment() {
             binding.joinButton.isClickable = false
         }
 
+        Timber.d(event.participant.toString())
+
+        if(event.participant.contains(sharedViewModel.getUser().username)) {
+            val joined = "Joined"
+            binding.joinButton.text = joined
+            binding.joinButton.setBackgroundColor(Color.parseColor("#00ffd2"))
+            binding.joinButton.isClickable = false
+        } else if (event.participant.size >= event.pax) {
+            val full = "Full"
+            binding.joinButton.text = full
+            binding.joinButton.isClickable = false
+        }
 
         binding.cancelButton.setOnClickListener {
             findNavController().navigateUp()

@@ -208,7 +208,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:backgroundTint="@color/quantum_googblueA400"
-            android:text="Create Activity" />
+            android:text="Create Activity"
+            android:textColor="@color/white"/>
 
     </LinearLayout>
 

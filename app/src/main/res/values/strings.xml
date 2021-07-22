@@ -46,7 +46,7 @@
     <string name="inquiry">Inquiry</string>
 
     <string name="remove_friend">Remove friend</string>
-    <string name="or">OR</string>
+    <string name="or">or sign in with</string>
     <string name="email_verification_text">Please check your email to verify your account.</string>
     <string name="google_login_register_username">Please enter a username.\nThe username will be visible to others and cannot be changed.</string>
 

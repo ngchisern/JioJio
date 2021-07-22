@@ -1,5 +1,6 @@
 package com.example.producity.ui.notification
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,6 +68,10 @@ class NotificationAdapter(
             )
 
             notificationViewModel.getUpdate(username).observe(context.viewLifecycleOwner) {
+                if(it == null) return@observe
+
+                Log.d("Main", it.size.toString())
+
                 val image = context.requireView().findViewById<ImageView>(R.id.empty_noti_image)
                 val text = context.requireView().findViewById<TextView>(R.id.empty_noti_text)
 
@@ -98,6 +103,8 @@ class NotificationAdapter(
             recyclerView.adapter = adapter
 
             notificationViewModel.getRequest(username).observe(context.viewLifecycleOwner) {
+                if(it == null) return@observe
+
                 val image = context.requireView().findViewById<ImageView>(R.id.empty_noti_image)
                 val text = context.requireView().findViewById<TextView>(R.id.empty_noti_text)
 
@@ -127,11 +134,11 @@ class NotificationAdapter(
     private var first: Int? = null
     private var second: Int? = null
 
-    fun getListSize(position: Int): Int {
+    fun getListSize(position: Int): Int? {
         return if (position == 0) {
-            first ?: 0
+            first
         } else {
-            second ?: 0
+            second
         }
     }
 

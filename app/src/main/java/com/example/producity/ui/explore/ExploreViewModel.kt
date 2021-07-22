@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import com.example.producity.models.*
 import com.example.producity.models.source.IActivityRepository
 import com.example.producity.models.source.IParticipantRepository
+import com.google.firebase.Timestamp
 import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
@@ -27,6 +28,32 @@ class ExploreViewModel(
 
     fun getList(): List<Activity> {
         return exploreActivities.value!!
+    }
+
+    fun setUp(username: String) {
+        val db = Firebase.firestore
+        db.collection("activity")
+            .whereEqualTo("privacy", Activity.PUBLIC)
+            .orderBy("date")
+            .startAt(Timestamp.now())
+            .limit(5)
+            .get()
+            .addOnSuccessListener { x ->
+                val list = x.toObjects(Activity::class.java)
+
+                if (list.isEmpty()) {
+                    return@addOnSuccessListener
+                }
+
+                latest = list.last().date
+
+                val result = list.filter { y -> !y.participant.contains(username) }
+                    .toMutableList()
+                updateList(result)
+            }
+            .addOnFailureListener {
+                Timber.d(it.message.toString())
+            }
     }
 
     fun updateList(newList: MutableList<Activity>) {
@@ -134,6 +161,7 @@ class ExploreViewModel(
 
             }
     }
+
 
 }
 

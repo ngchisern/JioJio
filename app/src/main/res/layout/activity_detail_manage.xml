@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/darker_gray">
+    android:background="#f5f7ff">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="0dp"
@@ -25,19 +25,29 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="120dp">
 
-                <ImageView
-                    android:id="@+id/activity_detail_image"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/image_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/ic_launcher_background" />
+                    android:layout_height="wrap_content"
+                    app:layout_collapseMode="parallax">
+
+                    <ImageView
+                        android:id="@+id/activity_detail_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_launcher_background"
+                        app:layout_constraintDimensionRatio="16:9"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
                 <EditText
                     android:id="@+id/activity_detail_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/activity_detail_image"
+                    android:layout_below="@id/image_layout"
                     android:layout_marginHorizontal="10dp"
                     android:text="Basketball"
                     android:textSize="20sp"
@@ -48,7 +58,7 @@
                     android:id="@+id/activity_edit_lock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/activity_detail_image"
+                    android:layout_below="@id/image_layout"
                     android:layout_alignParentEnd="true"
                     android:layout_marginHorizontal="10dp"
                     android:layout_marginTop="10dp" />
@@ -80,7 +90,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/activity_detail_date"
                     android:layout_marginHorizontal="10dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="25dp"
                     android:text="Time" />
 
                 <EditText
@@ -101,7 +111,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/activity_detail_time"
                     android:layout_marginHorizontal="10dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="25dp"
                     android:text="Location" />
 
                 <EditText
@@ -122,7 +132,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/activity_detail_time"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="10dp"
                     android:textOff="Virtual"
                     android:textOn="In Person" />
 

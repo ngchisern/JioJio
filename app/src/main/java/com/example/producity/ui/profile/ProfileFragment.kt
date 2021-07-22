@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -143,6 +144,24 @@ class ProfileFragment : Fragment() {
                 ProfileFragmentDirections.actionNavigationProfileToEditAccountFragment(CHANGE_EMAIL)
             findNavController().navigate(action)
         }
+
+        val auth = Firebase.auth
+
+        auth.fetchSignInMethodsForEmail(auth.currentUser!!.email!!)
+            .addOnSuccessListener {
+                val isGoogle = it.signInMethods!!.contains("google.com")
+
+                if (isGoogle) {
+                    binding.emailLayout.isClickable = false
+                    binding.emailForwardArrow.visibility = View.INVISIBLE
+                    val params = binding.profileEmail.layoutParams as RelativeLayout.LayoutParams
+                    params.addRule(RelativeLayout.ALIGN_PARENT_END)
+                    binding.profileEmail.layoutParams = params
+
+                    binding.passwordLayout.visibility = View.GONE
+
+                }
+            }
 
         binding.telehandleLayout.setOnClickListener {
             val action = ProfileFragmentDirections.actionNavigationProfileToEditAccountFragment(

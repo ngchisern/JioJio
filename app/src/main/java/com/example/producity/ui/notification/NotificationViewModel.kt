@@ -27,7 +27,7 @@ class NotificationViewModel(val userRepository: IUserRepository) : ViewModel() {
 
     fun getUpdate(username: String): MutableLiveData<List<Notification>> {
 
-        val result: MutableLiveData<List<Notification>> = MutableLiveData(listOf())
+        val result: MutableLiveData<List<Notification>> = MutableLiveData(null)
 
         rtdb.reference.child("notification/$username")
             .orderByChild("timestamp")
@@ -52,7 +52,7 @@ class NotificationViewModel(val userRepository: IUserRepository) : ViewModel() {
     }
 
     fun getRequest(username: String): MutableLiveData<List<Request>> {
-        val result: MutableLiveData<List<Request>> = MutableLiveData(listOf())
+        val result: MutableLiveData<List<Request>> = MutableLiveData(null)
 
         rtdb.reference.child("request/$username")
             .orderByChild("timestamp")

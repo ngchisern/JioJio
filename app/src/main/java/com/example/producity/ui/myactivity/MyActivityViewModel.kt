@@ -13,7 +13,7 @@ import com.squareup.picasso.Picasso
 
 class MyActivityViewModel : ViewModel() {
 
-    val myActivityList: MutableLiveData<List<Activity>> = MutableLiveData(listOf())
+    val myActivityList: MutableLiveData<List<Activity>> = MutableLiveData(null)
     val recommended: MutableLiveData<MutableList<Activity>> = MutableLiveData(mutableListOf())
 
     fun getActivity(position: Int): Activity {
@@ -46,6 +46,7 @@ class MyActivityViewModel : ViewModel() {
         val item = list[count].first
 
         db.collection("activity")
+            .whereEqualTo("privacy", Activity.PUBLIC)
             .whereArrayContains("label", item)
             .limit(2)
             .get()

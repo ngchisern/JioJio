@@ -12,13 +12,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/signup_username"
+            android:layout_marginBottom="30dp"
+            android:textSize="36sp"
+            android:text="Sign up"
+            android:textStyle="bold"
+            android:textColor="#37474f"
+            android:layout_marginStart="20dp"
+            />
+
         <EditText
             android:id="@+id/signup_username"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="150sp"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="180sp"
+            android:layout_marginHorizontal="20dp"
             android:background="@drawable/rounded_corner"
             android:hint="@string/username"
             android:inputType="text"
@@ -31,9 +43,8 @@
             android:id="@+id/sign_up_email"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginHorizontal="20dp"
             android:layout_marginTop="20sp"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:background="@drawable/rounded_corner"
             android:hint="@string/login_email"
             android:inputType="textEmailAddress"
@@ -46,9 +57,8 @@
             android:id="@+id/sign_up_password"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginHorizontal="20dp"
             android:layout_marginTop="20sp"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:background="@drawable/rounded_corner"
             android:hint="@string/login_password"
             android:inputType="textPassword"
@@ -63,9 +73,8 @@
             android:id="@+id/confirm_password"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginHorizontal="20dp"
             android:layout_marginTop="20sp"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:background="@drawable/rounded_corner"
             android:hint="@string/confirm_pass"
             android:inputType="textPassword"
@@ -76,17 +85,18 @@
             app:layout_constraintStart_toStartOf="@+id/sign_up_button"
             app:layout_constraintTop_toBottomOf="@id/sign_up_password" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/sign_up_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginTop="50sp"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginHorizontal="20dp"
             android:layout_marginBottom="250sp"
-            android:background="@drawable/rounded_corner"
+            android:backgroundTint="#80d8ff"
+            android:paddingVertical="15dp"
             android:text="@string/sign_up"
             android:textColor="@color/white"
+            app:cornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -100,6 +110,7 @@
             android:layout_marginBottom="75sp"
             android:text="@string/already_have_an_account"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sign_up_button"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/sign_in_text" />
 
@@ -108,6 +119,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sign_in"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/have_account_view"
             app:layout_constraintLeft_toRightOf="@id/have_account_view"
             app:layout_constraintRight_toRightOf="parent"

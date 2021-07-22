@@ -54,10 +54,9 @@ class MyActivityDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val arguments = MyActivityDetailFragmentArgs.fromBundle(requireArguments())
-        val temp: Activity = myActivityDetailViewModel.currentActivity ?: arguments.event
+        val temp: Activity = arguments.event
 
-        isOwner = sharedViewModel.currentUser.value?.username.equals(temp.owner)
-
+        isOwner = sharedViewModel.getUser().username == temp.owner
 
         _binding = MyActivityDetailBinding.inflate(inflater, container, false)
 
@@ -80,7 +79,7 @@ class MyActivityDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val arguments = MyActivityDetailFragmentArgs.fromBundle(requireArguments())
-        val activity: Activity = myActivityDetailViewModel.currentActivity ?: arguments.event
+        val activity: Activity =  arguments.event
 
         myActivityDetailViewModel.updateList(activity.docId)
         myActivityDetailViewModel.setActivity(activity)
@@ -124,6 +123,7 @@ class MyActivityDetailFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+
         super.onDestroyView()
         _binding = null
     }
@@ -233,6 +233,9 @@ class MyActivityDetailFragment : Fragment() {
 
                     val message = Message("left the activity.", user.username, Timestamp.now().toDate().time)
                     myActivityDetailViewModel.sendMessage(message)
+
+                    findNavController().popBackStack(R.id.navigation_myActivity, false)
+                    findNavController().navigate(R.id.navigation_myActivity)
                 }
                 .setNegativeButton("Cancel") { dialog, which ->
                     dialog.cancel()
@@ -251,7 +254,8 @@ class MyActivityDetailFragment : Fragment() {
                     val message = Message("left the activity.", username, Timestamp.now().toDate().time)
                     myActivityDetailViewModel.sendMessage(message)
 
-                    findNavController().popBackStack(R.id.navigation_myActivity, true)
+                    findNavController().popBackStack(R.id.navigation_myActivity, false)
+                    findNavController().navigate(R.id.navigation_myActivity)
                 }
                 .setNegativeButton("Cancel") { dialog, which ->
                     dialog.cancel()

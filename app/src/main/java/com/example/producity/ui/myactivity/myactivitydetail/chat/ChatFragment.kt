@@ -1,6 +1,7 @@
 package com.example.producity.ui.myactivity.myactivitydetail.chat
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.producity.R
 import com.example.producity.SharedViewModel
@@ -15,6 +17,8 @@ import com.example.producity.databinding.ChatRoomBinding
 import com.example.producity.models.Message
 import com.example.producity.ui.myactivity.MyActivityViewModel
 import com.google.firebase.Timestamp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class ChatFragment : Fragment() {
 
@@ -57,7 +61,11 @@ class ChatFragment : Fragment() {
 
         chatViewModel.chatMessages.observe(viewLifecycleOwner) {
             adapter.submitList(it)
-            recyclerView.scrollToPosition(adapter.itemCount - 1)
+
+            lifecycleScope.launch {
+                delay(100)
+                recyclerView.scrollToPosition(adapter.itemCount - 1)
+            }
         }
 
         updateLayout()

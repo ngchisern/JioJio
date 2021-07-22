@@ -179,7 +179,7 @@ class MyActivityDetailViewModel(
         rtdb.getReference("chatroom/$docid")
             .get()
             .addOnSuccessListener {
-                val chatRoom = it.getValue(ChatRoom::class.java)!!
+                val chatRoom = it.getValue(ChatRoom::class.java) ?: return@addOnSuccessListener
 
                 val unread = chatRoom.unread.mapValues { x ->
                     x.value + 1

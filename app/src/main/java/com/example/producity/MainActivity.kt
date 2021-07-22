@@ -1,11 +1,9 @@
 package com.example.producity
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.widget.*
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -26,6 +24,8 @@ import com.google.firebase.ktx.Firebase
 import timber.log.Timber
 import java.util.*
 
+const val USER = "user"
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,91 +59,53 @@ class MainActivity : AppCompatActivity() {
         auth = Firebase.auth
         db = Firebase.firestore
 
-        verifyUser()
+        setUp()
     }
 
-    private fun verifyUser() {
+    private fun setUp() {
         val currentUser = auth.currentUser
 
-        if (currentUser == null) {
+        val user = intent.getParcelableExtra<User>(USER)
+
+        if (currentUser == null || user == null) {
             quit()
             return
         }
 
-        db.collection("users")
-            .whereEqualTo("uid", currentUser.uid)
-            .limit(1)
+        sharedViewModel.updateUser(user)
+        val username = user.username
+
+        sharedViewModel.loadUserImage()
+
+        myActivityViewModel.getRecommendation(username)
+
+        db.collection("users/$username/friends")
+            .orderBy("username")
             .get()
-            .addOnSuccessListener { it ->
-                if (it.isEmpty) {
-                    Timber.d("cant set up user info")
-                    quit()
-                    return@addOnSuccessListener
-                }
-
+            .addOnSuccessListener {
+                val list: MutableList<User> = mutableListOf()
                 it.forEach { doc ->
-                    val temp = doc.toObject(User::class.java)
-                    sharedViewModel.updateUser(temp)
-                    val username = temp.username
-
-                    sharedViewModel.loadUserImage()
-
-                    myActivityViewModel.getRecommendation(username)
-
-                    db.collection("users/$username/friends")
-                        .orderBy("username")
-                        .get()
-                        .addOnSuccessListener {
-                            val list: MutableList<User> = mutableListOf()
-                            it.forEach { doc ->
-                                val friend = doc.toObject(User::class.java)
-                                list.add(friend)
-                            }
-//                            friendListViewModel.updateFriendList(list)
-                        }
-
-
-                    db.collection("activity")
-                        .whereArrayContains("participant", username)
-                        .orderBy("date")
-                        .startAt(Timestamp.now())
-                        .limit(10)
-                        .addSnapshotListener { value, error ->
-                            if (error != null) {
-                                return@addSnapshotListener
-                            }
-                            val list =
-                                value?.toObjects(Activity::class.java) ?: return@addSnapshotListener
-                            myActivityViewModel.updateList(list)
-                            chatListViewModel.updateList(list)
-                        }
-
-                    db.collection("activity")
-                        .whereEqualTo("privacy", Activity.PUBLIC)
-                        .orderBy("date")
-                        .startAt(Timestamp.now())
-                        .limit(5)
-                        .get()
-                        .addOnSuccessListener { x ->
-                            val list = x.toObjects(Activity::class.java)
-
-                            if (list.isEmpty()) {
-                                return@addOnSuccessListener
-                            }
-
-                            exploreViewModel.latest = list.last().date
-
-                            val result = list.filter { y -> !y.participant.contains(username) }
-                                .toMutableList()
-                            exploreViewModel.updateList(result)
-                        }
-                        .addOnFailureListener {
-                            Timber.d(it.message.toString())
-                        }
-
-
+                    val friend = doc.toObject(User::class.java)
+                    list.add(friend)
                 }
+//                            friendListViewModel.updateFriendList(list)
             }
+
+
+        db.collection("activity")
+            .whereArrayContains("participant", username)
+            .orderBy("date")
+            .startAt(Timestamp.now())
+            .limit(10)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
+                val list = value?.toObjects(Activity::class.java) ?: return@addSnapshotListener
+                myActivityViewModel.updateList(list)
+                chatListViewModel.updateList(list)
+            }
+
 
     }
 

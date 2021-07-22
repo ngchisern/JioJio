@@ -165,7 +165,7 @@ class FriendProfileFragment : Fragment() {
                     return@observe
                 }
 
-                friendListViewModel.loadImage(it.docId, binding.profileActivityImage)
+                friendListViewModel.loadActivityImage(it.docId, binding.profileActivityImage)
                 binding.profileActivityName.text = it.title
                 binding.profileActivityCountdown.text
 
@@ -221,6 +221,9 @@ class FriendProfileFragment : Fragment() {
     private fun popRemoveFriendDialog() {
         val builder = MaterialAlertDialogBuilder(requireContext())
         val view = LayoutInflater.from(context).inflate(R.layout.delete_friend_dialog, null)
+
+        val text  = view.findViewById<TextView>(R.id.delete_friend_confirmation)
+        text.text = "Are you sure you want to remove ${friend.nickname} from your friends?"
 
         builder.setView(view)
         val dialog = builder.create()

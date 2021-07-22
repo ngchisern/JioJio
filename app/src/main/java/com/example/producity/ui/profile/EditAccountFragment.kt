@@ -23,17 +23,22 @@ const val CHANGE_EMAIL = 0
 const val CHANGE_TELEGRAM = 1
 const val CHANGE_PASSWORD = 2
 
-class EditAccountFragment: Fragment() {
+class EditAccountFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels {
-        ProfileViewModelFactory(ServiceLocator.provideUserRepository(), ServiceLocator.provideAuthRepository())
+        ProfileViewModelFactory(
+            ServiceLocator.provideUserRepository(),
+            ServiceLocator.provideAuthRepository()
+        )
     }
 
     private var _binding: EditAccountBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var userProfile: User // current user profile
+
+    private var isGoogle = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,8 +61,9 @@ class EditAccountFragment: Fragment() {
 
         updateLayout()
         listen()
-    }
 
+
+    }
 
 
     override fun onDestroyView() {
@@ -68,7 +74,7 @@ class EditAccountFragment: Fragment() {
     private fun updateLayout() {
         val arguments = EditAccountFragmentArgs.fromBundle(requireArguments())
 
-        if(arguments.isVerify) {
+        if (arguments.isVerify) {
             loadVerifyLayout()
         } else {
             val code = EditAccountFragmentArgs.fromBundle(requireArguments()).code
@@ -86,9 +92,9 @@ class EditAccountFragment: Fragment() {
             }
         }
 
-
         binding.editAccountInput.requestFocus()
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(binding.editAccountInput, InputMethodManager.SHOW_IMPLICIT)
 
     }
@@ -97,7 +103,8 @@ class EditAccountFragment: Fragment() {
         val currentEmail = Firebase.auth.currentUser!!.email
 
         binding.editAccountTitle.text = "CHANGE EMAIL"
-        binding.editAccountSubtitle.text = "Your current email address is $currentEmail.\n What would you like to change it to?"
+        binding.editAccountSubtitle.text =
+            "Your current email address is $currentEmail.\n What would you like to change it to?"
         binding.editAccountSubject.text = "EMAIL"
         binding.editAccountInput.hint = "Email"
         binding.editAccountButton.text = "Change Email"
@@ -107,18 +114,32 @@ class EditAccountFragment: Fragment() {
     private fun loadTelegramLayout() {
         val tele = userProfile.telegramHandle
 
-        if(tele == "") {
+        if (tele == "") {
             binding.editAccountTitle.text = "ENTER YOUR TELEGRAM HANDLE"
-            binding.editAccountSubtitle.text = "Please enter your own telegram handle without the @-prefix "
+            binding.editAccountSubtitle.text =
+                "Please enter your own telegram handle without the @-prefix "
             binding.editAccountButton.text = "Next"
         } else {
             binding.editAccountTitle.text = "CHANGE TELEGRAM HANDLE"
             binding.editAccountButton.text = "Change Telegram Handle"
-            binding.editAccountSubtitle.text = "Your current telegram handle is $tele.\n What would you like to change it to?"
+            binding.editAccountSubtitle.text =
+                "Your current telegram handle is $tele.\n What would you like to change it to?"
         }
 
         binding.editAccountSubject.text = "TELEGRAM HANDLE"
         binding.editAccountInput.hint = "Telegram Handle"
+
+        val auth = Firebase.auth
+
+        auth.fetchSignInMethodsForEmail(auth.currentUser!!.email!!)
+            .addOnSuccessListener {
+                isGoogle = it.signInMethods!!.contains("google.com")
+
+                if (isGoogle) {
+                    binding.editAccountButton.text = "Change Telegram Handle"
+                }
+
+            }
 
     }
 
@@ -137,7 +158,8 @@ class EditAccountFragment: Fragment() {
         binding.editAccountInput.hint = ""
         binding.editAccountButton.text = "Done"
         binding.closeText.text = "Back"
-        binding.editAccountInput.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
+        binding.editAccountInput.inputType =
+            InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
     }
 
 
@@ -147,15 +169,15 @@ class EditAccountFragment: Fragment() {
         }
 
         binding.editAccountButton.setOnClickListener {
-            val arguments =  EditAccountFragmentArgs.fromBundle(requireArguments())
+            val arguments = EditAccountFragmentArgs.fromBundle(requireArguments())
 
-            if(arguments.isVerify) {
+            if (arguments.isVerify) {
                 performVerification()
                 return@setOnClickListener
             }
 
             val code = arguments.code
-            when(code) {
+            when (code) {
                 CHANGE_EMAIL -> {
                     performChangeEmail()
                 }
@@ -171,35 +193,52 @@ class EditAccountFragment: Fragment() {
 
     private fun performChangeEmail() {
         val email = binding.editAccountInput.text.toString()
-        if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             binding.editAccountInput.error = "Not a well formed email address"
             return
         }
-        val action = EditAccountFragmentDirections.actionEditAccountFragmentSelf(CHANGE_EMAIL, email, true)
+        val action =
+            EditAccountFragmentDirections.actionEditAccountFragmentSelf(CHANGE_EMAIL, email, true)
         findNavController().navigate(action)
     }
 
     private fun performChangeTele() {
         val tele = binding.editAccountInput.text.toString()
 
-        val action = EditAccountFragmentDirections.actionEditAccountFragmentSelf(CHANGE_TELEGRAM, tele, true)
-        findNavController().navigate(action)
+        if (isGoogle) {
+            val editedUserProfile = userProfile
+            editedUserProfile.telegramHandle = tele
+            profileViewModel.updateUserProfile(editedUserProfile)
+            sharedViewModel.updateUser(editedUserProfile)
+            findNavController().popBackStack(R.id.navigation_profile, false)
+        } else {
+            val action = EditAccountFragmentDirections.actionEditAccountFragmentSelf(
+                CHANGE_TELEGRAM,
+                tele,
+                true
+            )
+            findNavController().navigate(action)
+        }
     }
 
     private fun performChangePassword() {
         val password = binding.editAccountInput.text.toString()
 
-        if(password.length < 6) {
+        if (password.length < 6) {
             binding.editAccountInput.error = "Password must contain at least 6 characters."
             return
         }
-        val action = EditAccountFragmentDirections.actionEditAccountFragmentSelf(CHANGE_PASSWORD, password, true)
+        val action = EditAccountFragmentDirections.actionEditAccountFragmentSelf(
+            CHANGE_PASSWORD,
+            password,
+            true
+        )
         findNavController().navigate(action)
     }
 
     private fun performVerification() {
         val password = binding.editAccountInput.text.toString()
-        if(!profileViewModel.verifyPassword(password)) {
+        if (!profileViewModel.verifyPassword(password)) {
             binding.editAccountInput.error = "Password does not match"
             return
         }
@@ -207,7 +246,7 @@ class EditAccountFragment: Fragment() {
         val code = EditAccountFragmentArgs.fromBundle(requireArguments()).code
         val input = EditAccountFragmentArgs.fromBundle(requireArguments()).input
 
-        when(code) {
+        when (code) {
             CHANGE_EMAIL -> {
                 profileViewModel.changeEmail(input)
                 findNavController().popBackStack(R.id.navigation_profile, false)

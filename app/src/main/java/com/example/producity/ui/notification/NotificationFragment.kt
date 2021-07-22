@@ -63,7 +63,7 @@ class NotificationFragment : Fragment() {
         TabLayoutMediator(tabLayout, viewPager) { myTabLayout, position ->
             myTabLayout.text = tabTitles[position]
 
-            val size = pagerAdapter.getListSize(0)
+            val size = pagerAdapter.getListSize(0) ?: return@TabLayoutMediator
 
             if (size <= 0) {
                 Picasso.get()
@@ -78,7 +78,7 @@ class NotificationFragment : Fragment() {
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 val position = tab!!.position
-                val size = pagerAdapter.getListSize(position)
+                val size = pagerAdapter.getListSize(position) ?: return
 
                 if (size <= 0) {
                     Picasso.get()
