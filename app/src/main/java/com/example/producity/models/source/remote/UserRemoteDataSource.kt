@@ -255,25 +255,15 @@ class UserRemoteDataSource : IUserRemoteDataSource {
     ): User {
         val ref = storage.getReference("/profile_pictures/${userProfile.username}")
 
-        val editedUserProfile = User(
-            userProfile.username,
-            userProfile.uid,
-            userProfile.nickname,
-            userProfile.telegramHandle,
-            userProfile.gender,
-            userProfile.birthday,
-            userProfile.bio
-        )
-
         val task = ref.putFile(imageUri) // upload image to Firebase Storage
             .addOnSuccessListener {
                 Timber.d("Successfully uploaded image at: ${it.metadata?.path}")
                 ref.downloadUrl.addOnSuccessListener {
-                    val currUsername = editedUserProfile.username
+                    val currUsername = userProfile.username
                     // Update the user profile details
                     db.collection("users")
                         .document(currUsername)
-                        .set(editedUserProfile)
+                        .set(userProfile)
                         .addOnSuccessListener { // get friends and update the profile details in friends
                             Timber.d("Edited user profile")
 
@@ -294,7 +284,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
                                     friendUsernames.forEach { friendUsername ->
                                         db.collection("users/$friendUsername/friends")
                                             .document(currUsername)
-                                            .set(editedUserProfile)
+                                            .set(userProfile)
                                             .addOnSuccessListener {
                                                 Timber.d(
                                                     "updated profile in friend: $friendUsername"
@@ -317,7 +307,7 @@ class UserRemoteDataSource : IUserRemoteDataSource {
         while (!task.isComplete) {
         }
 
-        return editedUserProfile
+        return userProfile
     }
 
 
