@@ -97,7 +97,6 @@ class MyActivityInviteAdapter(
 
         val message = Message("I invited ${user.nickname} to the activity",
             currentUser.username, Timestamp.now().toDate().time)
-        activityDetailViewModel.sendMessage(message)
 
         val noti = Notification(
             user.username,
@@ -117,12 +116,11 @@ class MyActivityInviteAdapter(
                 Timber.d(it.message.toString())
             }
 
-        rtdb.reference.child("chatroom/$docId/unread/${user.username}")
-            .setValue(0)
-
         val participant = User(user.username, nickname = user.nickname)
 
         activityDetailViewModel.addParticipant(participant, docId)
+
+        activityDetailViewModel.sendMessage(message)
 
 
     }
