@@ -76,8 +76,7 @@
                     android:layout_below="@id/private_text"
                     android:layout_alignParentStart="true"
                     android:layout_toStartOf="@id/forward_arrow"
-                    android:text="Only people who are invited can join the event.
-                                    Participants cannot invite their friends." />
+                    android:text="Only people who are invited can join the event.\nParticipants cannot invite their friends." />
 
                 <!--
                 android:text="Only people who are invited can join the event.
