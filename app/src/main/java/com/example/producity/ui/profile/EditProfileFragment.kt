@@ -233,7 +233,7 @@ class EditProfileFragment : Fragment() {
                         profilePicUri, editedUserProfile
                     )
 
-                    sharedViewModel.currentUser.postValue(returnedUser)
+                    sharedViewModel.currentUser.postValue(editedUserProfile)
                     sharedViewModel.userImage.postValue(profilePicUri.toString())
                     sharedViewModel.loadUserImage()
                     ContextCompat.getMainExecutor(context).execute {

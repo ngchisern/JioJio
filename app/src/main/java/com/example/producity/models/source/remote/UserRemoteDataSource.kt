@@ -259,49 +259,50 @@ class UserRemoteDataSource : IUserRemoteDataSource {
             .addOnSuccessListener {
                 Timber.d("Successfully uploaded image at: ${it.metadata?.path}")
                 ref.downloadUrl.addOnSuccessListener {
-                    val currUsername = userProfile.username
-                    // Update the user profile details
-                    db.collection("users")
-                        .document(currUsername)
-                        .set(userProfile)
-                        .addOnSuccessListener { // get friends and update the profile details in friends
-                            Timber.d("Edited user profile")
-
-                            // get list of friends
-                            val friendList: MutableList<User> = mutableListOf()
-                            db.collection("users/$currUsername/friends")
-                                .orderBy("username")
-                                .get()
-                                .addOnSuccessListener { x ->
-                                    x.forEach { doc ->
-                                        val friend = doc.toObject(User::class.java)
-                                        friendList.add(friend)
-                                    }
-
-                                    // update the current user profile details in each of the friends
-                                    val friendUsernames: List<String> =
-                                        friendList.map { y -> y.username }
-                                    friendUsernames.forEach { friendUsername ->
-                                        db.collection("users/$friendUsername/friends")
-                                            .document(currUsername)
-                                            .set(userProfile)
-                                            .addOnSuccessListener {
-                                                Timber.d(
-                                                    "updated profile in friend: $friendUsername"
-                                                )
-                                            }
-                                            .addOnFailureListener { e ->
-                                                Timber.d(e.toString())
-                                            }
-                                    }
-                                }
-                        }
 
 
                 }
             }
             .addOnFailureListener {
                 Timber.d(it.toString())
+            }
+
+        val currUsername = userProfile.username
+        // Update the user profile details
+        db.collection("users")
+            .document(currUsername)
+            .set(userProfile)
+            .addOnSuccessListener { // get friends and update the profile details in friends
+                Timber.d("Edited user profile")
+
+                // get list of friends
+                val friendList: MutableList<User> = mutableListOf()
+                db.collection("users/$currUsername/friends")
+                    .orderBy("username")
+                    .get()
+                    .addOnSuccessListener { x ->
+                        x.forEach { doc ->
+                            val friend = doc.toObject(User::class.java)
+                            friendList.add(friend)
+                        }
+
+                        // update the current user profile details in each of the friends
+                        val friendUsernames: List<String> =
+                            friendList.map { y -> y.username }
+                        friendUsernames.forEach { friendUsername ->
+                            db.collection("users/$friendUsername/friends")
+                                .document(currUsername)
+                                .set(userProfile)
+                                .addOnSuccessListener {
+                                    Timber.d(
+                                        "updated profile in friend: $friendUsername"
+                                    )
+                                }
+                                .addOnFailureListener { e ->
+                                    Timber.d(e.toString())
+                                }
+                        }
+                    }
             }
 
         while (!task.isComplete) {

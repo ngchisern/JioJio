@@ -64,15 +64,15 @@ class ProfileViewModel(
     suspend fun uploadImageToFirebaseStorageAndEditProfile(
         imageUri: Uri,
         userProfile: User
-    ): User {
+    ) {
         val returnedUser: Deferred<User> = viewModelScope.async {
             userRepository.uploadImageToFirebaseStorageAndEditProfile(
                 imageUri, userProfile
             )
         }
-        val result: User = returnedUser.await()
-        Timber.d("RESULT: $result, username: ${result.username}")
-        return result
+//        val result: User = returnedUser.await()
+//        Timber.d("RESULT: $result, username: ${result.username}")
+//        return result
     }
 
     fun verifyPassword(pass: String): Boolean {
