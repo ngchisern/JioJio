@@ -239,6 +239,7 @@ class MyActivityDetailFragment : Fragment() {
 
                     findNavController().popBackStack(R.id.navigation_myActivity, false)
                     findNavController().navigate(R.id.navigation_myActivity)
+                    myActivityDetailViewModel.currentActivity = null
                 }
                 .setNegativeButton("Cancel") { dialog, which ->
                     dialog.cancel()
@@ -259,6 +260,7 @@ class MyActivityDetailFragment : Fragment() {
 
                     findNavController().popBackStack(R.id.navigation_myActivity, false)
                     findNavController().navigate(R.id.navigation_myActivity)
+                    myActivityDetailViewModel.currentActivity = null
                 }
                 .setNegativeButton("Cancel") { dialog, which ->
                     dialog.cancel()
