@@ -238,6 +238,10 @@ class EditAccountFragment : Fragment() {
 
     private fun performVerification() {
         val password = binding.editAccountInput.text.toString()
+        if (password == "") {
+            binding.editAccountInput.error = "Please enter your password."
+            return
+        }
         if (!profileViewModel.verifyPassword(password)) {
             binding.editAccountInput.error = "Password does not match"
             return
