@@ -148,7 +148,7 @@ class EditAccountFragment : Fragment() {
         binding.editAccountSubtitle.text = "Choose a password that's harder for people to guess"
         binding.editAccountSubject.text = "NEW PASSWORD"
         binding.editAccountInput.hint = ""
-        binding.editAccountInput.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+        binding.editAccountInput.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
         binding.editAccountButton.text = "Change Password"
     }
 
