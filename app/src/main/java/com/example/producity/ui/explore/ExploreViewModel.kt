@@ -70,6 +70,7 @@ class ExploreViewModel(
         val db = Firebase.firestore
 
         db.collection("activity")
+            .whereEqualTo("privacy", Activity.PUBLIC)
             .orderBy("lowerCaseTitle")
             .startAt(query.toLowerCase(Locale.ROOT))
             .endAt(query.toLowerCase(Locale.ROOT) + "\uf8ff")
