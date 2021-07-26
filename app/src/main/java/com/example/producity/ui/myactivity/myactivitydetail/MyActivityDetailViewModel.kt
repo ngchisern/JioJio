@@ -70,15 +70,16 @@ class MyActivityDetailViewModel(
 
     fun assignNewOwner() {
         val db = Firebase.firestore
+        val tracker = currentActivity!!
 
-        db.document("activity/${currentActivity!!.docId}")
+        db.document("activity/${tracker.docId}")
             .get()
             .addOnSuccessListener {
                 val act = it.toObject(Activity::class.java) ?: return@addOnSuccessListener
                 val replace = act.participant.firstOrNull { x -> x != act.owner }
 
                 if (replace == null) {
-                    deleteActivity()
+                    deleteActivity(tracker)
                 } else {
                     db.document("activity/${currentActivity!!.docId}")
                         .update("owner", replace)
@@ -106,23 +107,22 @@ class MyActivityDetailViewModel(
             }
     }
 
-    private fun deleteActivity() {
+    private fun deleteActivity(activity: Activity) {
         val db = Firebase.firestore
         val rtdb = Firebase.database
         val storage = Firebase.storage
 
-        db.document("activity/${currentActivity!!.docId}")
+        db.document("activity/${activity.docId}")
             .delete()
 
-        rtdb.getReference("activity/${currentActivity!!.docId}")
+        rtdb.getReference("activity/${activity.docId}")
             .removeValue()
 
-        rtdb.getReference("chatroom/${currentActivity!!.docId}")
+        rtdb.getReference("chatroom/${activity.docId}")
             .removeValue()
 
-        storage.reference.child("/activity_images/${currentActivity!!.docId}")
+        storage.reference.child("/activity_images/${activity.docId}")
             .delete()
-
 
     }
 
