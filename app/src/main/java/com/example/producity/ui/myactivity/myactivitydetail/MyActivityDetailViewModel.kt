@@ -39,16 +39,14 @@ class MyActivityDetailViewModel(
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Participant>()
-                    participantList.value = list
+                    participantList.value = listOf()
                     snapshot.children.forEach {
                         rtdb.getReference("participant/${it.value.toString()}")
                             .get()
                             .addOnSuccessListener { x ->
                                 val temp = x.getValue(Participant::class.java)
                                     ?: return@addOnSuccessListener
-                                Timber.d(temp.username)
                                 list.add(temp)
-
                                 participantList.value = list
                             }
                     }
@@ -81,12 +79,12 @@ class MyActivityDetailViewModel(
                 if (replace == null) {
                     deleteActivity(tracker)
                 } else {
-                    db.document("activity/${currentActivity!!.docId}")
+                    db.document("activity/${tracker.docId}")
                         .update("owner", replace)
 
                     val rtdb = Firebase.database
 
-                    rtdb.getReference("activity/${currentActivity!!.docId}/participant")
+                    rtdb.getReference("activity/${tracker.docId}/participant")
                         .addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(snapshot: DataSnapshot) {
                                 for (item in snapshot.children) {
