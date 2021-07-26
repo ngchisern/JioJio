@@ -28,7 +28,7 @@ We hope to develop an application to facilitate people to pursue their interests
 
 - As an activity host, I would like to find enough participants so that my event can run smoothly and provide a better experience (e.g. ten persons for a 5v5 basketball match).
 
-#### As an ongoing person
+#### As an outgoing person
 
 - As an outgoing person, I would like to indicate my interests in my profile so that other users would discover my interests and invite me to the relevant activities.
 
