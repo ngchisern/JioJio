@@ -237,11 +237,11 @@ class MyActivityDetailFragment : Fragment() {
                     val message = Message("left the activity.", user.username, Timestamp.now().toDate().time)
                     myActivityDetailViewModel.sendMessage(message)
 
-                    findNavController().popBackStack(R.id.navigation_myActivity, false)
-                    findNavController().navigate(R.id.navigation_myActivity)
+                    val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToNavigationMyActivity()
+                    findNavController().navigate(action)
                     myActivityDetailViewModel.currentActivity = null
                 }
-                .setNegativeButton("Cancel") { dialog, which ->
+                .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.cancel()
                 }
 
@@ -258,8 +258,8 @@ class MyActivityDetailFragment : Fragment() {
                     val message = Message("left the activity.", username, Timestamp.now().toDate().time)
                     myActivityDetailViewModel.sendMessage(message)
 
-                    findNavController().popBackStack(R.id.navigation_myActivity, false)
-                    findNavController().navigate(R.id.navigation_myActivity)
+                    val action = MyActivityDetailFragmentDirections.actionScheduleDetailFragmentToNavigationMyActivity()
+                    findNavController().navigate(action)
                     myActivityDetailViewModel.currentActivity = null
                 }
                 .setNegativeButton("Cancel") { dialog, which ->

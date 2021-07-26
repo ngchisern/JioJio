@@ -109,6 +109,12 @@
         <action
             android:id="@+id/action_scheduleDetailFragment_to_reportUserFragment"
             app:destination="@id/reportUserFragment" />
+        <action
+            android:id="@+id/action_scheduleDetailFragment_to_navigation_myActivity"
+            app:destination="@id/navigation_myActivity"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/mobile_navigation"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
